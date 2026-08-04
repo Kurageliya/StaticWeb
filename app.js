@@ -517,6 +517,27 @@
       if (e.key === 'ArrowLeft') navigateLightbox(-1);
       if (e.key === 'ArrowRight') navigateLightbox(1);
     });
+
+    // Image Magnifier & Interactive Zoom Support
+    const lightboxImgWrap = document.getElementById('lightbox-img-wrap');
+    if (lightboxImgWrap && lightboxImg) {
+      lightboxImgWrap.addEventListener('mousemove', (e) => {
+        const rect = lightboxImgWrap.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        lightboxImg.style.transformOrigin = `${x}% ${y}%`;
+      });
+
+      lightboxImgWrap.addEventListener('mouseleave', () => {
+        if (!lightboxImgWrap.classList.contains('is-zoomed')) {
+          lightboxImg.style.transformOrigin = 'center center';
+        }
+      });
+
+      lightboxImgWrap.addEventListener('click', () => {
+        lightboxImgWrap.classList.toggle('is-zoomed');
+      });
+    }
   }
 
   function openLightbox(index) {
@@ -528,6 +549,10 @@
   }
 
   function closeLightbox() {
+    const lightboxImgWrap = document.getElementById('lightbox-img-wrap');
+    if (lightboxImgWrap) lightboxImgWrap.classList.remove('is-zoomed');
+    if (lightboxImg) lightboxImg.style.transformOrigin = 'center center';
+
     lightboxModal.classList.remove('active');
     lightboxModal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';

@@ -1229,18 +1229,22 @@ button {
 }
 
 .lightbox-img-wrap {
-  max-height: 38vh;
-  aspect-ratio: 4 / 3;
+  max-height: 42vh;
+  width: 100%;
   overflow: hidden;
-  border-radius: 4px;
-  background: #1a121d;
+  border-radius: 6px;
+  background: #fdfbf7;
+  border: 1px solid rgba(232, 180, 184, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 auto;
+  position: relative;
+  cursor: zoom-in;
 }
 
 .lightbox-img-wrap img {
-  max-height: 38vh;
+  max-height: 42vh;
   max-width: 100%;
   width: auto;
   height: auto;
@@ -1248,6 +1252,42 @@ button {
   object-position: center;
   margin: 0 auto;
   display: block;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  transform-origin: center center;
+}
+
+/* Hover Zoom Magnifier Effect */
+.lightbox-img-wrap:hover img {
+  transform: scale(1.4);
+}
+
+/* Click to Full Zoom State */
+.lightbox-img-wrap.is-zoomed {
+  cursor: zoom-out;
+}
+
+.lightbox-img-wrap.is-zoomed img {
+  transform: scale(2.2) !important;
+}
+
+.lightbox-zoom-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  background: rgba(40, 25, 38, 0.75);
+  color: #ffffff;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.725rem;
+  font-weight: 600;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.lightbox-img-wrap:hover .lightbox-zoom-hint {
+  opacity: 0;
 }
 
 .lightbox-details {
