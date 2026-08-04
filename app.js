@@ -83,7 +83,7 @@
   }
 
   let memoriesList = JSON.parse(localStorage.getItem('love_journey_memories'));
-  if (!memoriesList || !Array.isArray(memoriesList) || memoriesList.length === 0) {
+  if (!memoriesList || !Array.isArray(memoriesList) || memoriesList.length === 0 || (memoriesList[0] && memoriesList[0].imgUrl !== 'assets/images/pesanpertama.jpeg')) {
     memoriesList = DEFAULT_MEMORIES;
     localStorage.setItem('love_journey_memories', JSON.stringify(DEFAULT_MEMORIES));
   }
