@@ -1360,6 +1360,11 @@ button {
   visibility: visible;
 }
 
+/* Edit modal sits ABOVE lightbox (z-index 2000) */
+.modal-edit-overlay {
+  z-index: 2500;
+}
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -1810,6 +1815,19 @@ button {
 
 .btn-card-love.active:hover {
   color: #ffffff;
+}
+
+.btn-card-edit {
+  top: 10px;
+  right: 50px;
+}
+
+.btn-card-edit:hover {
+  transform: scale(1.15);
+  background: var(--gold-accent);
+  color: #ffffff;
+  border-color: var(--gold-accent);
+  box-shadow: 0 4px 10px rgba(184, 154, 100, 0.4);
 }
 
 .btn-card-delete {

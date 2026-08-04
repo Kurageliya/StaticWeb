@@ -140,7 +140,7 @@
     db.collection('memories').onSnapshot((snapshot) => {
       if (snapshot.empty) {
         DEFAULT_MEMORIES.forEach(mem => {
-          db.collection('memories').doc(mem.id).set(mem).catch(() => {});
+          db.collection('memories').doc(mem.id).set(mem).catch(() => { });
         });
         return;
       }
@@ -171,7 +171,7 @@
         updateCoupleDisplay();
         updateCounterValues();
       } else {
-        db.collection('settings').doc('couple').set(coupleSettings || DEFAULT_SETTINGS).catch(() => {});
+        db.collection('settings').doc('couple').set(coupleSettings || DEFAULT_SETTINGS).catch(() => { });
       }
     }, (error) => {
       console.warn('Firestore settings snapshot fallback to local:', error);
@@ -440,6 +440,9 @@
           <div class="hover-overlay">
             <i class="fa-solid fa-heart"></i>
           </div>
+          <button type="button" class="btn-card-action btn-card-edit" title="Edit Kenangan">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
           <button type="button" class="btn-card-action btn-card-love ${isLoved ? 'active' : ''}" title="${isLoved ? 'Sembunyikan dari Timeline' : 'Tampilkan di Timeline'}">
             <i class="fa-solid fa-heart"></i>
           </button>
@@ -464,6 +467,14 @@
       });
 
       // Quick action buttons
+      const btnEdit = itemEl.querySelector('.btn-card-edit');
+      if (btnEdit) {
+        btnEdit.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openEditMemoryModal(memory.id);
+        });
+      }
+
       const btnLove = itemEl.querySelector('.btn-card-love');
       if (btnLove) {
         btnLove.addEventListener('click', (e) => {
@@ -699,6 +710,152 @@
     if (btnDelete) {
       btnDelete.onclick = () => deleteMemory(memory.id);
     }
+
+    // Edit button in Lightbox — opens edit modal ON TOP (no close needed)
+    const btnEdit = document.getElementById('btn-edit-lightbox');
+    if (btnEdit) {
+      btnEdit.onclick = () => openEditMemoryModal(memory.id);
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     6.1. EDIT MEMORY MODAL (OVERLAY ABOVE LIGHTBOX)
+     -------------------------------------------------------------------------- */
+  const modalEditMemory = document.getElementById('modal-edit-memory');
+  const modalEditClose = document.getElementById('modal-edit-close');
+  const formEditMemory = document.getElementById('form-edit-memory');
+  const btnEditCancel = document.getElementById('btn-edit-cancel');
+
+  // Edit photo upload elements
+  const editUploadDropzone = document.getElementById('edit-upload-dropzone');
+  const editFileInput = document.getElementById('edit-memory-file-input');
+  const editDropzoneContent = document.getElementById('edit-dropzone-content');
+  const editFilePreviewWrap = document.getElementById('edit-file-preview-wrap');
+  const editFilePreviewImg = document.getElementById('edit-file-preview-img');
+  const btnEditRemoveFile = document.getElementById('btn-edit-remove-file');
+  let editSelectedDataUrl = '';
+
+  // Edit dropzone click → trigger file input
+  if (editUploadDropzone) {
+    editUploadDropzone.addEventListener('click', (e) => {
+      if (e.target.closest('#btn-edit-remove-file')) return;
+      editFileInput.click();
+    });
+  }
+
+  // Edit file input change → compress & preview
+  if (editFileInput) {
+    editFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Reuse compressImage if available, otherwise direct read
+      if (typeof compressImage === 'function') {
+        compressImage(file, 1200, 0.82, (dataUrl) => {
+          editSelectedDataUrl = dataUrl;
+          editFilePreviewImg.src = dataUrl;
+          editDropzoneContent.style.display = 'none';
+          editFilePreviewWrap.style.display = 'block';
+        });
+      } else {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          editSelectedDataUrl = ev.target.result;
+          editFilePreviewImg.src = ev.target.result;
+          editDropzoneContent.style.display = 'none';
+          editFilePreviewWrap.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Edit remove file button
+  if (btnEditRemoveFile) {
+    btnEditRemoveFile.addEventListener('click', (e) => {
+      e.stopPropagation();
+      editSelectedDataUrl = '';
+      editFileInput.value = '';
+      editFilePreviewWrap.style.display = 'none';
+      editDropzoneContent.style.display = 'block';
+    });
+  }
+
+  function openEditMemoryModal(id) {
+    const memory = memoriesList.find(m => m.id === id);
+    if (!memory) return;
+
+    document.getElementById('edit-memory-id').value = memory.id;
+    document.getElementById('edit-memory-title').value = memory.title || '';
+    document.getElementById('edit-memory-date').value = memory.date || '';
+    document.getElementById('edit-memory-category').value = memory.category || 'spesial';
+    document.getElementById('edit-memory-caption').value = memory.caption || '';
+
+    // Show current photo preview
+    const currentPhoto = document.getElementById('edit-current-photo');
+    if (currentPhoto) currentPhoto.src = memory.imgUrl || '';
+
+    // Reset upload state
+    editSelectedDataUrl = '';
+    if (editFileInput) editFileInput.value = '';
+    if (editFilePreviewWrap) editFilePreviewWrap.style.display = 'none';
+    if (editDropzoneContent) editDropzoneContent.style.display = 'block';
+    const editImgUrl = document.getElementById('edit-memory-img-url');
+    if (editImgUrl) editImgUrl.value = '';
+
+    // Open edit modal ON TOP of lightbox (z-index 2500 > 2000)
+    openModal(modalEditMemory);
+  }
+
+  function closeEditModal() {
+    closeModal(modalEditMemory);
+  }
+
+  if (modalEditClose) {
+    modalEditClose.addEventListener('click', closeEditModal);
+  }
+  if (btnEditCancel) {
+    btnEditCancel.addEventListener('click', closeEditModal);
+  }
+  if (modalEditMemory) {
+    const editBackdrop = modalEditMemory.querySelector('.modal-backdrop');
+    if (editBackdrop) editBackdrop.addEventListener('click', closeEditModal);
+  }
+
+  if (formEditMemory) {
+    formEditMemory.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('edit-memory-id').value;
+      const memory = memoriesList.find(m => m.id === id);
+      if (!memory) return;
+
+      memory.title = document.getElementById('edit-memory-title').value.trim();
+      memory.date = document.getElementById('edit-memory-date').value;
+      memory.category = document.getElementById('edit-memory-category').value;
+      memory.caption = document.getElementById('edit-memory-caption').value.trim();
+
+      // Update photo if a new one was selected
+      const editImgUrlInput = document.getElementById('edit-memory-img-url');
+      const newImgUrl = editSelectedDataUrl || (editImgUrlInput ? editImgUrlInput.value.trim() : '');
+      if (newImgUrl) {
+        memory.imgUrl = newImgUrl;
+      }
+
+      memoriesList.sort((a, b) => new Date(b.date) - new Date(a.date));
+      localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
+      syncMemoryToCloud(memory);
+
+      renderPolaroidGrid();
+      renderTimelineSection();
+
+      // Update lightbox if it's still open
+      if (lightboxModal && lightboxModal.classList.contains('active')) {
+        updateLightboxContent(memory);
+      }
+
+      closeEditModal();
+      showToast('✏️ Kenangan Berhasil Diperbarui!');
+    });
   }
 
   /* --------------------------------------------------------------------------
