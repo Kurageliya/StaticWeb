@@ -121,6 +121,18 @@
     }
   }
 
+  let coupleSettings = JSON.parse(localStorage.getItem('love_journey_settings'));
+  if (!coupleSettings || !coupleSettings.person1) {
+    coupleSettings = DEFAULT_SETTINGS;
+    localStorage.setItem('love_journey_settings', JSON.stringify(DEFAULT_SETTINGS));
+  }
+
+  let memoriesList = JSON.parse(localStorage.getItem('love_journey_memories'));
+  if (!memoriesList || !Array.isArray(memoriesList) || memoriesList.length === 0) {
+    memoriesList = DEFAULT_MEMORIES;
+    localStorage.setItem('love_journey_memories', JSON.stringify(DEFAULT_MEMORIES));
+  }
+
   function setupCloudListeners() {
     if (!db) return;
 
@@ -128,7 +140,7 @@
     db.collection('memories').onSnapshot((snapshot) => {
       if (snapshot.empty) {
         DEFAULT_MEMORIES.forEach(mem => {
-          db.collection('memories').doc(mem.id).set(mem);
+          db.collection('memories').doc(mem.id).set(mem).catch(() => {});
         });
         return;
       }
@@ -138,15 +150,17 @@
         cloudMemories.push(doc.data());
       });
 
-      cloudMemories.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      memoriesList = cloudMemories;
-      localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
-
+      if (cloudMemories.length > 0) {
+        cloudMemories.sort((a, b) => new Date(b.date) - new Date(a.date));
+        memoriesList = cloudMemories;
+        localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
+        renderPolaroidGrid();
+        renderTimelineSection();
+      }
+    }, (error) => {
+      console.warn('Firestore memories snapshot fallback to local:', error);
       renderPolaroidGrid();
       renderTimelineSection();
-    }, (error) => {
-      console.warn('Firestore memories snapshot error:', error);
     });
 
     // 2. Realtime Couple Settings Listener
@@ -157,10 +171,12 @@
         updateCoupleDisplay();
         updateCounterValues();
       } else {
-        db.collection('settings').doc('couple').set(coupleSettings || DEFAULT_SETTINGS);
+        db.collection('settings').doc('couple').set(coupleSettings || DEFAULT_SETTINGS).catch(() => {});
       }
     }, (error) => {
-      console.warn('Firestore settings snapshot error:', error);
+      console.warn('Firestore settings snapshot fallback to local:', error);
+      updateCoupleDisplay();
+      updateCounterValues();
     });
   }
 
