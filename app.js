@@ -75,17 +75,93 @@
     }
   ];
 
-  // Retrieve or set initial data with safe local persistence
-  let coupleSettings = JSON.parse(localStorage.getItem('love_journey_settings'));
-  if (!coupleSettings || !coupleSettings.person1) {
-    coupleSettings = DEFAULT_SETTINGS;
-    localStorage.setItem('love_journey_settings', JSON.stringify(DEFAULT_SETTINGS));
+  /* --------------------------------------------------------------------------
+     FIREBASE REAL-TIME CLOUD SYNCHRONIZATION SETUP
+     -------------------------------------------------------------------------- */
+  const firebaseConfig = {
+    apiKey: "AIzaSyBWFGFMU90YZsldRcm0LGeWthJZJ5BC9iA",
+    authDomain: "webstaticcilpa.firebaseapp.com",
+    projectId: "webstaticcilpa",
+    storageBucket: "webstaticcilpa.firebasestorage.app",
+    messagingSenderId: "897044124769",
+    appId: "1:897044124769:web:e148ae679745e44931c620",
+    measurementId: "G-GYX18MNE8M"
+  };
+
+  let db = null;
+  if (window.firebase) {
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      db = firebase.firestore();
+    } catch (err) {
+      console.warn('Firebase initialization fallback:', err);
+    }
   }
 
-  let memoriesList = JSON.parse(localStorage.getItem('love_journey_memories'));
-  if (!memoriesList || !Array.isArray(memoriesList) || memoriesList.length === 0 || (memoriesList[0] && memoriesList[0].imgUrl !== 'assets/images/pesanpertama.jpeg')) {
-    memoriesList = DEFAULT_MEMORIES;
-    localStorage.setItem('love_journey_memories', JSON.stringify(DEFAULT_MEMORIES));
+  function syncMemoryToCloud(memory) {
+    if (db && memory && memory.id) {
+      db.collection('memories').doc(memory.id).set(memory, { merge: true })
+        .catch(err => console.warn('Cloud sync memory error:', err));
+    }
+  }
+
+  function deleteMemoryFromCloud(id) {
+    if (db && id) {
+      db.collection('memories').doc(id).delete()
+        .catch(err => console.warn('Cloud sync delete error:', err));
+    }
+  }
+
+  function syncSettingsToCloud(settings) {
+    if (db && settings) {
+      db.collection('settings').doc('couple').set(settings, { merge: true })
+        .catch(err => console.warn('Cloud sync settings error:', err));
+    }
+  }
+
+  function setupCloudListeners() {
+    if (!db) return;
+
+    // 1. Realtime Memories Listener across devices
+    db.collection('memories').onSnapshot((snapshot) => {
+      if (snapshot.empty) {
+        DEFAULT_MEMORIES.forEach(mem => {
+          db.collection('memories').doc(mem.id).set(mem);
+        });
+        return;
+      }
+
+      const cloudMemories = [];
+      snapshot.forEach(doc => {
+        cloudMemories.push(doc.data());
+      });
+
+      cloudMemories.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      memoriesList = cloudMemories;
+      localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
+
+      renderPolaroidGrid();
+      renderTimelineSection();
+    }, (error) => {
+      console.warn('Firestore memories snapshot error:', error);
+    });
+
+    // 2. Realtime Couple Settings Listener
+    db.collection('settings').doc('couple').onSnapshot((doc) => {
+      if (doc.exists) {
+        coupleSettings = doc.data();
+        localStorage.setItem('love_journey_settings', JSON.stringify(coupleSettings));
+        updateCoupleDisplay();
+        updateCounterValues();
+      } else {
+        db.collection('settings').doc('couple').set(coupleSettings || DEFAULT_SETTINGS);
+      }
+    }, (error) => {
+      console.warn('Firestore settings snapshot error:', error);
+    });
   }
 
   let currentFilter = 'all';
@@ -177,6 +253,7 @@
     setupFileUploadEvents();
     setupAudioSynth();
     initAmbientCanvas();
+    setupCloudListeners();
   }
 
   function applyTheme(themeId) {
@@ -465,6 +542,7 @@
 
     memoriesList = memoriesList.filter(m => m.id !== id);
     localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
+    deleteMemoryFromCloud(id);
 
     renderPolaroidGrid();
     renderTimelineSection();
@@ -481,6 +559,7 @@
     if (memory) {
       memory.isFeatured = memory.isFeatured === false ? true : false;
       localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
+      syncMemoryToCloud(memory);
 
       renderPolaroidGrid();
       renderTimelineSection();
@@ -674,6 +753,7 @@
         }
 
         localStorage.setItem('love_journey_settings', JSON.stringify(coupleSettings));
+        syncSettingsToCloud(coupleSettings);
         updateCoupleDisplay();
         updateCounterValues();
         closeModal(modalSettings);
@@ -716,12 +796,15 @@
           date: document.getElementById('memory-date').value,
           category: document.getElementById('memory-category').value,
           imgUrl: finalImgUrl,
-          caption: document.getElementById('memory-caption').value.trim()
+          caption: document.getElementById('memory-caption').value.trim(),
+          isFeatured: true
         };
 
         memoriesList.unshift(newMemory); // Add to front of array
         localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
+        syncMemoryToCloud(newMemory);
         renderPolaroidGrid();
+        renderTimelineSection();
         closeModal(modalAddMemory);
         showToast('💖 Kenangan Baru Berhasil Ditambahkan!');
       });
