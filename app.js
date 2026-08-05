@@ -267,6 +267,7 @@
     setupLightboxEvents();
     setupModalEvents();
     setupFileUploadEvents();
+    setupConfirmDeleteEvents();
     setupAudioSynth();
     initAmbientCanvas();
     setupCloudListeners();
@@ -561,24 +562,62 @@
     setupScrollReveal();
   }
 
+  let pendingDeleteMemoryId = null;
+
   function deleteMemory(id) {
     const memory = memoriesList.find(m => m.id === id);
-    const titleText = memory ? memory.title : 'foto kenangan ini';
+    if (!memory) return;
 
-    if (!confirm(`Apakah kamu yakin ingin menghapus "${titleText}"?`)) return;
-
-    memoriesList = memoriesList.filter(m => m.id !== id);
-    localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
-    deleteMemoryFromCloud(id);
-
-    renderPolaroidGrid();
-    renderTimelineSection();
-
-    if (lightboxModal && lightboxModal.classList.contains('active')) {
-      closeLightbox();
+    pendingDeleteMemoryId = id;
+    const textEl = document.getElementById('confirm-delete-text');
+    if (textEl) {
+      textEl.innerHTML = `Apakah kamu yakin ingin menghapus foto <strong style="color:var(--text-dark);">"${escapeHtml(memory.title)}"</strong> dari scrapbook?`;
     }
 
-    showToast('🗑️ Foto Kenangan Berhasil Dihapus!');
+    const modalConfirm = document.getElementById('modal-confirm-delete');
+    openModal(modalConfirm);
+  }
+
+  function setupConfirmDeleteEvents() {
+    const modalConfirm = document.getElementById('modal-confirm-delete');
+    const btnCancel = document.getElementById('btn-confirm-delete-cancel');
+    const btnOk = document.getElementById('btn-confirm-delete-ok');
+
+    if (btnCancel && modalConfirm) {
+      btnCancel.addEventListener('click', () => {
+        pendingDeleteMemoryId = null;
+        closeModal(modalConfirm);
+      });
+      const backdrop = modalConfirm.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.addEventListener('click', () => {
+          pendingDeleteMemoryId = null;
+          closeModal(modalConfirm);
+        });
+      }
+    }
+
+    if (btnOk && modalConfirm) {
+      btnOk.addEventListener('click', () => {
+        if (!pendingDeleteMemoryId) return;
+        const id = pendingDeleteMemoryId;
+        pendingDeleteMemoryId = null;
+
+        memoriesList = memoriesList.filter(m => m.id !== id);
+        localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
+        deleteMemoryFromCloud(id);
+
+        renderPolaroidGrid();
+        renderTimelineSection();
+
+        if (lightboxModal && lightboxModal.classList.contains('active')) {
+          closeLightbox();
+        }
+
+        closeModal(modalConfirm);
+        showToast('🗑️ Foto Kenangan Berhasil Dihapus!');
+      });
+    }
   }
 
   function toggleFeaturedMemory(id) {
@@ -745,27 +784,51 @@
 
   // Edit file input change → compress & preview
   if (editFileInput) {
-    editFileInput.addEventListener('change', (e) => {
+    editFileInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
 
-      // Reuse compressImage if available, otherwise direct read
-      if (typeof compressImage === 'function') {
-        compressImage(file, 1200, 0.82, (dataUrl) => {
+      try {
+        const dataUrl = await compressAndReadImage(file);
+        editSelectedDataUrl = dataUrl;
+        if (editFilePreviewImg) editFilePreviewImg.src = dataUrl;
+        if (editDropzoneContent) editDropzoneContent.style.display = 'none';
+        if (editFilePreviewWrap) editFilePreviewWrap.style.display = 'block';
+      } catch (err) {
+        showToast('⚠️ Gagal membaca foto. Silakan coba foto lain.');
+      }
+    });
+  }
+
+  // Edit drag & drop support
+  if (editUploadDropzone) {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      editUploadDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        editUploadDropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      editUploadDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        editUploadDropzone.classList.remove('dragover');
+      });
+    });
+
+    editUploadDropzone.addEventListener('drop', async (e) => {
+      const dt = e.dataTransfer;
+      const file = dt.files[0];
+      if (file && file.type.startsWith('image/')) {
+        try {
+          const dataUrl = await compressAndReadImage(file);
           editSelectedDataUrl = dataUrl;
-          editFilePreviewImg.src = dataUrl;
-          editDropzoneContent.style.display = 'none';
-          editFilePreviewWrap.style.display = 'block';
-        });
-      } else {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          editSelectedDataUrl = ev.target.result;
-          editFilePreviewImg.src = ev.target.result;
-          editDropzoneContent.style.display = 'none';
-          editFilePreviewWrap.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
+          if (editFilePreviewImg) editFilePreviewImg.src = dataUrl;
+          if (editDropzoneContent) editDropzoneContent.style.display = 'none';
+          if (editFilePreviewWrap) editFilePreviewWrap.style.display = 'block';
+        } catch (err) {
+          showToast('⚠️ Gagal membaca foto. Silakan coba foto lain.');
+        }
       }
     });
   }
@@ -775,9 +838,9 @@
     btnEditRemoveFile.addEventListener('click', (e) => {
       e.stopPropagation();
       editSelectedDataUrl = '';
-      editFileInput.value = '';
-      editFilePreviewWrap.style.display = 'none';
-      editDropzoneContent.style.display = 'block';
+      if (editFileInput) editFileInput.value = '';
+      if (editFilePreviewWrap) editFilePreviewWrap.style.display = 'none';
+      if (editDropzoneContent) editDropzoneContent.style.display = 'block';
     });
   }
 

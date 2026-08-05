@@ -1868,3 +1868,8 @@ button {
   background: #dc3545 !important;
   color: #ffffff !important;
 }
+
+/* Custom Confirmation Modal Overlay (z-index highest) */
+.modal-confirm-overlay {
+  z-index: 3000 !important;
+}
