@@ -18,62 +18,27 @@
     musicUrl: 'assets/audio/music.mp3'
   };
 
-  const DEFAULT_MEMORIES = [
-    {
-      id: 'mem-1',
-      title: 'Pesan Pertama di WhatsApp',
-      date: '2025-12-09',
-      category: 'spesial',
-      imgUrl: 'assets/images/pesanpertama.jpeg',
-      caption: 'Malam jam 20.59 WIB saat Cilpaaa pertama kali mengirimkan pesan WhatsApp. Dulu pernah DM tapi dicuekin, dan pesan ini menjadi awal perjalanan indah kita!',
-      isFeatured: true
-    },
-    {
-      id: 'mem-2',
-      title: 'Kisah LDR Jakarta - Kudus',
-      date: '2026-01-15',
-      category: 'kencan',
-      imgUrl: 'assets/images/kisah.jpeg',
-      caption: 'Rijal di Jakarta & Cilpaaa di Kudus sedang kuliah. Obrolan hangat setiap hari merekatkan rasa nyaman walau terpisah jarak ratusan kilometer.',
-      isFeatured: true
-    },
-    {
-      id: 'mem-3',
-      title: 'Pertemuan Pertama di Kudus',
-      date: '2026-02-14',
-      category: 'spesial',
-      imgUrl: 'assets/images/pertemuan.jpeg',
-      caption: 'Pertama kali bertatap muka secara langsung di Kudus, Jawa Tengah. Rasa gugup berubah menjadi kehangatan nyata saat kita berdua bersama.',
-      isFeatured: true
-    },
-    {
-      id: 'mem-4',
-      title: 'Resmi Berpacaran ("Nembak")',
-      date: '2026-02-15',
-      category: 'spesial',
-      imgUrl: 'assets/images/nembak.jpeg',
-      caption: 'Momen paling membahagiakan saat Rijal menyatakan perasaan cinta ("nembak") dan Cilpaaa menerimanya. Awal perjalanan resmi Rijal & Cilpaaa.',
-      isFeatured: true
-    },
-    {
-      id: 'mem-5',
-      title: 'Pertemuan Ke-2 (Quality Time)',
-      date: '2026-05-15',
-      category: 'kencan',
-      imgUrl: 'assets/images/kedua.jpeg',
-      caption: 'Momen manis pertemuan kedua di mana kita menghabiskan waktu bersama, melepas rindu setelah berbulan-bulan LDR.',
-      isFeatured: true
-    },
-    {
-      id: 'mem-6',
-      title: 'Pertemuan Ke-3 (Mendatang)',
-      date: '2026-08-15',
-      category: 'spesial',
-      imgUrl: 'assets/images/pertemuan.jpeg',
-      caption: 'Momen pertemuan ke-3 yang sangat dinantikan bersama. Kartu ini siap diisi cerita dan kenangan manisnya nanti!',
-      isFeatured: true
+  /* --------------------------------------------------------------------------
+     SAFE LOCALSTORAGE WRAPPER
+     Mencegah unhandled QuotaExceededError crash saat menyimpan foto Base64
+     -------------------------------------------------------------------------- */
+  function safeGetLocalStorage(key, defaultVal = null) {
+    try {
+      const val = localStorage.getItem(key);
+      return val ? JSON.parse(val) : defaultVal;
+    } catch (e) {
+      console.warn(`LocalStorage read warning for "${key}":`, e);
+      return defaultVal;
     }
-  ];
+  }
+
+  function safeSetLocalStorage(key, val) {
+    try {
+      localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val));
+    } catch (e) {
+      console.warn(`LocalStorage write warning for "${key}":`, e);
+    }
+  }
 
   /* --------------------------------------------------------------------------
      FIREBASE REAL-TIME CLOUD SYNCHRONIZATION SETUP
@@ -100,63 +65,70 @@
     }
   }
 
-  function syncMemoryToCloud(memory) {
-    if (db && memory && memory.id) {
-      db.collection('memories').doc(memory.id).set(memory, { merge: true })
-        .catch(err => console.warn('Cloud sync memory error:', err));
+  async function syncMemoryToCloud(memory) {
+    if (!db || !memory || !memory.id) return false;
+    try {
+      await db.collection('memories').doc(memory.id).set(memory, { merge: true });
+      return true;
+    } catch (err) {
+      console.error('Cloud sync memory error:', err);
+      showToast('⚠️ Gagal menyimpan ke server cloud. Periksa koneksi internet.');
+      return false;
     }
   }
 
-  function deleteMemoryFromCloud(id) {
-    if (db && id) {
-      db.collection('memories').doc(id).delete()
-        .catch(err => console.warn('Cloud sync delete error:', err));
+  async function deleteMemoryFromCloud(id) {
+    if (!db || !id) return false;
+    try {
+      await db.collection('memories').doc(id).delete();
+      return true;
+    } catch (err) {
+      console.error('Cloud sync delete error:', err);
+      showToast('⚠️ Gagal menghapus dari server cloud. Periksa koneksi internet.');
+      return false;
     }
   }
 
-  function syncSettingsToCloud(settings) {
-    if (db && settings) {
-      db.collection('settings').doc('couple').set(settings, { merge: true })
-        .catch(err => console.warn('Cloud sync settings error:', err));
+  async function syncSettingsToCloud(settings) {
+    if (!db || !settings) return false;
+    try {
+      await db.collection('settings').doc('couple').set(settings, { merge: true });
+      return true;
+    } catch (err) {
+      console.error('Cloud sync settings error:', err);
+      return false;
     }
   }
 
-  let coupleSettings = JSON.parse(localStorage.getItem('love_journey_settings'));
+  // Initial State: Load from cache without falling back to dummy memories
+  let coupleSettings = safeGetLocalStorage('love_journey_settings', DEFAULT_SETTINGS);
   if (!coupleSettings || !coupleSettings.person1) {
     coupleSettings = DEFAULT_SETTINGS;
-    localStorage.setItem('love_journey_settings', JSON.stringify(DEFAULT_SETTINGS));
   }
 
-  let memoriesList = JSON.parse(localStorage.getItem('love_journey_memories'));
-  if (!memoriesList || !Array.isArray(memoriesList) || memoriesList.length === 0) {
-    memoriesList = DEFAULT_MEMORIES;
-    localStorage.setItem('love_journey_memories', JSON.stringify(DEFAULT_MEMORIES));
+  let memoriesList = safeGetLocalStorage('love_journey_memories', []);
+  if (!Array.isArray(memoriesList)) {
+    memoriesList = [];
   }
 
   function setupCloudListeners() {
     if (!db) return;
 
-    // 1. Realtime Memories Listener across devices
+    // 1. Realtime Memories Listener across devices (Single Source of Truth)
     db.collection('memories').onSnapshot((snapshot) => {
-      if (snapshot.empty) {
-        DEFAULT_MEMORIES.forEach(mem => {
-          db.collection('memories').doc(mem.id).set(mem).catch(() => { });
-        });
-        return;
-      }
-
       const cloudMemories = [];
       snapshot.forEach(doc => {
-        cloudMemories.push(doc.data());
+        const data = doc.data();
+        if (data && data.id) {
+          cloudMemories.push(data);
+        }
       });
 
-      if (cloudMemories.length > 0) {
-        cloudMemories.sort((a, b) => new Date(b.date) - new Date(a.date));
-        memoriesList = cloudMemories;
-        localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
-        renderPolaroidGrid();
-        renderTimelineSection();
-      }
+      cloudMemories.sort((a, b) => new Date(b.date) - new Date(a.date));
+      memoriesList = cloudMemories;
+      safeSetLocalStorage('love_journey_memories', memoriesList);
+      renderPolaroidGrid();
+      renderTimelineSection();
     }, (error) => {
       console.warn('Firestore memories snapshot fallback to local:', error);
       renderPolaroidGrid();
@@ -167,7 +139,7 @@
     db.collection('settings').doc('couple').onSnapshot((doc) => {
       if (doc.exists) {
         coupleSettings = doc.data();
-        localStorage.setItem('love_journey_settings', JSON.stringify(coupleSettings));
+        safeSetLocalStorage('love_journey_settings', coupleSettings);
         updateCoupleDisplay();
         updateCounterValues();
       } else {
@@ -276,7 +248,7 @@
   function applyTheme(themeId) {
     currentTheme = themeId;
     document.documentElement.setAttribute('data-theme', themeId);
-    localStorage.setItem('love_journey_theme', themeId);
+    safeSetLocalStorage('love_journey_theme', themeId);
 
     const themeOptions = document.querySelectorAll('.theme-card-option');
     themeOptions.forEach(opt => {
@@ -422,8 +394,22 @@
       return item.category === currentFilter;
     });
 
+    if (memoriesList.length === 0) {
+      polaroidGrid.innerHTML = `
+        <div class="empty-gallery-state text-center" style="grid-column: 1/-1; padding: 3.5rem 1.5rem; color: var(--text-muted);">
+          <div style="font-size: 2.8rem; margin-bottom: 0.75rem; color: var(--primary-pink);"><i class="fa-regular fa-images"></i></div>
+          <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem;">Album Kenangan Masih Kosong</h3>
+          <p style="max-width: 440px; margin: 0 auto 1.5rem; font-size: 0.95rem; line-height: 1.5;">Yuk abadikan momen indah perjalanan cinta kalian! Klik tombol di bawah untuk menambahkan foto kenangan pertama.</p>
+          <button type="button" class="btn btn-sm btn-gold" onclick="document.getElementById('btn-add-memory').click();">
+            <i class="fa-solid fa-plus"></i> Tambah Foto Kenangan
+          </button>
+        </div>
+      `;
+      return;
+    }
+
     if (filteredMemories.length === 0) {
-      polaroidGrid.innerHTML = `<div class="text-center" style="grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">Belum ada foto dalam kategori ini. Klik "Tambah Foto Baru" untuk mengunggah.</div>`;
+      polaroidGrid.innerHTML = `<div class="text-center" style="grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">Belum ada foto dalam kategori "${escapeHtml(currentFilter)}". Klik "Tambah Foto Baru" untuk mengunggah.</div>`;
       return;
     }
 
@@ -598,14 +584,13 @@
     }
 
     if (btnOk && modalConfirm) {
-      btnOk.addEventListener('click', () => {
+      btnOk.addEventListener('click', async () => {
         if (!pendingDeleteMemoryId) return;
         const id = pendingDeleteMemoryId;
         pendingDeleteMemoryId = null;
 
         memoriesList = memoriesList.filter(m => m.id !== id);
-        localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
-        deleteMemoryFromCloud(id);
+        safeSetLocalStorage('love_journey_memories', memoriesList);
 
         renderPolaroidGrid();
         renderTimelineSection();
@@ -616,6 +601,8 @@
 
         closeModal(modalConfirm);
         showToast('🗑️ Foto Kenangan Berhasil Dihapus!');
+
+        await deleteMemoryFromCloud(id);
       });
     }
   }
@@ -624,7 +611,7 @@
     const memory = memoriesList.find(m => m.id === id);
     if (memory) {
       memory.isFeatured = memory.isFeatured === false ? true : false;
-      localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
+      safeSetLocalStorage('love_journey_memories', memoriesList);
       syncMemoryToCloud(memory);
 
       renderPolaroidGrid();
@@ -886,7 +873,7 @@
   }
 
   if (formEditMemory) {
-    formEditMemory.addEventListener('submit', (e) => {
+    formEditMemory.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('edit-memory-id').value;
       const memory = memoriesList.find(m => m.id === id);
@@ -905,8 +892,7 @@
       }
 
       memoriesList.sort((a, b) => new Date(b.date) - new Date(a.date));
-      localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
-      syncMemoryToCloud(memory);
+      safeSetLocalStorage('love_journey_memories', memoriesList);
 
       renderPolaroidGrid();
       renderTimelineSection();
@@ -918,6 +904,8 @@
 
       closeEditModal();
       showToast('✏️ Kenangan Berhasil Diperbarui!');
+
+      await syncMemoryToCloud(memory);
     });
   }
 
@@ -976,7 +964,7 @@
     }
 
     if (formSettings) {
-      formSettings.addEventListener('submit', (e) => {
+      formSettings.addEventListener('submit', async (e) => {
         e.preventDefault();
         coupleSettings.person1 = inputPerson1.value.trim();
         coupleSettings.person2 = inputPerson2.value.trim();
@@ -988,12 +976,13 @@
           coupleSettings.musicUrl = inputMusicUrl.value.trim();
         }
 
-        localStorage.setItem('love_journey_settings', JSON.stringify(coupleSettings));
-        syncSettingsToCloud(coupleSettings);
+        safeSetLocalStorage('love_journey_settings', coupleSettings);
         updateCoupleDisplay();
         updateCounterValues();
         closeModal(modalSettings);
         showToast('✨ Pengaturan Pasangan & Musik Berhasil Diperbarui!');
+
+        await syncSettingsToCloud(coupleSettings);
       });
     }
 
@@ -1016,7 +1005,7 @@
     }
 
     if (formAddMemory) {
-      formAddMemory.addEventListener('submit', (e) => {
+      formAddMemory.addEventListener('submit', async (e) => {
         e.preventDefault();
         const inputUrl = document.getElementById('memory-img-url').value.trim();
         const finalImgUrl = selectedUploadedDataUrl || inputUrl;
@@ -1037,12 +1026,13 @@
         };
 
         memoriesList.unshift(newMemory); // Add to front of array
-        localStorage.setItem('love_journey_memories', JSON.stringify(memoriesList));
-        syncMemoryToCloud(newMemory);
+        safeSetLocalStorage('love_journey_memories', memoriesList);
         renderPolaroidGrid();
         renderTimelineSection();
         closeModal(modalAddMemory);
         showToast('💖 Kenangan Baru Berhasil Ditambahkan!');
+
+        await syncMemoryToCloud(newMemory);
       });
     }
   }
@@ -1058,7 +1048,7 @@
   const filePreviewImg = document.getElementById('file-preview-img');
   const btnRemoveFile = document.getElementById('btn-remove-file');
 
-  function compressAndReadImage(file, maxWidth = 1000, quality = 0.8) {
+  function compressAndReadImage(file, maxWidth = 900, quality = 0.72) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
