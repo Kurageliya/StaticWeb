@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=1.0.5">
+  <link rel="stylesheet" href="style.css?v=1.2.0">
 </head>
 
 <body>
@@ -200,45 +200,132 @@
       </div>
     </section>
 
-    <!-- HALAMAN SURAT CINTA INTERAKTIF -->
+    <!-- HALAMAN SURAT CINTA INTERAKTIF (FLIP CARD: 2 SURAT) -->
     <section id="letter" class="letter-section">
       <div class="container">
         <div class="section-header text-center reveal">
           <span class="section-tag"><i class="fa-solid fa-paper-plane"></i> Pesan Spesial</span>
-          <h2 class="section-title">Surat Cinta Untukmu</h2>
-          <p class="section-subtitle">Klik amplop di bawah ini untuk membuka pesan dari dalam hatiku</p>
+          <h2 class="section-title">Surat Cinta Untuk Kita Berdua</h2>
+          <p class="section-subtitle">Klik amplop untuk membuka, lalu balik surat untuk membaca pesan dari pasanganmu</p>
         </div>
 
         <div class="envelope-wrapper reveal">
           <div class="envelope" id="envelope">
+            <!-- Elemen saat amplop tertutup -->
             <div class="envelope-flap"></div>
             <div class="envelope-pocket"></div>
             <div class="envelope-seal"><i class="fa-solid fa-heart"></i></div>
 
-            <div class="letter-paper" id="letter-paper">
-              <div class="paper-watermark">💖</div>
-              <h3 class="letter-header">Untuk Sayangku, <span id="letter-recipient-name">Cilpaaa</span></h3>
-              <div class="letter-body" id="letter-body-text">
-                <p>Makasihhh yaa sayangkuuu.. kamu pasti inget awal kita kenalan, kamu ngechat aku tanggal 9 desember
-                  2025 jam 20.59 (walaupun dulu aku pernah dm kamu tapi dicuekin sih 😜).</p>
-                <p>Tapi aku seneng banget hari-hariku mulai berubah. Yang awalnya cuma kerja di jakarta sendirian gaada
-                  tempat cerita, semenjak itu aku punya kamu yang mewarnai hariku.. yah meskipun kita ldr kamu di kudus
-                  aku di jakarta, tapi aku bakal tetep percaya sama kamu.. semua masalah pasti bisa kita atasi bersama.
-                </p>
-                <p>Terima kasih sudah menjaga rasa ini dan bertahan bersama. Website kecil ini aku buat khusus untuk
-                  mengabadikan setiap kenangan indah perjalanan cinta Rijal & Cilpaaa. Aku sayang banget sama kamu, hari
-                  ini, besok, dan selamanya! 💖</p>
+            <!-- Nuansa Amplop saat Terbuka (Backing & Open Flap) -->
+            <div class="envelope-open-bg">
+              <div class="envelope-open-flap"></div>
+              <div class="envelope-open-liner"></div>
+            </div>
+
+            <!-- FLIP CARD CONTAINER -->
+            <div class="letter-flipcard" id="letter-flipcard">
+              <!-- SISI DEPAN: Surat dari Person1 (Rijal) -->
+              <div class="letter-flipcard-face letter-flipcard-front">
+                <div class="letter-paper" id="letter-paper-front">
+                  <div class="paper-watermark">💖</div>
+
+                  <!-- Cap Pos & Perangko Romantis -->
+                  <div class="letter-stamp-wrap">
+                    <div class="letter-stamp">
+                      <div class="stamp-inner">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>LOVE</span>
+                        <small>2026</small>
+                      </div>
+                    </div>
+                    <div class="letter-postmark">
+                      <div class="postmark-circle">
+                        <span>AIR MAIL</span>
+                        <small id="postmark-route-front">KUDUS ✈ JKT</small>
+                      </div>
+                      <div class="postmark-lines">
+                        <span></span><span></span><span></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="letter-from-badge" id="letter-from-badge-front">
+                    <i class="fa-solid fa-pen-fancy"></i> Surat dari <span id="letter-from-name-front">Rijal</span>
+                  </div>
+                  <h3 class="letter-header">Untuk Sayangku, <span id="letter-recipient-name">Cilpaaa</span></h3>
+                  <div class="letter-body" id="letter-body-text">
+                    <p>Makasihhh yaa sayangkuuu.. kamu pasti inget awal kita kenalan, kamu ngechat aku tanggal 9 desember
+                      2025 jam 20.59 (walaupun dulu aku pernah dm kamu tapi dicuekin sih 😜).</p>
+                    <p>Tapi aku seneng banget hari-hariku mulai berubah. Yang awalnya cuma kerja di jakarta sendirian gaada
+                      tempat cerita, semenjak itu aku punya kamu yang mewarnai hariku.. yah meskipun kita ldr kamu di kudus
+                      aku di jakarta, tapi aku bakal tetep percaya sama kamu.. semua masalah pasti bisa kita atasi bersama.
+                    </p>
+                    <p>Terima kasih sudah menjaga rasa ini dan bertahan bersama. Website kecil ini aku buat khusus untuk
+                      mengabadikan setiap kenangan indah perjalanan cinta Rijal & Cilpaaa. Aku sayang banget sama kamu, hari
+                      ini, besok, dan selamanya! 💖</p>
+                  </div>
+                  <div class="letter-footer">
+                    <span>Dengan seluruh cintaku,</span>
+                    <span class="letter-signature" id="letter-sender-name">Rijal</span>
+                  </div>
+                </div>
               </div>
-              <div class="letter-footer">
-                <span>Dengan seluruh cintaku,</span>
-                <span class="letter-signature" id="letter-sender-name">Rijal</span>
+
+              <!-- SISI BELAKANG: Surat dari Person2 (Cilpaaa) -->
+              <div class="letter-flipcard-face letter-flipcard-back">
+                <div class="letter-paper" id="letter-paper-back">
+                  <div class="paper-watermark">💕</div>
+
+                  <!-- Cap Pos & Perangko Romantis Sisi Belakang -->
+                  <div class="letter-stamp-wrap">
+                    <div class="letter-stamp letter-stamp-alt">
+                      <div class="stamp-inner">
+                        <i class="fa-solid fa-dove"></i>
+                        <span>FOREVER</span>
+                        <small>2026</small>
+                      </div>
+                    </div>
+                    <div class="letter-postmark">
+                      <div class="postmark-circle">
+                        <span>WITH LOVE</span>
+                        <small id="postmark-route-back">JKT ✈ KUDUS</small>
+                      </div>
+                      <div class="postmark-lines">
+                        <span></span><span></span><span></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="letter-from-badge letter-from-badge-alt" id="letter-from-badge-back">
+                    <i class="fa-solid fa-pen-fancy"></i> Surat dari <span id="letter-from-name-back">Cilpaaa</span>
+                  </div>
+                  <h3 class="letter-header">Untuk Sayangku, <span id="letter-recipient-name-2">Rijal</span></h3>
+                  <div class="letter-body" id="letter-body-text-2">
+                    <p class="letter-placeholder-text"><i class="fa-solid fa-heart-circle-plus" style="font-size:1.5rem;"></i></p>
+                    <p class="letter-placeholder-text">Surat ini masih kosong... ✨</p>
+                    <p class="letter-placeholder-text">Ayo tulis pesan cintamu lewat menu <strong>Pengaturan Pasangan</strong> di bawah halaman!</p>
+                  </div>
+                  <div class="letter-footer">
+                    <span>Dengan seluruh cintaku,</span>
+                    <span class="letter-signature" id="letter-sender-name-2">Cilpaaa</span>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            <!-- Saku Bawah Amplop saat Terbuka (Holding Pocket) -->
+            <div class="envelope-open-pocket">
+              <div class="pocket-seal"><i class="fa-solid fa-heart"></i></div>
             </div>
           </div>
 
+          <!-- BUTTONS -->
           <div class="envelope-instruction text-center">
             <button id="btn-toggle-envelope" class="btn btn-pink">
               <i class="fa-solid fa-envelope-open"></i> Buka Surat Cinta
+            </button>
+            <button id="btn-flip-letter" class="btn btn-gold btn-flip-letter" style="display:none;">
+              <i class="fa-solid fa-rotate"></i> <span id="btn-flip-text">Balik Surat — Dari Cilpaaa</span>
             </button>
           </div>
         </div>
@@ -401,9 +488,15 @@
             <input type="datetime-local" id="input-date" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="input-letter">Pesan Surat Cinta (Opsional)</label>
+            <label for="input-letter"><i class="fa-solid fa-pen-fancy"></i> Surat Cinta dari <strong id="label-letter-person1">Rijal</strong></label>
             <textarea id="input-letter" class="form-control" rows="4"
-              placeholder="Tulis ungkapan perasaanmu..."></textarea>
+              placeholder="Tulis ungkapan perasaanmu untuk pasanganmu..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="input-letter-2"><i class="fa-solid fa-pen-fancy"></i> Surat Cinta dari <strong id="label-letter-person2">Cilpaaa</strong></label>
+            <textarea id="input-letter-2" class="form-control" rows="4"
+              placeholder="Tulis ungkapan perasaan pasanganmu untukmu..."></textarea>
+            <small style="font-size:0.78rem; color:var(--text-muted); display:block; margin-top:0.25rem;">Biarkan kosong jika belum ingin mengisi surat dari pasangan.</small>
           </div>
           <div class="form-group">
             <label for="input-music-url"><i class="fa-solid fa-music"></i> Link / File Musik MP3 (Lagu Nadhif
@@ -585,7 +678,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <!-- Main JavaScript File -->
-  <script src="app.js?v=1.7.0"></script>
+  <script src="app.js?v=1.8.0"></script>
 </body>
 
 </html>

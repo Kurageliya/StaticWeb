@@ -15,6 +15,7 @@
     person2: 'Cilpaaa',
     anniversaryDate: '2026-02-15T09:00:00',
     letterMessage: `Makasihhh yaa sayangkuuu.. kamu pasti inget awal kita kenalan, kamu ngechat aku tanggal 9 desember 2025 jam 20.59 (walaupun dulu aku pernah dm kamu tapi dicuekin sih 😜).\n\nTapi aku seneng banget hari-hariku mulai berubah. Yang awalnya cuma kerja di jakarta sendirian gaada tempat cerita, semenjak itu aku punya kamu yang mewarnai hariku.. yah meskipun kita ldr kamu di kudus aku di jakarta, tapi aku bakal tetep percaya sama kamu.. semua masalah pasti bisa kita atasi bersama.\n\nTerima kasih sudah menjaga rasa ini dan bertahan bersama. Website kecil ini aku buat khusus untuk mengabadikan setiap kenangan indah perjalanan cinta Rijal & Cilpaaa. Aku sayang banget sama kamu, hari ini, besok, dan selamanya! 💖`,
+    letterMessage2: '',
     musicUrl: 'assets/audio/music.mp3'
   };
 
@@ -178,12 +179,20 @@
   const filterBtns = document.querySelectorAll('.filter-btn');
   const btnAddMemory = document.getElementById('btn-add-memory');
 
-  // Envelope & Letter
+  // Envelope & Letter (Flip Card Dual Letter)
   const envelope = document.getElementById('envelope');
   const btnToggleEnvelope = document.getElementById('btn-toggle-envelope');
+  const letterFlipcard = document.getElementById('letter-flipcard');
+  const btnFlipLetter = document.getElementById('btn-flip-letter');
+  const btnFlipText = document.getElementById('btn-flip-text');
   const letterRecipientName = document.getElementById('letter-recipient-name');
   const letterSenderName = document.getElementById('letter-sender-name');
   const letterBodyText = document.getElementById('letter-body-text');
+  const letterFromNameFront = document.getElementById('letter-from-name-front');
+  const letterRecipientName2 = document.getElementById('letter-recipient-name-2');
+  const letterSenderName2 = document.getElementById('letter-sender-name-2');
+  const letterBodyText2 = document.getElementById('letter-body-text-2');
+  const letterFromNameBack = document.getElementById('letter-from-name-back');
 
   // Footer & Settings Modal
   const footerNames = document.getElementById('footer-names');
@@ -195,6 +204,9 @@
   const inputPerson2 = document.getElementById('input-person2');
   const inputDate = document.getElementById('input-date');
   const inputLetter = document.getElementById('input-letter');
+  const inputLetter2 = document.getElementById('input-letter-2');
+  const labelLetterPerson1 = document.getElementById('label-letter-person1');
+  const labelLetterPerson2 = document.getElementById('label-letter-person2');
 
   // Add Memory Modal
   const modalAddMemory = document.getElementById('modal-add-memory');
@@ -316,8 +328,20 @@
     if (heroCoupleNames) heroCoupleNames.textContent = combinedNames;
     if (heroCoupleTitle) heroCoupleTitle.textContent = combinedNames;
     if (footerNames) footerNames.textContent = combinedNames;
+
+    // Sisi Depan: Surat dari Person 1 (Rijal) untuk Person 2 (Cilpaaa)
     if (letterRecipientName) letterRecipientName.textContent = p2;
     if (letterSenderName) letterSenderName.textContent = p1;
+    if (letterFromNameFront) letterFromNameFront.textContent = p1;
+
+    // Sisi Belakang: Surat dari Person 2 (Cilpaaa) untuk Person 1 (Rijal)
+    if (letterRecipientName2) letterRecipientName2.textContent = p1;
+    if (letterSenderName2) letterSenderName2.textContent = p2;
+    if (letterFromNameBack) letterFromNameBack.textContent = p2;
+
+    // Label di modal pengaturan
+    if (labelLetterPerson1) labelLetterPerson1.textContent = p1;
+    if (labelLetterPerson2) labelLetterPerson2.textContent = p2;
 
     // Format Anniversary Date Display
     const dateObj = new Date(coupleSettings.anniversaryDate);
@@ -327,10 +351,36 @@
     if (heroDateDisplay) heroDateDisplay.textContent = formattedDate;
     if (counterSinceDate) counterSinceDate.textContent = `(${formattedDate})`;
 
-    // Update Letter Message
+    // Update Pesan Surat 1 (Person 1)
     if (letterBodyText) {
-      const paragraphs = coupleSettings.letterMessage.split('\n\n');
-      letterBodyText.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+      const msg1 = coupleSettings.letterMessage || '';
+      const paragraphs = msg1.split('\n\n').filter(p => p.trim());
+      if (paragraphs.length > 0) {
+        letterBodyText.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+      } else {
+        letterBodyText.innerHTML = `<p class="letter-placeholder-text">Belum ada pesan surat cinta yang ditulis.</p>`;
+      }
+    }
+
+    // Update Pesan Surat 2 (Person 2)
+    if (letterBodyText2) {
+      const msg2 = coupleSettings.letterMessage2 || '';
+      const paragraphs2 = msg2.split('\n\n').filter(p => p.trim());
+      if (paragraphs2.length > 0) {
+        letterBodyText2.innerHTML = paragraphs2.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+      } else {
+        letterBodyText2.innerHTML = `
+          <p class="letter-placeholder-text"><i class="fa-solid fa-heart-circle-plus" style="font-size:1.8rem; color:var(--pink-accent); margin-bottom:0.5rem; display:inline-block;"></i></p>
+          <p class="letter-placeholder-text">Surat dari <strong>${escapeHtml(p2)}</strong> masih kosong... ✨</p>
+          <p class="letter-placeholder-text">Ayo tulis pesan balasan cintamu lewat menu <strong>Pengaturan Pasangan</strong> di bawah!</p>
+        `;
+      }
+    }
+
+    // Update Teks Tombol Balik Surat
+    if (btnFlipText) {
+      const isFlipped = letterFlipcard && letterFlipcard.classList.contains('flipped');
+      btnFlipText.textContent = isFlipped ? `Balik Surat — Dari ${p1}` : `Balik Surat — Dari ${p2}`;
     }
   }
 
@@ -910,7 +960,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     7. INTERACTIVE LOVE LETTER ENVELOPE
+     7. INTERACTIVE LOVE LETTER ENVELOPE (FLIP CARD DUAL LETTER)
      -------------------------------------------------------------------------- */
   function setupEnvelopeInteraction() {
     if (!envelope || !btnToggleEnvelope) return;
@@ -919,23 +969,56 @@
 
     function toggleEnvelope() {
       isOpen = !isOpen;
+      const p1 = coupleSettings.person1 || 'Rijal';
+      const p2 = coupleSettings.person2 || 'Cilpaaa';
+
       if (isOpen) {
         envelope.classList.add('open');
         btnToggleEnvelope.innerHTML = `<i class="fa-solid fa-envelope"></i> Tutup Surat`;
+        if (btnFlipLetter) {
+          btnFlipLetter.style.display = 'inline-flex';
+          const isFlipped = letterFlipcard && letterFlipcard.classList.contains('flipped');
+          if (btnFlipText) {
+            btnFlipText.textContent = isFlipped ? `Balik Surat — Dari ${p1}` : `Balik Surat — Dari ${p2}`;
+          }
+        }
       } else {
         envelope.classList.remove('open');
         btnToggleEnvelope.innerHTML = `<i class="fa-solid fa-envelope-open"></i> Buka Surat Cinta`;
+        if (btnFlipLetter) {
+          btnFlipLetter.style.display = 'none';
+        }
+        // Kembalikan ke sisi depan saat amplop ditutup
+        if (letterFlipcard) {
+          letterFlipcard.classList.remove('flipped');
+        }
       }
     }
 
     envelope.addEventListener('click', (e) => {
-      if (!isOpen) toggleEnvelope();
+      // Hanya buka jika amplop sedang tertutup dan bukan klik di dalam tombol/link
+      if (!isOpen && !e.target.closest('button')) {
+        toggleEnvelope();
+      }
     });
 
     btnToggleEnvelope.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleEnvelope();
     });
+
+    if (btnFlipLetter && letterFlipcard) {
+      btnFlipLetter.addEventListener('click', (e) => {
+        e.stopPropagation();
+        letterFlipcard.classList.toggle('flipped');
+        const isFlipped = letterFlipcard.classList.contains('flipped');
+        const p1 = coupleSettings.person1 || 'Rijal';
+        const p2 = coupleSettings.person2 || 'Cilpaaa';
+        if (btnFlipText) {
+          btnFlipText.textContent = isFlipped ? `Balik Surat — Dari ${p1}` : `Balik Surat — Dari ${p2}`;
+        }
+      });
+    }
   }
 
   /* --------------------------------------------------------------------------
@@ -944,6 +1027,18 @@
   function setupModalEvents() {
     const inputMusicUrl = document.getElementById('input-music-url');
 
+    // Live update label nama surat saat ketik di modal settings
+    if (inputPerson1 && labelLetterPerson1) {
+      inputPerson1.addEventListener('input', () => {
+        labelLetterPerson1.textContent = inputPerson1.value.trim() || 'Pasangan 1';
+      });
+    }
+    if (inputPerson2 && labelLetterPerson2) {
+      inputPerson2.addEventListener('input', () => {
+        labelLetterPerson2.textContent = inputPerson2.value.trim() || 'Pasangan 2';
+      });
+    }
+
     // Settings Modal
     if (btnEditCouple) {
       btnEditCouple.addEventListener('click', () => {
@@ -951,7 +1046,11 @@
         inputPerson2.value = coupleSettings.person2 || '';
         inputDate.value = coupleSettings.anniversaryDate ? coupleSettings.anniversaryDate.substring(0, 16) : '';
         inputLetter.value = coupleSettings.letterMessage || '';
+        if (inputLetter2) inputLetter2.value = coupleSettings.letterMessage2 || '';
         if (inputMusicUrl) inputMusicUrl.value = coupleSettings.musicUrl || '';
+
+        if (labelLetterPerson1) labelLetterPerson1.textContent = coupleSettings.person1 || 'Pasangan 1';
+        if (labelLetterPerson2) labelLetterPerson2.textContent = coupleSettings.person2 || 'Pasangan 2';
 
         openModal(modalSettings);
       });
@@ -959,8 +1058,10 @@
 
     if (modalSettingsClose) {
       modalSettingsClose.addEventListener('click', () => closeModal(modalSettings));
-      document.querySelector('#modal-settings .modal-backdrop').addEventListener('click', () => closeModal(modalSettings));
-      document.querySelector('#modal-settings .modal-close-btn').addEventListener('click', () => closeModal(modalSettings));
+      const backdrop = document.querySelector('#modal-settings .modal-backdrop');
+      if (backdrop) backdrop.addEventListener('click', () => closeModal(modalSettings));
+      const closeBtn = document.querySelector('#modal-settings .modal-close-btn');
+      if (closeBtn) closeBtn.addEventListener('click', () => closeModal(modalSettings));
     }
 
     if (formSettings) {
@@ -969,8 +1070,9 @@
         coupleSettings.person1 = inputPerson1.value.trim();
         coupleSettings.person2 = inputPerson2.value.trim();
         coupleSettings.anniversaryDate = inputDate.value;
-        if (inputLetter.value.trim()) {
-          coupleSettings.letterMessage = inputLetter.value.trim();
+        coupleSettings.letterMessage = inputLetter.value.trim();
+        if (inputLetter2) {
+          coupleSettings.letterMessage2 = inputLetter2.value.trim();
         }
         if (inputMusicUrl) {
           coupleSettings.musicUrl = inputMusicUrl.value.trim();
@@ -980,7 +1082,7 @@
         updateCoupleDisplay();
         updateCounterValues();
         closeModal(modalSettings);
-        showToast('✨ Pengaturan Pasangan & Musik Berhasil Diperbarui!');
+        showToast('✨ Pengaturan Pasangan & Kedua Surat Cinta Berhasil Disimpan!');
 
         await syncSettingsToCloud(coupleSettings);
       });

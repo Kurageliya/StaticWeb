@@ -126,6 +126,20 @@
   --shadow-polaroid: 0 10px 30px -5px rgba(0, 0, 0, 0.7);
 }
 
+[data-theme="midnight-romance"] .envelope-open-bg {
+  background: linear-gradient(165deg, #2d182b 0%, #3e1b36 50%, #200f20 100%);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 0 2px rgba(212, 175, 55, 0.4);
+}
+
+[data-theme="midnight-romance"] .envelope-open-flap {
+  background: linear-gradient(to top, #3e1b36, #2d182b);
+}
+
+[data-theme="midnight-romance"] .envelope-open-pocket {
+  background: linear-gradient(to bottom, #4a1f40 0%, #35152d 100%);
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.5);
+}
+
 /* --------------------------------------------------------------------------
    2. GLOBAL RESET & BASE STYLES
    -------------------------------------------------------------------------- */
@@ -997,30 +1011,27 @@ button {
   transition: transform 0.4s ease;
 }
 
-/* Letter Paper inside Envelope */
-.letter-paper {
+/* Letter Flipcard inside Envelope */
+.letter-flipcard {
   position: absolute;
   top: 10px;
-  left: 15px;
-  right: 15px;
+  left: 10px;
+  right: 10px;
   bottom: 10px;
-  background: #ffffff;
-  color: #3a2e39;
-  border-radius: 4px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-  transition: all 0.6s ease;
-  overflow: hidden;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.34, 1.3, 0.64, 1), opacity 0.5s ease;
   opacity: 0;
   pointer-events: none;
-  border: 1px solid var(--pink-dusty);
+  z-index: 2;
 }
 
 /* OPEN ENVELOPE STATE */
 .envelope.open {
+  width: 100%;
+  max-width: 600px;
   height: auto;
-  min-height: 420px;
+  min-height: 520px;
   background: transparent;
   box-shadow: none;
   cursor: default;
@@ -1029,29 +1040,377 @@ button {
 .envelope.open .envelope-flap {
   transform: rotateX(180deg);
   z-index: 1;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .envelope.open .envelope-seal {
   transform: translateX(-50%) scale(0);
   opacity: 0;
+  pointer-events: none;
 }
 
 .envelope.open .envelope-pocket {
   opacity: 0;
+  pointer-events: none;
 }
 
-.envelope.open .letter-paper {
-  position: relative;
+/* ENVELOPE OPEN BACKING (Nuansa Amplop Terbuka di Belakang Kertas Surat) */
+.envelope-open-bg {
+  position: absolute;
+  top: -45px;
+  left: -16px;
+  right: -16px;
+  bottom: -16px;
+  background: linear-gradient(165deg, #fce4ec 0%, #f8bbd0 50%, #f48fb1 100%);
+  border-radius: 16px;
+  box-shadow:
+    0 20px 45px rgba(162, 75, 92, 0.22),
+    inset 0 0 0 2px rgba(212, 175, 55, 0.4),
+    inset 0 0 20px rgba(162, 75, 92, 0.1);
+  z-index: 1;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.6s cubic-bezier(0.34, 1.3, 0.64, 1);
+  pointer-events: none;
+}
+
+.envelope.open .envelope-open-bg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Flap Segitiga Amplop Terbuka di Bagian Atas */
+.envelope-open-flap {
+  position: absolute;
+  top: -65px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 70px;
+  background: linear-gradient(to top, #f8bbd0, #fce4ec);
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  border-radius: 4px;
+  filter: drop-shadow(0 -4px 8px rgba(162, 75, 92, 0.18));
+  z-index: 1;
+}
+
+/* Pola Lining Mewah di Dalam Flap Segitiga */
+.envelope-open-liner {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 195px;
+  height: 62px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(224, 86, 126, 0.2),
+    rgba(224, 86, 126, 0.2) 8px,
+    rgba(255, 255, 255, 0.7) 8px,
+    rgba(255, 255, 255, 0.7) 16px
+  );
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  opacity: 0.85;
+  z-index: 2;
+}
+
+/* SAKU BAWAH AMPLOP (Tempat Surat Bersarang / Holding Pocket) */
+.envelope-open-pocket {
+  position: absolute;
+  bottom: -16px;
+  left: -16px;
+  right: -16px;
+  height: 68px;
+  background: linear-gradient(to bottom, #f0b0bb 0%, #ebbec2 60%, #e8a7b3 100%);
+  border-radius: 0 0 16px 16px;
+  z-index: 12;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.6s cubic-bezier(0.34, 1.3, 0.64, 1);
+  pointer-events: none;
+  box-shadow: 0 -4px 15px rgba(162, 75, 92, 0.12);
+}
+
+.envelope.open .envelope-open-pocket {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.envelope-open-pocket::before {
+  content: '';
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  max-width: 580px;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+  clip-path: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%);
+}
+
+.pocket-seal {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e91e63, #880e4f);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(136, 14, 79, 0.4), inset 0 0 0 1.5px rgba(255, 215, 0, 0.7);
+  z-index: 14;
+}
+
+.envelope.open .letter-flipcard {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
   opacity: 1;
   pointer-events: auto;
   z-index: 10;
-  transform: translateY(-20px) scale(1.05);
-  box-shadow: var(--shadow-lg);
-  padding: 2.5rem 2rem;
+  width: 100%;
+  transform: translateY(-8px);
+}
+
+.envelope.open .letter-flipcard.flipped {
+  transform: translateY(-8px) rotateY(180deg);
+}
+
+/* FLIP CARD FACES */
+.letter-flipcard-face {
+  width: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.letter-flipcard-front {
+  position: relative;
+  transform: rotateY(0deg);
+}
+
+.letter-flipcard-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotateY(180deg);
+}
+
+.letter-flipcard.flipped .letter-flipcard-front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.letter-flipcard.flipped .letter-flipcard-back {
+  position: relative;
+  pointer-events: auto;
+}
+
+/* KERTAS SURAT ROMANTIS (STATIONERY AIRMAIL PAPER) */
+.letter-paper {
+  background-color: #fffefb;
+  background-image:
+    repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      rgba(162, 75, 92, 0.07) 31px,
+      rgba(162, 75, 92, 0.07) 32px
+    );
+  color: #2c222b;
+  border-radius: 8px;
+  padding: 2.2rem 2.2rem 5.5rem 2.2rem;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.05),
+    0 12px 28px rgba(162, 75, 92, 0.14),
+    inset 0 0 0 1px rgba(212, 175, 55, 0.25),
+    inset 0 0 0 5px #fffefb,
+    inset 0 0 0 6px rgba(162, 75, 92, 0.12);
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Pita Airmail / Pos Udara Cantik di Bagian Atas Kertas */
+.letter-paper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #e91e63,
+    #e91e63 12px,
+    #ffffff 12px,
+    #ffffff 18px,
+    #d4af37 18px,
+    #d4af37 30px,
+    #ffffff 30px,
+    #ffffff 36px
+  );
+  border-radius: 8px 8px 0 0;
+  opacity: 0.8;
+}
+
+/* CAP POS & PERANGKO ROMANTIS (POSTAGE STAMP & POSTMARK) */
+.letter-stamp-wrap {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  pointer-events: none;
+  user-select: none;
+  z-index: 5;
+}
+
+.letter-stamp {
+  width: 48px;
+  height: 58px;
+  background: #ffffff;
+  border: 2px dashed #e0567e;
+  border-radius: 4px;
+  padding: 3px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  transform: rotate(4deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stamp-inner {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #880e4f;
+  text-align: center;
+}
+
+.stamp-inner i {
+  font-size: 1.1rem;
+  color: #e91e63;
+  margin-bottom: 2px;
+}
+
+.stamp-inner span {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.stamp-inner small {
+  font-size: 0.48rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.letter-stamp-alt {
+  border-color: #880e4f;
+  transform: rotate(-3deg);
+}
+
+.letter-stamp-alt .stamp-inner {
+  background: linear-gradient(135deg, #f3e5f5, #ce93d8);
+  color: #4a148c;
+}
+
+.letter-stamp-alt .stamp-inner i {
+  color: #9c27b0;
+}
+
+/* Cap Pos Melingkar Retro */
+.letter-postmark {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.8;
+  transform: rotate(-6deg);
+}
+
+.postmark-circle {
+  width: 46px;
+  height: 46px;
+  border: 1.5px solid rgba(162, 75, 92, 0.65);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2px;
+}
+
+.postmark-circle span {
+  font-size: 0.4rem;
+  font-weight: 800;
+  color: #880e4f;
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
+.postmark-circle small {
+  font-size: 0.35rem;
+  color: #a24b5c;
+  line-height: 1.1;
+  margin-top: 1px;
+  font-weight: 700;
+}
+
+.postmark-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.postmark-lines span {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: rgba(162, 75, 92, 0.5);
+  border-radius: 1px;
+}
+
+.letter-from-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(162, 75, 92, 0.08);
+  color: #a24b5c;
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  border: 1px dashed rgba(162, 75, 92, 0.3);
+  width: fit-content;
+}
+
+.letter-from-badge-alt {
+  background: rgba(224, 86, 126, 0.1);
+  color: #d63384;
+  border-color: rgba(224, 86, 126, 0.35);
 }
 
 .paper-watermark {
@@ -1061,6 +1420,7 @@ button {
   font-size: 4rem;
   opacity: 0.08;
   pointer-events: none;
+  user-select: none;
 }
 
 .letter-header {
@@ -1072,17 +1432,25 @@ button {
 
 .letter-body {
   font-family: var(--font-handwriting);
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   color: #3a2e39;
   line-height: 1.6;
+  flex-grow: 1;
 }
 
 .letter-body p {
   margin-bottom: 1rem;
 }
 
+.letter-placeholder-text {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0.8rem 0;
+}
+
 .letter-footer {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -1097,6 +1465,22 @@ button {
 
 .envelope-instruction {
   margin-top: 2.5rem;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-flip-letter {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-flip-letter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.45);
 }
 
 /* --------------------------------------------------------------------------
@@ -1631,7 +2015,7 @@ button {
     right: -10px;
   }
 
-  .envelope {
+  .envelope:not(.open) {
     width: 280px;
     height: 190px;
   }
@@ -1646,6 +2030,43 @@ button {
     border-left-width: 140px;
     border-right-width: 140px;
     border-bottom-width: 95px;
+  }
+
+  .envelope-open-bg {
+    left: -10px;
+    right: -10px;
+    top: -38px;
+    bottom: -10px;
+  }
+
+  .envelope-open-flap {
+    width: 180px;
+    height: 56px;
+    top: -52px;
+  }
+
+  .envelope-open-liner {
+    width: 160px;
+    height: 50px;
+    top: -46px;
+  }
+
+  .envelope-open-pocket {
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    height: 58px;
+  }
+
+  .letter-paper {
+    padding: 1.8rem 1.4rem 4.8rem 1.4rem;
+  }
+
+  .letter-stamp-wrap {
+    top: 1rem;
+    right: 1rem;
+    transform: scale(0.85);
+    transform-origin: top right;
   }
 }
 
