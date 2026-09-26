@@ -12,18 +12,18 @@
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
 
-  <!-- Google Fonts: Cinzel Decorative, Great Vibes, Caveat, Plus Jakarta Sans -->
+  <!-- Google Fonts: Cinzel Decorative, Great Vibes, Caveat, Plus Jakarta Sans, Fredoka, Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cinzel+Decorative:wght@700&family=Fredoka:wght@600;700&family=Great+Vibes&family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
 
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- Main Stylesheet (Modular CSS Entry Point) -->
-  <link rel="stylesheet" href="style.css?v=2.0.0">
+  <link rel="stylesheet" href="style.css?v=2.2.0">
 </head>
 
 <body>
@@ -307,99 +307,148 @@
               tersayang</p>
           </div>
 
-          <div class="reminders-grid">
-            <!-- Kartu Ultah Pasangan (Cilpaaa - 24 September) -->
-            <div class="reminder-card card-cilpa" id="card-birthday-cilpa">
-              <div class="reminder-top">
-                <div class="reminder-avatar-badge">
-                  <span class="avatar-icon">👑</span>
-                  <span class="sparkle-pin">✨</span>
+          <div class="reminders-grid anime-grid-miku">
+            <!-- Kartu Ultah Pasangan (Cilpaaa - Hinata di Kiri, Tema Ungu Miku) -->
+            <div class="reminder-card card-cilpa card-anime-miku" id="card-birthday-cilpa">
+              <!-- Background Sparkle & Abstract Object Decorations -->
+              <div class="miku-card-bg-deco" aria-hidden="true">
+                <span class="miku-abstract-shape ring-1"></span>
+                <span class="miku-abstract-shape ring-2"></span>
+                <span class="miku-abstract-shape dot-grid"></span>
+                <span class="miku-abstract-shape wave-curve"></span>
+                <span class="miku-sparkle s1">✦</span>
+                <span class="miku-sparkle s2">•</span>
+                <span class="miku-sparkle s3">✦</span>
+                <span class="miku-sparkle s4">•</span>
+                <span class="miku-sparkle s5">✦</span>
+              </div>
+
+              <!-- Anime Character Pop-Out (Hinata on Left) -->
+              <div class="anime-popout-wrap char-left">
+                <div class="miku-floating-hearts hinata-hearts" aria-hidden="true">
+                  <span class="miku-heart purple-heart h1">💜</span>
+                  <span class="miku-heart purple-heart h2">💜</span>
                 </div>
-                <div class="reminder-meta">
-                  <span class="reminder-badge badge-pink"><i class="fa-solid fa-cake-candles"></i> Hari Lahir Princess
-                    ku</span>
-                  <h4 class="person-name" id="reminder-name-2">Cilpaaa</h4>
-                  <div class="zodiac-pill" id="zodiac-cilpa"><i class="fa-solid fa-star"></i> Libra ♎ • 24 September
+                <img src="assets/images/hinata-birthday.png" alt="Hinata Hyuga" class="anime-popout-img img-hinata" loading="lazy" />
+              </div>
+
+              <!-- Card Content (Right side of Hinata) -->
+              <div class="anime-card-content">
+                <div class="miku-top-tag">
+                  <span class="reminder-badge badge-hinata"><i class="fa-solid fa-cake-candles"></i> Birthday Countdown</span>
+                </div>
+                <h3 class="person-name miku-name" id="reminder-name-2">Cilpaaa</h3>
+                <div class="zodiac-pill" id="zodiac-cilpa"><i class="fa-solid fa-star"></i> Libra ♎ • 24 September</div>
+
+                <div class="reminder-countdown" id="countdown-cilpa">
+                  <div class="countdown-unit">
+                    <span class="cd-num" id="cd-cilpa-days">00</span>
+                    <span class="cd-label">Hari</span>
+                  </div>
+                  <div class="countdown-sep">:</div>
+                  <div class="countdown-unit">
+                    <span class="cd-num" id="cd-cilpa-hours">00</span>
+                    <span class="cd-label">Jam</span>
+                  </div>
+                  <div class="countdown-sep">:</div>
+                  <div class="countdown-unit">
+                    <span class="cd-num" id="cd-cilpa-minutes">00</span>
+                    <span class="cd-label">Menit</span>
+                  </div>
+                  <div class="countdown-sep">:</div>
+                  <div class="countdown-unit">
+                    <span class="cd-num" id="cd-cilpa-seconds">00</span>
+                    <span class="cd-label">Detik</span>
                   </div>
                 </div>
-              </div>
 
-              <div class="reminder-countdown" id="countdown-cilpa">
-                <div class="countdown-unit">
-                  <span class="cd-num" id="cd-cilpa-days">00</span>
-                  <span class="cd-label">Hari</span>
+                <div class="reminder-footer">
+                  <div class="reminder-status" id="status-cilpa">
+                    <i class="fa-solid fa-hourglass-half"></i> Menuju 24 September berikutnya
+                  </div>
+                  <button type="button" class="btn-wish-surprise btn-wish-hinata" id="btn-wish-cilpa" title="Kirim Cinta & Doa">
+                    <i class="fa-solid fa-heart"></i> Kirim Doa
+                  </button>
                 </div>
-                <div class="countdown-sep">:</div>
-                <div class="countdown-unit">
-                  <span class="cd-num" id="cd-cilpa-hours">00</span>
-                  <span class="cd-label">Jam</span>
-                </div>
-                <div class="countdown-sep">:</div>
-                <div class="countdown-unit">
-                  <span class="cd-num" id="cd-cilpa-minutes">00</span>
-                  <span class="cd-label">Menit</span>
-                </div>
-                <div class="countdown-sep">:</div>
-                <div class="countdown-unit">
-                  <span class="cd-num" id="cd-cilpa-seconds">00</span>
-                  <span class="cd-label">Detik</span>
-                </div>
-              </div>
 
-              <div class="reminder-footer">
-                <div class="reminder-status" id="status-cilpa">
-                  <i class="fa-solid fa-hourglass-half"></i> Menuju 24 September berikutnya
+                <!-- Miku-style Slider Indicator Dashes -->
+                <div class="miku-slider-dashes" aria-hidden="true">
+                  <span class="dash active"></span>
+                  <span class="dash"></span>
+                  <span class="dash"></span>
                 </div>
-                <button type="button" class="btn-wish-surprise" id="btn-wish-cilpa" title="Kirim Cinta & Doa">
-                  <i class="fa-solid fa-heart"></i> Kirim Doa
-                </button>
               </div>
             </div>
 
-            <!-- Kartu Ultah User (Rijal - 22 November) -->
-            <div class="reminder-card card-rijal" id="card-birthday-rijal">
-              <div class="reminder-top">
-                <div class="reminder-avatar-badge">
-                  <span class="avatar-icon">🎩</span>
-                  <span class="sparkle-pin">✨</span>
+            <!-- Kartu Ultah User (Rijal - Naruto di Kanan, Tema Kuning Miku) -->
+            <div class="reminder-card card-rijal card-anime-miku" id="card-birthday-rijal">
+              <!-- Background Sparkle & Abstract Object Decorations -->
+              <div class="miku-card-bg-deco" aria-hidden="true">
+                <span class="miku-abstract-shape ring-1"></span>
+                <span class="miku-abstract-shape ring-2"></span>
+                <span class="miku-abstract-shape dot-grid"></span>
+                <span class="miku-abstract-shape wave-curve"></span>
+                <span class="miku-sparkle s1">✦</span>
+                <span class="miku-sparkle s2">•</span>
+                <span class="miku-sparkle s3">✦</span>
+                <span class="miku-sparkle s4">•</span>
+                <span class="miku-sparkle s5">✦</span>
+              </div>
+
+              <!-- Anime Character Pop-Out (Naruto on Right for desktop, Top for mobile) -->
+              <div class="anime-popout-wrap char-right">
+                <div class="miku-floating-hearts" aria-hidden="true">
+                  <span class="miku-heart h1">✨</span>
+                  <span class="miku-heart h2">💛</span>
                 </div>
-                <div class="reminder-meta">
-                  <span class="reminder-badge badge-gold"><i class="fa-solid fa-gift"></i> Hari Lahir your Love</span>
-                  <h4 class="person-name" id="reminder-name-1">Rijal</h4>
-                  <div class="zodiac-pill" id="zodiac-rijal"><i class="fa-solid fa-star"></i> Sagitarius ♐ • 22 November
+                <img src="assets/images/naruto-birthday.png" alt="Naruto Uzumaki" class="anime-popout-img img-naruto" loading="lazy" />
+              </div>
+
+              <!-- Card Content (Left side of Naruto) -->
+              <div class="anime-card-content">
+                <div class="miku-top-tag">
+                  <span class="reminder-badge badge-naruto"><i class="fa-solid fa-gift"></i> Birthday Countdown</span>
+                </div>
+                <h3 class="person-name miku-name" id="reminder-name-1">Rijal</h3>
+                <div class="zodiac-pill" id="zodiac-rijal"><i class="fa-solid fa-star"></i> Sagitarius ♐ • 22 November</div>
+
+                <div class="reminder-countdown" id="countdown-rijal">
+                  <div class="countdown-unit">
+                    <span class="cd-num" id="cd-rijal-days">00</span>
+                    <span class="cd-label">Hari</span>
+                  </div>
+                  <div class="countdown-sep">:</div>
+                  <div class="countdown-unit">
+                    <span class="cd-num" id="cd-rijal-hours">00</span>
+                    <span class="cd-label">Jam</span>
+                  </div>
+                  <div class="countdown-sep">:</div>
+                  <div class="countdown-unit">
+                    <span class="cd-num" id="cd-rijal-minutes">00</span>
+                    <span class="cd-label">Menit</span>
+                  </div>
+                  <div class="countdown-sep">:</div>
+                  <div class="countdown-unit">
+                    <span class="cd-num" id="cd-rijal-seconds">00</span>
+                    <span class="cd-label">Detik</span>
                   </div>
                 </div>
-              </div>
 
-              <div class="reminder-countdown" id="countdown-rijal">
-                <div class="countdown-unit">
-                  <span class="cd-num" id="cd-rijal-days">00</span>
-                  <span class="cd-label">Hari</span>
+                <div class="reminder-footer">
+                  <div class="reminder-status" id="status-rijal">
+                    <i class="fa-solid fa-hourglass-half"></i> Menuju 22 November berikutnya
+                  </div>
+                  <button type="button" class="btn-wish-surprise btn-wish-naruto" id="btn-wish-rijal" title="Kirim Cinta & Doa">
+                    <i class="fa-solid fa-heart"></i> Kirim Doa
+                  </button>
                 </div>
-                <div class="countdown-sep">:</div>
-                <div class="countdown-unit">
-                  <span class="cd-num" id="cd-rijal-hours">00</span>
-                  <span class="cd-label">Jam</span>
-                </div>
-                <div class="countdown-sep">:</div>
-                <div class="countdown-unit">
-                  <span class="cd-num" id="cd-rijal-minutes">00</span>
-                  <span class="cd-label">Menit</span>
-                </div>
-                <div class="countdown-sep">:</div>
-                <div class="countdown-unit">
-                  <span class="cd-num" id="cd-rijal-seconds">00</span>
-                  <span class="cd-label">Detik</span>
-                </div>
-              </div>
 
-              <div class="reminder-footer">
-                <div class="reminder-status" id="status-rijal">
-                  <i class="fa-solid fa-hourglass-half"></i> Menuju 22 November berikutnya
+                <!-- Miku-style Slider Indicator Dashes -->
+                <div class="miku-slider-dashes" aria-hidden="true">
+                  <span class="dash active"></span>
+                  <span class="dash"></span>
+                  <span class="dash"></span>
                 </div>
-                <button type="button" class="btn-wish-surprise" id="btn-wish-rijal" title="Kirim Cinta & Doa">
-                  <i class="fa-solid fa-heart"></i> Kirim Doa
-                </button>
               </div>
             </div>
           </div>

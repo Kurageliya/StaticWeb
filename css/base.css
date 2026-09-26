@@ -300,29 +300,30 @@ button {
 }
 
 /* --------------------------------------------------------------------------
-   13. FOOTER
+   13. FOOTER (COMPACT & SLIM DESIGN)
    -------------------------------------------------------------------------- */
 .footer {
-  padding: 3.5rem 0 2.5rem 0;
+  padding: 0.85rem 0 0.95rem 0;
   background: var(--bg-cream-card);
-  border-top: 1px solid rgba(232, 180, 184, 0.4);
+  border-top: 1px solid rgba(232, 180, 184, 0.35);
 }
 
 .footer-heart {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+  margin-bottom: 0.15rem;
   animation: pulse-heart 1.5s infinite alternate ease-in-out;
 }
 
 .footer-title {
   font-family: var(--font-script);
-  font-size: 2.2rem;
+  font-size: 1.45rem;
   color: var(--pink-deep);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1rem;
+  line-height: 1.15;
 }
 
 .footer-sub {
-  font-size: 0.875rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
+  line-height: 1.3;
 }
-

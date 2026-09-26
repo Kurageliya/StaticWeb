@@ -3,7 +3,7 @@
    9. SURAT CINTA INTERAKTIF (ENVELOPE ANIMATION)
    -------------------------------------------------------------------------- */
 .letter-section {
-  padding: 5rem 0;
+  padding: 4rem 0 1.25rem 0;
   overflow: hidden;
 }
 
@@ -175,13 +175,11 @@
   transform: translateX(-50%);
   width: 195px;
   height: 62px;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(224, 86, 126, 0.2),
-    rgba(224, 86, 126, 0.2) 8px,
-    rgba(255, 255, 255, 0.7) 8px,
-    rgba(255, 255, 255, 0.7) 16px
-  );
+  background: repeating-linear-gradient(45deg,
+      rgba(224, 86, 126, 0.2),
+      rgba(224, 86, 126, 0.2) 8px,
+      rgba(255, 255, 255, 0.7) 8px,
+      rgba(255, 255, 255, 0.7) 16px);
   clip-path: polygon(0 100%, 50% 0, 100% 100%);
   opacity: 0.85;
   z-index: 2;
@@ -296,12 +294,10 @@
 .letter-paper {
   background-color: #fffefb;
   background-image:
-    repeating-linear-gradient(
-      transparent,
+    repeating-linear-gradient(transparent,
       transparent 31px,
       rgba(162, 75, 92, 0.07) 31px,
-      rgba(162, 75, 92, 0.07) 32px
-    );
+      rgba(162, 75, 92, 0.07) 32px);
   color: #2c222b;
   border-radius: 8px;
   padding: 2.2rem 2.2rem 5.5rem 2.2rem;
@@ -328,17 +324,15 @@
   left: 0;
   right: 0;
   height: 5px;
-  background: repeating-linear-gradient(
-    -45deg,
-    #e91e63,
-    #e91e63 12px,
-    #ffffff 12px,
-    #ffffff 18px,
-    #d4af37 18px,
-    #d4af37 30px,
-    #ffffff 30px,
-    #ffffff 36px
-  );
+  background: repeating-linear-gradient(-45deg,
+      #e91e63,
+      #e91e63 12px,
+      #ffffff 12px,
+      #ffffff 18px,
+      #d4af37 18px,
+      #d4af37 30px,
+      #ffffff 30px,
+      #ffffff 36px);
   border-radius: 8px 8px 0 0;
   opacity: 0.8;
 }
@@ -539,7 +533,7 @@
 }
 
 .envelope-instruction {
-  margin-top: 2.5rem;
+  margin-top: 1.5rem;
   display: flex;
   gap: 0.75rem;
   justify-content: center;
@@ -557,4 +551,3 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(217, 119, 6, 0.45);
 }
-
