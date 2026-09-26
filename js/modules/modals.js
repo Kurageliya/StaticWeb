@@ -439,6 +439,10 @@ export function setupModalEvents({
   const inputPerson1 = document.getElementById('input-person1');
   const inputPerson2 = document.getElementById('input-person2');
   const inputDate = document.getElementById('input-date');
+  const inputBirthdayPerson1 = document.getElementById('input-birthday-person1');
+  const inputBirthdayPerson2 = document.getElementById('input-birthday-person2');
+  const labelBirthdayPerson1 = document.getElementById('label-birthday-person1');
+  const labelBirthdayPerson2 = document.getElementById('label-birthday-person2');
   const inputLetter = document.getElementById('input-letter');
   const inputLetter2 = document.getElementById('input-letter-2');
   const inputMusicUrl = document.getElementById('input-music-url');
@@ -458,14 +462,18 @@ export function setupModalEvents({
   const uploadDropzone = document.getElementById('upload-dropzone');
   const btnAddMoreFiles = document.getElementById('btn-add-more-files');
 
-  if (inputPerson1 && labelLetterPerson1) {
+  if (inputPerson1) {
     inputPerson1.addEventListener('input', () => {
-      labelLetterPerson1.textContent = inputPerson1.value.trim() || 'Pasangan 1';
+      const name = inputPerson1.value.trim() || 'Pasangan 1';
+      if (labelLetterPerson1) labelLetterPerson1.textContent = name;
+      if (labelBirthdayPerson1) labelBirthdayPerson1.textContent = name;
     });
   }
-  if (inputPerson2 && labelLetterPerson2) {
+  if (inputPerson2) {
     inputPerson2.addEventListener('input', () => {
-      labelLetterPerson2.textContent = inputPerson2.value.trim() || 'Pasangan 2';
+      const name = inputPerson2.value.trim() || 'Pasangan 2';
+      if (labelLetterPerson2) labelLetterPerson2.textContent = name;
+      if (labelBirthdayPerson2) labelBirthdayPerson2.textContent = name;
     });
   }
 
@@ -475,12 +483,16 @@ export function setupModalEvents({
       inputPerson1.value = settings.person1 || '';
       inputPerson2.value = settings.person2 || '';
       inputDate.value = settings.anniversaryDate ? settings.anniversaryDate.substring(0, 16) : '';
+      if (inputBirthdayPerson1) inputBirthdayPerson1.value = settings.birthdayPerson1 || '11-22';
+      if (inputBirthdayPerson2) inputBirthdayPerson2.value = settings.birthdayPerson2 || '09-24';
       inputLetter.value = settings.letterMessage || '';
       if (inputLetter2) inputLetter2.value = settings.letterMessage2 || '';
       if (inputMusicUrl) inputMusicUrl.value = settings.musicUrl || '';
 
       if (labelLetterPerson1) labelLetterPerson1.textContent = settings.person1 || 'Pasangan 1';
       if (labelLetterPerson2) labelLetterPerson2.textContent = settings.person2 || 'Pasangan 2';
+      if (labelBirthdayPerson1) labelBirthdayPerson1.textContent = settings.person1 || 'Pasangan 1';
+      if (labelBirthdayPerson2) labelBirthdayPerson2.textContent = settings.person2 || 'Pasangan 2';
 
       openModal(modalSettings);
     });
@@ -501,6 +513,8 @@ export function setupModalEvents({
         person1: inputPerson1.value.trim(),
         person2: inputPerson2.value.trim(),
         anniversaryDate: inputDate.value,
+        birthdayPerson1: inputBirthdayPerson1 ? inputBirthdayPerson1.value.trim() : '11-22',
+        birthdayPerson2: inputBirthdayPerson2 ? inputBirthdayPerson2.value.trim() : '09-24',
         letterMessage: inputLetter.value.trim(),
         letterMessage2: inputLetter2 ? inputLetter2.value.trim() : '',
         musicUrl: inputMusicUrl ? inputMusicUrl.value.trim() : ''

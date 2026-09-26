@@ -298,6 +298,109 @@
           </div>
         </div>
 
+        <!-- MILESTONE / REMINDER HARI SPESIAL ULANG TAHUN -->
+        <div class="special-reminders-wrapper reveal" id="special-reminders">
+          <div class="reminders-header text-center">
+            <span class="reminder-tag"><i class="fa-solid fa-cake-candles"></i> Hari Bahagia Kita</span>
+            <h3 class="reminder-title">Menghitung Hari Menuju Ulang Tahun</h3>
+            <p class="reminder-subtitle">Setiap detik yang terlewati membawa kita lebih dekat ke hari kelahiran orang tersayang</p>
+          </div>
+
+          <div class="reminders-grid">
+            <!-- Kartu Ultah Pasangan (Cilpaaa - 24 September) -->
+            <div class="reminder-card card-cilpa" id="card-birthday-cilpa">
+              <div class="reminder-top">
+                <div class="reminder-avatar-badge">
+                  <span class="avatar-icon">👑</span>
+                  <span class="sparkle-pin">✨</span>
+                </div>
+                <div class="reminder-meta">
+                  <span class="reminder-badge badge-pink"><i class="fa-solid fa-cake-candles"></i> Hari Lahir Tuan Putri</span>
+                  <h4 class="person-name" id="reminder-name-2">Cilpaaa</h4>
+                  <div class="zodiac-pill" id="zodiac-cilpa"><i class="fa-solid fa-star"></i> Libra ♎ • 24 September</div>
+                </div>
+              </div>
+
+              <div class="reminder-countdown" id="countdown-cilpa">
+                <div class="countdown-unit">
+                  <span class="cd-num" id="cd-cilpa-days">00</span>
+                  <span class="cd-label">Hari</span>
+                </div>
+                <div class="countdown-sep">:</div>
+                <div class="countdown-unit">
+                  <span class="cd-num" id="cd-cilpa-hours">00</span>
+                  <span class="cd-label">Jam</span>
+                </div>
+                <div class="countdown-sep">:</div>
+                <div class="countdown-unit">
+                  <span class="cd-num" id="cd-cilpa-minutes">00</span>
+                  <span class="cd-label">Menit</span>
+                </div>
+                <div class="countdown-sep">:</div>
+                <div class="countdown-unit">
+                  <span class="cd-num" id="cd-cilpa-seconds">00</span>
+                  <span class="cd-label">Detik</span>
+                </div>
+              </div>
+
+              <div class="reminder-footer">
+                <div class="reminder-status" id="status-cilpa">
+                  <i class="fa-solid fa-hourglass-half"></i> Menuju 24 September berikutnya
+                </div>
+                <button type="button" class="btn-wish-surprise" id="btn-wish-cilpa" title="Kirim Cinta & Doa">
+                  <i class="fa-solid fa-heart"></i> Kirim Doa
+                </button>
+              </div>
+            </div>
+
+            <!-- Kartu Ultah User (Rijal - 22 November) -->
+            <div class="reminder-card card-rijal" id="card-birthday-rijal">
+              <div class="reminder-top">
+                <div class="reminder-avatar-badge">
+                  <span class="avatar-icon">🎩</span>
+                  <span class="sparkle-pin">✨</span>
+                </div>
+                <div class="reminder-meta">
+                  <span class="reminder-badge badge-gold"><i class="fa-solid fa-gift"></i> Hari Lahir Kesayangan</span>
+                  <h4 class="person-name" id="reminder-name-1">Rijal</h4>
+                  <div class="zodiac-pill" id="zodiac-rijal"><i class="fa-solid fa-star"></i> Scorpio ♏ • 22 November</div>
+                </div>
+              </div>
+
+              <div class="reminder-countdown" id="countdown-rijal">
+                <div class="countdown-unit">
+                  <span class="cd-num" id="cd-rijal-days">00</span>
+                  <span class="cd-label">Hari</span>
+                </div>
+                <div class="countdown-sep">:</div>
+                <div class="countdown-unit">
+                  <span class="cd-num" id="cd-rijal-hours">00</span>
+                  <span class="cd-label">Jam</span>
+                </div>
+                <div class="countdown-sep">:</div>
+                <div class="countdown-unit">
+                  <span class="cd-num" id="cd-rijal-minutes">00</span>
+                  <span class="cd-label">Menit</span>
+                </div>
+                <div class="countdown-sep">:</div>
+                <div class="countdown-unit">
+                  <span class="cd-num" id="cd-rijal-seconds">00</span>
+                  <span class="cd-label">Detik</span>
+                </div>
+              </div>
+
+              <div class="reminder-footer">
+                <div class="reminder-status" id="status-rijal">
+                  <i class="fa-solid fa-hourglass-half"></i> Menuju 22 November berikutnya
+                </div>
+                <button type="button" class="btn-wish-surprise" id="btn-wish-rijal" title="Kirim Cinta & Doa">
+                  <i class="fa-solid fa-heart"></i> Kirim Doa
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="counter-footer text-center reveal">
           <p class="love-quote">
             <i class="fa-solid fa-quote-left"></i> Dan hitungan ini akan terus bertambah hingga selamanya. <i
@@ -715,6 +818,22 @@
           <div class="form-group">
             <label for="input-date">Tanggal Jadian / Resmi Berpacaran</label>
             <input type="datetime-local" id="input-date" class="form-control" required>
+          </div>
+          <div class="row-fields">
+            <div class="form-group flex-1">
+              <label for="input-birthday-person2"><i class="fa-solid fa-cake-candles" style="color: #ff6584;"></i> Ultah
+                <strong id="label-birthday-person2">Cilpaaa</strong></label>
+              <input type="text" id="input-birthday-person2" class="form-control" placeholder="09-24 (Bulan-Tanggal)">
+              <small style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:0.2rem;">Format: MM-DD
+                (misal: 09-24)</small>
+            </div>
+            <div class="form-group flex-1">
+              <label for="input-birthday-person1"><i class="fa-solid fa-gift" style="color: #d4a017;"></i> Ultah
+                <strong id="label-birthday-person1">Rijal</strong></label>
+              <input type="text" id="input-birthday-person1" class="form-control" placeholder="11-22 (Bulan-Tanggal)">
+              <small style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:0.2rem;">Format: MM-DD
+                (misal: 11-22)</small>
+            </div>
           </div>
           <div class="form-group">
             <label for="input-letter"><i class="fa-solid fa-pen-fancy"></i> Surat Cinta dari <strong

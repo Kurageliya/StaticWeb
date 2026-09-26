@@ -17,6 +17,7 @@ import {
   setupCloudListeners
 } from './js/repositories/storageRepository.js';
 import { startLiveCounter } from './js/services/counterService.js';
+import { startBirthdayReminder } from './js/services/reminderService.js';
 import { setupAudioSynth, onMusicUrlChanged } from './js/services/audioService.js';
 import { initAmbientCanvas } from './js/services/canvasService.js';
 import { showToast } from './js/utils/toast.js';
@@ -202,6 +203,9 @@ function initApp() {
     if (countMinutes) countMinutes.textContent = units.minutes;
     if (countSeconds) countSeconds.textContent = units.seconds;
   });
+
+  // 4b. Milestone Hari Spesial & Hitung Mundur Hari Ulang Tahun
+  startBirthdayReminder(() => coupleSettings);
 
   // 5. Galeri Polaroid & 3D Curved Panorama Slider
   refreshGalleryAndTimeline();

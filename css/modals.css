@@ -373,4 +373,21 @@ audio {
   border-radius: 4px;
   pointer-events: none;
 }
+
+/* Row fields layout */
+.row-fields {
+  display: flex;
+  gap: 0.85rem;
+}
+
+.row-fields .flex-1 {
+  flex: 1;
+}
+
+@media (max-width: 480px) {
+  .row-fields {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
 

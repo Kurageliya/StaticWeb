@@ -15,6 +15,9 @@
 /* 4. Real-Time Timer Counter Section */
 @import url('css/counter.css');
 
+/* 4b. Special Day & Birthday Reminders (Twin Cards) */
+@import url('css/reminders.css');
+
 /* 5. Polaroid Gallery & 3D Curved Slider Panorama */
 @import url('css/gallery.css');
 
