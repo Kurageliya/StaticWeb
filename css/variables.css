@@ -1,0 +1,139 @@
+/* === DESIGN TOKENS & ROOT VARIABLES === */
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS & ROOT VARIABLES
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="dusty-rose"] {
+  /* Theme 1: Soft Dusty Rose (Default Classic - Warm Rosy Peach Tint) */
+  --bg-cream: #faf0f2;
+  --bg-cream-card: #fff7f8;
+  --nav-bg: rgba(250, 240, 242, 0.92);
+  --pink-soft: #f4c2c2;
+  --pink-dusty: #e8b4b8;
+  --pink-accent: #d88390;
+  --pink-deep: #a24b5c;
+  --gold-soft: #e5c158;
+  --gold-accent: #d4af37;
+  --text-dark: #3a2e39;
+  --text-muted: #7c6877;
+  --text-light: #9e8899;
+
+  /* Typography */
+  --font-cinzel: 'Cinzel Decorative', Georgia, serif;
+  --font-serif: var(--font-cinzel);
+  --font-script: 'Great Vibes', cursive;
+  --font-handwriting: 'Caveat', cursive;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(90, 62, 67, 0.06);
+  --shadow-md: 0 8px 24px rgba(90, 62, 67, 0.1);
+  --shadow-lg: 0 16px 40px rgba(90, 62, 67, 0.14);
+  --shadow-polaroid: 0 10px 30px -5px rgba(58, 46, 57, 0.15);
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+}
+
+[data-theme="cherry-sakura"] {
+  /* Theme 2: Cherry Blossom (Sakura Pink) */
+  --bg-cream: #fbf0f4;
+  --bg-cream-card: #fff7fa;
+  --nav-bg: rgba(251, 240, 244, 0.92);
+  --pink-soft: #ffc2d1;
+  --pink-dusty: #ff85a1;
+  --pink-accent: #ff477e;
+  --pink-deep: #c9184a;
+  --gold-soft: #ffe066;
+  --gold-accent: #f7b731;
+  --text-dark: #2b1b24;
+  --text-muted: #6c4b5e;
+  --text-light: #9c758c;
+  --shadow-sm: 0 4px 12px rgba(255, 71, 126, 0.08);
+  --shadow-md: 0 8px 24px rgba(255, 71, 126, 0.12);
+  --shadow-lg: 0 16px 40px rgba(255, 71, 126, 0.16);
+  --shadow-polaroid: 0 10px 30px -5px rgba(43, 27, 36, 0.15);
+}
+
+[data-theme="berry-velvet"] {
+  /* Theme 3: Velvet Berry & Lavender */
+  --bg-cream: #f7eff9;
+  --bg-cream-card: #fcf7fe;
+  --nav-bg: rgba(247, 239, 249, 0.92);
+  --pink-soft: #e8d7f1;
+  --pink-dusty: #d8a7ca;
+  --pink-accent: #b565a7;
+  --pink-deep: #7b2cbf;
+  --gold-soft: #f3d5b5;
+  --gold-accent: #e0a96d;
+  --text-dark: #2d182e;
+  --text-muted: #674c69;
+  --text-light: #917594;
+  --shadow-sm: 0 4px 12px rgba(123, 44, 191, 0.08);
+  --shadow-md: 0 8px 24px rgba(123, 44, 191, 0.12);
+  --shadow-lg: 0 16px 40px rgba(123, 44, 191, 0.16);
+  --shadow-polaroid: 0 10px 30px -5px rgba(45, 24, 46, 0.15);
+}
+
+[data-theme="sunset-peach"] {
+  /* Theme 4: Sunset Peach & Coral */
+  --bg-cream: #faefe7;
+  --bg-cream-card: #fff8f4;
+  --nav-bg: rgba(250, 239, 231, 0.92);
+  --pink-soft: #ffd8cc;
+  --pink-dusty: #ffb3a7;
+  --pink-accent: #ff758c;
+  --pink-deep: #d93856;
+  --gold-soft: #f7d070;
+  --gold-accent: #e5a024;
+  --text-dark: #3d2426;
+  --text-muted: #7e5659;
+  --text-light: #a37b7e;
+  --shadow-sm: 0 4px 12px rgba(255, 117, 140, 0.08);
+  --shadow-md: 0 8px 24px rgba(255, 117, 140, 0.12);
+  --shadow-lg: 0 16px 40px rgba(255, 117, 140, 0.16);
+  --shadow-polaroid: 0 10px 30px -5px rgba(61, 36, 38, 0.15);
+}
+
+[data-theme="midnight-romance"] {
+  /* Theme 5: Midnight Romance (Luxury Dark Pink) */
+  --bg-cream: #140f18;
+  --bg-cream-card: #201826;
+  --nav-bg: rgba(20, 15, 24, 0.92);
+  --pink-soft: #381e30;
+  --pink-dusty: #75355a;
+  --pink-accent: #ff6584;
+  --pink-deep: #ff8fa3;
+  --gold-soft: #f4c478;
+  --gold-accent: #ffd166;
+  --text-dark: #f8eef5;
+  --text-muted: #cbb4c8;
+  --text-light: #9a8197;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --shadow-polaroid: 0 10px 30px -5px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="midnight-romance"] .envelope-open-bg {
+  background: linear-gradient(165deg, #2d182b 0%, #3e1b36 50%, #200f20 100%);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 0 2px rgba(212, 175, 55, 0.4);
+}
+
+[data-theme="midnight-romance"] .envelope-open-flap {
+  background: linear-gradient(to top, #3e1b36, #2d182b);
+}
+
+[data-theme="midnight-romance"] .envelope-open-pocket {
+  background: linear-gradient(to bottom, #4a1f40 0%, #35152d 100%);
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.5);
+}
+

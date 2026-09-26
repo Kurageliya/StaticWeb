@@ -1,0 +1,517 @@
+/* === LIGHTBOX MODAL WITH ZOOM+FADE & HORIZONTAL CAROUSEL === */
+/* --------------------------------------------------------------------------
+   10. LIGHTBOX MODAL (ZOOM + FADE EFFECT FOR PREV/NEXT)
+   -------------------------------------------------------------------------- */
+.lightbox-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.lightbox-modal.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.lightbox-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(38, 26, 36, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.lightbox-content {
+  position: relative;
+  z-index: 2001;
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Nav Left / Right Floating Buttons */
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  z-index: 2010;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.lightbox-nav:hover {
+  background: var(--pink-accent);
+  border-color: var(--pink-accent);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 10px 28px rgba(255, 71, 126, 0.45);
+}
+
+.lightbox-prev {
+  left: -24px;
+}
+
+.lightbox-next {
+  right: -24px;
+}
+
+@media (max-width: 650px) {
+  .lightbox-prev {
+    left: 4px;
+  }
+  .lightbox-next {
+    right: 4px;
+  }
+  .lightbox-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 0.95rem;
+  }
+}
+
+/* ==========================================================================
+   TRANSPARENT GLASS CARD MODAL (Ref: Gambar 2 Sophie Bennett)
+   Ukuran konsisten, foto penuh, info transparan & tombol X selalu di dalam
+   ========================================================================== */
+.lightbox-polaroid.glass-card-modal {
+  position: relative;
+  width: 90vw;
+  max-width: 440px;
+  height: 590px;
+  max-height: 84vh;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.18);
+  background: #140f18;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border: none;
+  transform: scale(1);
+  opacity: 1;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+}
+
+/* Custom Zoom + Fade Out State for Lightbox Nav Switch */
+.lightbox-polaroid.zoom-fade-out {
+  transform: scale(0.85);
+  opacity: 0;
+}
+
+/* Custom Zoom + Fade In State */
+.lightbox-polaroid.zoom-fade-in {
+  animation: zoomFadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes zoomFadeIn {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Full-bleed Photo Frame filling the entire card */
+.glass-card-modal .lightbox-img-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  overflow: hidden;
+  background: #120c16;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: none;
+  touch-action: pan-y;
+}
+
+/* Smooth Horizontal Carousel Sliding Track */
+.glass-card-modal .lightbox-carousel-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.glass-card-modal .lightbox-carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glass-card-modal .lightbox-carousel-slide img,
+.glass-card-modal .lightbox-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform: none !important;
+}
+
+/* Photo stays clean and full: no zoom scaling on hover or click */
+.glass-card-modal .lightbox-img-wrap:hover img,
+.glass-card-modal .lightbox-img-wrap.is-zoomed img {
+  transform: none !important;
+}
+
+/* Welcoming Toast Hint - Centered and automatically fades out */
+.lightbox-zoom-hint {
+  position: absolute;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(14, 9, 18, 0.72);
+  color: #ffffff;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 25;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+
+.lightbox-zoom-hint.fade-out {
+  opacity: 0 !important;
+  transform: translate(-50%, -6px) !important;
+  pointer-events: none;
+}
+
+/* Top Floating Bar inside Card: Category Pill, Header Dots, & Close Button 'X' */
+.lightbox-top-bar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.lightbox-tag {
+  pointer-events: auto;
+  background: rgba(14, 9, 18, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 5px 13px;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+
+/* Pagination Dots placed precisely in DEAD CENTER of the card header! */
+.lightbox-top-bar .lightbox-sub-dots {
+  pointer-events: auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(14, 9, 18, 0.58);
+  padding: 5px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  z-index: 35;
+}
+
+.lightbox-sub-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lightbox-sub-dot.active {
+  background: #ffffff;
+  width: 16px;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(255, 255, 255, 0.85);
+}
+
+/* Tombol X selalu berada DI DALAM card dan terlihat 100% tanpa terpotong! */
+.lightbox-close {
+  pointer-events: auto;
+  position: relative;
+  top: 0;
+  right: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(14, 9, 18, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+
+.lightbox-close:hover {
+  background: var(--pink-accent);
+  color: #ffffff;
+  border-color: var(--pink-accent);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 6px 18px rgba(255, 71, 126, 0.5);
+}
+
+/* Instagram Sub-nav inside image */
+.glass-card-modal .lightbox-sub-nav {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(14, 9, 18, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  cursor: pointer;
+  z-index: 25;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.glass-card-modal .lightbox-sub-nav:hover {
+  background: var(--pink-accent);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.15);
+}
+
+.glass-card-modal .lightbox-sub-nav.lightbox-sub-prev {
+  left: 14px;
+}
+
+.glass-card-modal .lightbox-sub-nav.lightbox-sub-next {
+  right: 14px;
+}
+
+/* Photo counter number is completely hidden as requested */
+.glass-card-modal .lightbox-carousel-counter {
+  display: none !important;
+}
+
+/* Bottom Frosted Glass Sheet (High transparency, soft 10% blur, compact) */
+.glass-card-modal .lightbox-details {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem 1.4rem 1.35rem 1.4rem;
+  background: linear-gradient(
+    to top,
+    rgba(10, 7, 14, 0.65) 0%,
+    rgba(10, 7, 14, 0.35) 45%,
+    rgba(10, 7, 14, 0.06) 78%,
+    transparent 100%
+  );
+  backdrop-filter: blur(3.5px);
+  -webkit-backdrop-filter: blur(3.5px);
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+  color: #ffffff;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+  max-height: 48%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  text-align: left;
+  margin-top: 0;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.25, 1), opacity 0.3s ease;
+}
+
+.glass-card-modal .lightbox-details::-webkit-scrollbar {
+  display: none;
+}
+
+/* Peek mode: Info slides down when user clicks photo */
+.glass-card-modal.info-minimized .lightbox-details {
+  transform: translateY(calc(100% - 32px));
+  opacity: 0.35;
+}
+
+.glass-card-modal.info-minimized .lightbox-details:hover {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.glass-card-modal .lightbox-date {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: inline-block;
+  margin-bottom: 0.1rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+}
+
+.glass-card-modal .lightbox-title {
+  font-family: var(--font-handwriting);
+  font-size: 2.1rem;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.15;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+.glass-card-modal .lightbox-caption {
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.45;
+  margin: 0.25rem 0 0.5rem 0;
+  font-family: var(--font-sans);
+  background: rgba(14, 9, 18, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 0.55rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 3px solid var(--pink-accent);
+  text-align: left;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Glass Action Buttons */
+.glass-card-modal .lightbox-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 0.15rem;
+  gap: 0.5rem;
+}
+
+.glass-card-modal .lightbox-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.btn-glass {
+  background: rgba(14, 9, 18, 0.55) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  border-radius: 20px !important;
+  padding: 6px 14px !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.btn-glass:hover {
+  background: var(--pink-accent) !important;
+  border-color: var(--pink-accent) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 71, 126, 0.4);
+}
+
+.btn-glass.btn-delete-danger {
+  background: rgba(220, 53, 69, 0.3) !important;
+  border-color: rgba(220, 53, 69, 0.45) !important;
+  color: #ffcdd2 !important;
+  margin-left: auto;
+}
+
+.btn-glass.btn-delete-danger:hover {
+  background: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
+}
+
+.btn-glass.active {
+  background: var(--pink-accent) !important;
+  border-color: var(--pink-accent) !important;
+}
+

@@ -1,0 +1,88 @@
+/* === REAL-TIME TIMER COUNTER SECTION === */
+/* --------------------------------------------------------------------------
+   6. REAL-TIME TIMER COUNTER SECTION
+   -------------------------------------------------------------------------- */
+.counter-section {
+  padding: 5rem 0;
+  background: linear-gradient(180deg, transparent, rgba(244, 194, 194, 0.15), transparent);
+}
+
+.section-header {
+  margin-bottom: 3rem;
+}
+
+.counter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.counter-card {
+  background: var(--bg-cream-card);
+  border-radius: var(--radius-md);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border: 1.5px solid rgba(232, 180, 184, 0.4);
+  position: relative;
+  transition: transform var(--transition-bounce), box-shadow var(--transition-normal);
+}
+
+.counter-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-pin {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.1rem;
+}
+
+.counter-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--pink-deep);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+}
+
+.counter-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.counter-card.highlight-card {
+  background: linear-gradient(135deg, #ffffff, #fff5f6);
+  border-color: var(--pink-accent);
+}
+
+.counter-card.highlight-card .counter-number {
+  color: var(--pink-accent);
+  animation: pulse-heart 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-heart {
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+.love-quote {
+  font-family: var(--font-handwriting);
+  font-size: 1.6rem;
+  color: var(--pink-deep);
+  margin-top: 1.5rem;
+}
+

@@ -1,0 +1,232 @@
+/* === RESPONSIVE BREAKPOINTS (MOBILE & TABLET OPTIMIZATIONS) === */
+/* --------------------------------------------------------------------------
+   14. RESPONSIVE BREAKPOINTS (MOBILE & TABLET OPTIMIZATION)
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .hero-polaroid-wrap,
+  .hero-scrapbook-wrap {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .hero-text-wrap {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .timeline-line {
+    left: 20px;
+  }
+
+  .timeline-item {
+    width: 100%;
+    padding-left: 3.5rem !important;
+    padding-right: 0 !important;
+    left: 0 !important;
+  }
+
+  .timeline-badge {
+    left: 0 !important;
+    right: auto !important;
+  }
+
+  .card-tape {
+    left: 20px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar .nav-links {
+    display: none;
+    /* Can be accessed via sticky flow or scroll */
+  }
+
+  .hero-scrapbook-wrap {
+    max-width: 380px;
+  }
+
+  .scrapbook-book {
+    min-height: 440px;
+  }
+
+  .page-paper {
+    padding: 1rem 1rem 1.8rem 1.4rem;
+  }
+
+  .page-photo-card .caption-title {
+    font-size: 1.6rem;
+  }
+
+  .hero-title {
+    font-size: 2.35rem;
+  }
+
+  .section-title {
+    font-size: 1.85rem;
+  }
+
+  .counter-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .lightbox-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .lightbox-prev {
+    left: -10px;
+  }
+
+  .lightbox-next {
+    right: -10px;
+  }
+
+  .envelope:not(.open) {
+    width: 280px;
+    height: 190px;
+  }
+
+  .envelope-flap {
+    border-left-width: 140px;
+    border-right-width: 140px;
+    border-top-width: 100px;
+  }
+
+  .envelope-pocket {
+    border-left-width: 140px;
+    border-right-width: 140px;
+    border-bottom-width: 95px;
+  }
+
+  .envelope-open-bg {
+    left: -10px;
+    right: -10px;
+    top: -38px;
+    bottom: -10px;
+  }
+
+  .envelope-open-flap {
+    width: 180px;
+    height: 56px;
+    top: -52px;
+  }
+
+  .envelope-open-liner {
+    width: 160px;
+    height: 50px;
+    top: -46px;
+  }
+
+  .envelope-open-pocket {
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    height: 58px;
+  }
+
+  .letter-paper {
+    padding: 1.8rem 1.4rem 4.8rem 1.4rem;
+  }
+
+  .letter-stamp-wrap {
+    top: 1rem;
+    right: 1rem;
+    transform: scale(0.85);
+    transform-origin: top right;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-scrapbook-wrap {
+    max-width: 320px;
+  }
+
+  .scrapbook-book {
+    min-height: 390px;
+    box-shadow:
+      -2px 4px 10px rgba(0, 0, 0, 0.1),
+      2px 2px 0 #ede1d8,
+      3px 3px 0 rgba(162, 75, 92, 0.15),
+      5px 5px 0 #e6d5ca,
+      6px 6px 0 rgba(162, 75, 92, 0.18),
+      8px 8px 0 #decbc0,
+      10px 14px 28px rgba(58, 46, 57, 0.22);
+  }
+
+  .scrapbook-spine {
+    width: 28px;
+  }
+
+  .scrapbook-pages {
+    left: 26px;
+  }
+
+  .spiral-ring {
+    width: 22px;
+    height: 14px;
+  }
+
+  .spiral-ring .ring-coil {
+    width: 26px;
+    height: 13px;
+  }
+
+  .page-paper {
+    padding: 0.75rem 0.75rem 1.5rem 1.1rem;
+  }
+
+  .page-photo-card {
+    padding: 0.65rem 0.65rem 1.15rem 0.65rem;
+    max-width: 260px;
+  }
+
+  .page-photo-card .caption-title {
+    font-size: 1.4rem;
+  }
+
+  .washi-tape {
+    width: 60px;
+    height: 20px;
+  }
+
+  .page-corner-fold {
+    font-size: 0.62rem;
+    width: 48px;
+    height: 48px;
+  }
+
+  .book-nav-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.875rem;
+  }
+
+  .counter-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero-title {
+    font-size: 1.95rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+

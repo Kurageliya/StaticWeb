@@ -1,0 +1,666 @@
+/* === POLAROID GALLERY & 3D CURVED SLIDER PANORAMA === */
+/* --------------------------------------------------------------------------
+   7. GALERI KENANGAN (POLAROID GRID)
+   -------------------------------------------------------------------------- */
+.gallery-section {
+  padding: 5rem 0;
+}
+
+.gallery-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: #ffffff;
+  border: 1px solid var(--pink-dusty);
+  transition: all var(--transition-fast);
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--pink-accent);
+  color: #ffffff;
+  border-color: var(--pink-accent);
+}
+
+.gallery-action-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+/* Gallery View Switcher: Slider vs Grid */
+.gallery-view-switcher {
+  display: inline-flex;
+  background: rgba(232, 180, 184, 0.25);
+  padding: 3px;
+  border-radius: 30px;
+  border: 1px solid rgba(232, 180, 184, 0.45);
+}
+
+.view-switch-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.view-switch-btn.active {
+  background: #ffffff;
+  color: var(--primary-pink);
+  box-shadow: 0 2px 8px rgba(162, 75, 92, 0.15);
+}
+
+/* Gallery Slider Wrapper & Nav Arrows */
+.gallery-slider-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.gallery-slider-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--primary-pink);
+  border: 1.5px solid rgba(232, 180, 184, 0.65);
+  box-shadow: 0 8px 24px rgba(162, 75, 92, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  cursor: pointer;
+  z-index: 25;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(4px);
+}
+
+.gallery-slider-nav.nav-prev {
+  left: -22px;
+}
+
+.gallery-slider-nav.nav-next {
+  right: -22px;
+}
+
+.gallery-slider-nav:hover {
+  background: var(--primary-pink);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.12);
+  box-shadow: 0 12px 28px rgba(162, 75, 92, 0.35);
+}
+
+.gallery-slider-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: translateY(-50%) scale(1);
+}
+
+@media (max-width: 820px) {
+  .gallery-slider-nav {
+    display: none;
+  }
+}
+
+/* Mode Slider Track with 3D Panorama Perspective (Foto 2) */
+.gallery-slider-wrapper.mode-slider {
+  perspective: 1400px;
+  perspective-origin: center center;
+  position: relative;
+  overflow: visible;
+}
+
+.gallery-slider-wrapper.mode-slider .polaroid-grid {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  gap: 1.75rem;
+  padding: 2.25rem 1.25rem 3.5rem 1.25rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  transform-style: preserve-3d;
+  cursor: grab;
+}
+
+.gallery-slider-wrapper.mode-slider .polaroid-grid:active {
+  cursor: grabbing;
+}
+
+.gallery-slider-wrapper.mode-slider .polaroid-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-slider-wrapper.mode-slider .polaroid-item {
+  flex: 0 0 300px;
+  max-width: 300px;
+  width: 300px;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow, opacity;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.25, 1), box-shadow 0.35s ease, border-color 0.35s ease, opacity 0.25s ease;
+}
+
+.gallery-slider-wrapper.mode-slider .polaroid-item.is-center-card {
+  border-color: rgba(216, 131, 144, 0.65) !important;
+}
+
+@media (max-width: 600px) {
+  .gallery-slider-wrapper.mode-slider .polaroid-grid {
+    padding: 1.75rem 0.75rem 2.75rem;
+    gap: 1.15rem;
+  }
+  .gallery-slider-wrapper.mode-slider .polaroid-item {
+    flex: 0 0 270px;
+    max-width: 270px;
+    width: 270px;
+  }
+}
+
+/* Mode Grid (Grid Multi-Column View) */
+.gallery-slider-wrapper.mode-grid .polaroid-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  overflow-x: visible;
+  padding: 1.5rem 0;
+  transform-style: flat;
+}
+
+.gallery-slider-wrapper.mode-grid .gallery-slider-nav,
+.gallery-slider-wrapper.mode-grid ~ .gallery-slider-footer {
+  display: none !important;
+}
+
+.gallery-slider-wrapper.mode-grid .polaroid-item {
+  transform: none !important;
+  opacity: 1 !important;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.gallery-slider-wrapper.mode-grid .polaroid-item:hover {
+  transform: translateY(-8px) !important;
+}
+
+/* Slider Progress Bar & Counter */
+.gallery-slider-footer {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.gallery-progress-bar {
+  width: 240px;
+  max-width: 80%;
+  height: 5px;
+  background: rgba(232, 180, 184, 0.35);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.gallery-progress-fill {
+  width: 25%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-pink), var(--gold-accent));
+  border-radius: 10px;
+  transition: width 0.25s ease-out;
+}
+
+.gallery-slider-counter {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ==========================================================================
+   MODERN CARD ITEM (Ref: Foto 1 - Clean Rounded Architecture)
+   ========================================================================== */
+.polaroid-item {
+  background: var(--bg-cream-card, #ffffff);
+  padding: 0.95rem 0.95rem 1.15rem 0.95rem;
+  border-radius: 26px;
+  box-shadow: 0 12px 32px rgba(58, 46, 57, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(232, 180, 184, 0.42);
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transform-origin: center center;
+}
+
+/* Card hover: Only card elevates, NO PHOTO ANIMATION (User Request) */
+.polaroid-item:hover {
+  box-shadow: 0 22px 46px rgba(58, 46, 57, 0.18), 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: rgba(216, 131, 144, 0.7);
+  z-index: 25;
+}
+
+/* Photo Box Container (18px Rounded Corners) */
+.polaroid-item .img-box {
+  aspect-ratio: 1.12 / 1;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #1e1522;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.polaroid-item .carousel-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.polaroid-item .carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* PHOTO DOES NOT ZOOM OR SCALE ON CARD HOVER (CRITICAL USER REQUEST) */
+.polaroid-item .carousel-slide img,
+.polaroid-item .img-box > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  display: block;
+  transform: none !important;
+  transition: none !important;
+}
+
+.polaroid-item:hover .carousel-slide img,
+.polaroid-item:hover .img-box > img {
+  transform: none !important;
+}
+
+/* In-Card Multiple Photos Badge (Hidden as requested: dots and arrows are sufficient) */
+.carousel-badge {
+  display: none !important;
+}
+
+/* In-Card Next/Prev Buttons */
+.card-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--pink-deep);
+  border: 1px solid rgba(232, 180, 184, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  cursor: pointer;
+  z-index: 14;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-carousel-btn.card-carousel-prev {
+  left: 8px;
+}
+
+.card-carousel-btn.card-carousel-next {
+  right: 8px;
+}
+
+.polaroid-item:hover .card-carousel-btn,
+.polaroid-item:focus-within .card-carousel-btn {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .card-carousel-btn {
+    opacity: 0.85;
+  }
+}
+
+.card-carousel-btn:hover {
+  background: var(--pink-accent);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.15);
+}
+
+/* In-Card Centered Dots Indicator (Ref: Foto 1 bottom dots) */
+.carousel-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 12;
+  pointer-events: auto;
+  background: rgba(15, 10, 20, 0.45);
+  padding: 3px 8px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.carousel-dot.active {
+  background: #ffffff;
+  width: 14px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(255, 255, 255, 0.6);
+}
+
+.polaroid-item .hover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(162, 75, 92, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.6rem;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  z-index: 8;
+  border-radius: 18px;
+}
+
+.polaroid-item:hover .hover-overlay {
+  opacity: 1;
+}
+
+/* Card Body Content (Foto 1 layout) */
+.polaroid-item .item-details {
+  padding: 0.95rem 0.2rem 0.15rem 0.2rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Header Row: Bold Title + Category Pill (like $2,999 badge in Foto 1) */
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.35rem;
+}
+
+.card-header-row .item-title {
+  font-family: var(--font-sans);
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.25;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.card-category-pill {
+  flex-shrink: 0;
+  background: #1c252c;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  text-transform: capitalize;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="midnight-romance"] .card-category-pill {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Caption Snippet (2 lines maximum) */
+.polaroid-item .item-caption-snippet {
+  font-size: 0.835rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin: 0.25rem 0 0.65rem 0;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: normal;
+  background: transparent;
+  padding: 0;
+  border: none;
+  text-align: left;
+}
+
+/* Chips / Tags Row (like "Top Pick", "Only 9 vibes left" in Foto 1) */
+.card-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+
+.card-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(232, 180, 184, 0.25);
+  padding: 2.5px 8px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+[data-theme="midnight-romance"] .card-chip {
+  background: rgba(255, 101, 132, 0.15);
+  color: var(--text-dark);
+}
+
+/* Full-width Pill Action Button (like "Add to Cart" in Foto 1) */
+.btn-card-open {
+  width: 100%;
+  border-radius: 30px;
+  padding: 0.72rem 1rem;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.88rem;
+  background: #1c252c;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  margin-top: auto;
+}
+
+.btn-card-open:hover {
+  background: var(--pink-deep);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(162, 75, 92, 0.4);
+}
+
+/* Dark Mode Pill Button (White button with dark text, matching Foto 1 dark variant) */
+[data-theme="midnight-romance"] .btn-card-open {
+  background: #ffffff;
+  color: #140f18;
+}
+
+[data-theme="midnight-romance"] .btn-card-open:hover {
+  background: var(--pink-accent);
+  color: #ffffff;
+}
+
+
+/* --------------------------------------------------------------------------
+   CARD ACTION BUTTONS (LOVE & DELETE ON POLAROIDS & LIGHTBOX)
+   -------------------------------------------------------------------------- */
+.btn-card-action {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--pink-dusty);
+  color: #9e8899;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: all var(--transition-bounce);
+  box-shadow: var(--shadow-sm);
+  opacity: 0.85;
+}
+
+.polaroid-item:hover .btn-card-action {
+  opacity: 1;
+}
+
+.btn-card-love {
+  top: 10px;
+  right: 10px;
+}
+
+.btn-card-love.active {
+  background: var(--pink-accent);
+  color: #ffffff;
+  border-color: var(--pink-accent);
+  box-shadow: 0 4px 10px rgba(255, 71, 126, 0.4);
+}
+
+.btn-card-love:hover {
+  transform: scale(1.15);
+  color: var(--pink-accent);
+}
+
+.btn-card-love.active:hover {
+  color: #ffffff;
+}
+
+.btn-card-edit {
+  top: 10px;
+  right: 50px;
+}
+
+.btn-card-edit:hover {
+  transform: scale(1.15);
+  background: var(--gold-accent);
+  color: #ffffff;
+  border-color: var(--gold-accent);
+  box-shadow: 0 4px 10px rgba(184, 154, 100, 0.4);
+}
+
+.btn-card-delete {
+  top: 10px;
+  left: 10px;
+}
+
+.btn-card-delete:hover {
+  background: #dc3545;
+  color: #ffffff;
+  border-color: #dc3545;
+  transform: scale(1.15);
+}
+
+/* Lightbox Action Bar */
+.lightbox-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.lightbox-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-delete-danger {
+  background: rgba(220, 53, 69, 0.12) !important;
+  color: #dc3545 !important;
+  border: 1px solid rgba(220, 53, 69, 0.3) !important;
+}
+
+.btn-delete-danger:hover {
+  background: #dc3545 !important;
+  color: #ffffff !important;
+}
+
+/* Custom Confirmation Modal Overlay (z-index highest) */
+.modal-confirm-overlay {
+  z-index: 3000 !important;
+}
