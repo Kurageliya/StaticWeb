@@ -451,15 +451,47 @@ export function setupGallerySliderEvents() {
     }, true);
   }
 
+  const scrollCardBy = (direction) => {
+    if (!polaroidGrid) return;
+    const items = Array.from(polaroidGrid.querySelectorAll('.polaroid-item'));
+    if (items.length === 0) return;
+
+    const currentScroll = polaroidGrid.scrollLeft;
+    const gridPaddingLeft = 20;
+
+    if (direction > 0) {
+      const nextItem = items.find(item => item.offsetLeft > currentScroll + 30);
+      if (nextItem) {
+        polaroidGrid.scrollTo({
+          left: Math.max(0, nextItem.offsetLeft - gridPaddingLeft),
+          behavior: 'smooth'
+        });
+      } else {
+        polaroidGrid.scrollBy({ left: getSliderStep(), behavior: 'smooth' });
+      }
+    } else {
+      const prevItems = items.filter(item => item.offsetLeft < currentScroll - 30);
+      if (prevItems.length > 0) {
+        const prevItem = prevItems[prevItems.length - 1];
+        polaroidGrid.scrollTo({
+          left: Math.max(0, prevItem.offsetLeft - gridPaddingLeft),
+          behavior: 'smooth'
+        });
+      } else {
+        polaroidGrid.scrollTo({ left: 0, behavior: 'smooth' });
+      }
+    }
+  };
+
   if (gallerySliderPrev && polaroidGrid) {
     gallerySliderPrev.addEventListener('click', () => {
-      polaroidGrid.scrollBy({ left: -getSliderStep(), behavior: 'smooth' });
+      scrollCardBy(-1);
     });
   }
 
   if (gallerySliderNext && polaroidGrid) {
     gallerySliderNext.addEventListener('click', () => {
-      polaroidGrid.scrollBy({ left: getSliderStep(), behavior: 'smooth' });
+      scrollCardBy(1);
     });
   }
 
