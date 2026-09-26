@@ -242,9 +242,11 @@
      -------------------------------------------------------------------------- */
   function initApp() {
     setupThemeEvents();
+    setupHeroScrapbook();
     updateCoupleDisplay();
     startLiveCounter();
     renderPolaroidGrid();
+    setupGallerySliderEvents();
     renderTimelineSection();
     setupScrollReveal();
     setupEnvelopeInteraction();
@@ -430,11 +432,19 @@
   }
 
   /* --------------------------------------------------------------------------
-     5. POLAROID GALLERY GRID & FILTERING
+     5. POLAROID GALLERY GRID & FILTERING (WITH INSTAGRAM-LIKE CARD CAROUSEL)
      -------------------------------------------------------------------------- */
-  /* --------------------------------------------------------------------------
-     5. POLAROID GALLERY GRID & FILTERING
-     -------------------------------------------------------------------------- */
+  function getMemoryImages(memory) {
+    if (!memory) return [];
+    if (Array.isArray(memory.images) && memory.images.length > 0) {
+      return memory.images.filter(img => typeof img === 'string' && img.trim().length > 0);
+    }
+    if (memory.imgUrl && typeof memory.imgUrl === 'string' && memory.imgUrl.trim().length > 0) {
+      return [memory.imgUrl.trim()];
+    }
+    return [];
+  }
+
   function renderPolaroidGrid() {
     if (!polaroidGrid) return;
     polaroidGrid.innerHTML = '';
@@ -444,9 +454,14 @@
       return item.category === currentFilter;
     });
 
+    const galleryTotalCount = document.getElementById('gallery-total-count');
+    if (galleryTotalCount) {
+      galleryTotalCount.textContent = filteredMemories.length;
+    }
+
     if (memoriesList.length === 0) {
       polaroidGrid.innerHTML = `
-        <div class="empty-gallery-state text-center" style="grid-column: 1/-1; padding: 3.5rem 1.5rem; color: var(--text-muted);">
+        <div class="empty-gallery-state text-center" style="grid-column: 1/-1; padding: 3.5rem 1.5rem; color: var(--text-muted); width: 100%;">
           <div style="font-size: 2.8rem; margin-bottom: 0.75rem; color: var(--primary-pink);"><i class="fa-regular fa-images"></i></div>
           <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem;">Album Kenangan Masih Kosong</h3>
           <p style="max-width: 440px; margin: 0 auto 1.5rem; font-size: 0.95rem; line-height: 1.5;">Yuk abadikan momen indah perjalanan cinta kalian! Klik tombol di bawah untuk menambahkan foto kenangan pertama.</p>
@@ -455,52 +470,189 @@
           </button>
         </div>
       `;
+      updateGallerySliderState();
       return;
     }
 
     if (filteredMemories.length === 0) {
-      polaroidGrid.innerHTML = `<div class="text-center" style="grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">Belum ada foto dalam kategori "${escapeHtml(currentFilter)}". Klik "Tambah Foto Baru" untuk mengunggah.</div>`;
+      polaroidGrid.innerHTML = `<div class="text-center" style="grid-column: 1/-1; padding: 3rem; color: var(--text-muted); width: 100%;">Belum ada foto dalam kategori "${escapeHtml(currentFilter)}". Klik "Tambah Kenangan Baru" untuk mengunggah.</div>`;
+      updateGallerySliderState();
       return;
     }
 
-    filteredMemories.forEach((memory, index) => {
+    filteredMemories.forEach((memory, memoryIndex) => {
       const itemEl = document.createElement('div');
       itemEl.className = 'polaroid-item';
 
       const dateObj = new Date(memory.date);
       const formattedDate = dateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
       const isLoved = memory.isFeatured !== false;
+      const images = getMemoryImages(memory);
+      const hasMultiplePhotos = images.length > 1;
+
+      let currentPhotoIndex = 0;
+
+      // Construct Image Box HTML
+      let imgBoxHtml = '';
+      if (hasMultiplePhotos) {
+        imgBoxHtml = `
+          <div class="img-box card-carousel" data-photo-index="0">
+            <div class="carousel-track">
+              ${images.map((img, i) => `
+                <div class="carousel-slide ${i === 0 ? 'active' : ''}">
+                  <img src="${escapeHtml(img)}" alt="${escapeHtml(memory.title)} - Foto ${i + 1}" loading="lazy">
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Carousel Nav Buttons -->
+            <button type="button" class="card-carousel-btn card-carousel-prev" aria-label="Foto Sebelumnya" title="Foto Sebelumnya">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button type="button" class="card-carousel-btn card-carousel-next" aria-label="Foto Selanjutnya" title="Foto Selanjutnya">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <!-- Dots Indicator -->
+            <div class="carousel-dots">
+              ${images.map((_, i) => `<span class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`).join('')}
+            </div>
+
+            <div class="hover-overlay">
+              <i class="fa-solid fa-heart"></i>
+            </div>
+            <button type="button" class="btn-card-action btn-card-edit" title="Edit Kenangan">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button type="button" class="btn-card-action btn-card-love ${isLoved ? 'active' : ''}" title="${isLoved ? 'Sembunyikan dari Timeline' : 'Tampilkan di Timeline'}">
+              <i class="fa-solid fa-heart"></i>
+            </button>
+            <button type="button" class="btn-card-action btn-card-delete" title="Hapus Foto Kenangan">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+      } else {
+        const singleImg = images[0] || memory.imgUrl || '';
+        imgBoxHtml = `
+          <div class="img-box">
+            <img src="${escapeHtml(singleImg)}" alt="${escapeHtml(memory.title)}" loading="lazy">
+            <div class="hover-overlay">
+              <i class="fa-solid fa-heart"></i>
+            </div>
+            <button type="button" class="btn-card-action btn-card-edit" title="Edit Kenangan">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button type="button" class="btn-card-action btn-card-love ${isLoved ? 'active' : ''}" title="${isLoved ? 'Sembunyikan dari Timeline' : 'Tampilkan di Timeline'}">
+              <i class="fa-solid fa-heart"></i>
+            </button>
+            <button type="button" class="btn-card-action btn-card-delete" title="Hapus Foto Kenangan">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+      }
+
+      const categoryName = memory.category || 'Momen';
+      const categoryIcon = categoryName === 'kencan' ? 'fa-heart' : (categoryName === 'liburan' ? 'fa-plane' : 'fa-star');
 
       itemEl.innerHTML = `
-        <div class="img-box">
-          <img src="${escapeHtml(memory.imgUrl)}" alt="${escapeHtml(memory.title)}" loading="lazy">
-          <div class="hover-overlay">
-            <i class="fa-solid fa-heart"></i>
-          </div>
-          <button type="button" class="btn-card-action btn-card-edit" title="Edit Kenangan">
-            <i class="fa-solid fa-pen-to-square"></i>
-          </button>
-          <button type="button" class="btn-card-action btn-card-love ${isLoved ? 'active' : ''}" title="${isLoved ? 'Sembunyikan dari Timeline' : 'Tampilkan di Timeline'}">
-            <i class="fa-solid fa-heart"></i>
-          </button>
-          <button type="button" class="btn-card-action btn-card-delete" title="Hapus Foto Kenangan">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
-        </div>
+        ${imgBoxHtml}
         <div class="item-details">
-          <h3 class="item-title">${escapeHtml(memory.title)}</h3>
-          <span class="item-date"><i class="fa-regular fa-calendar"></i> ${formattedDate}</span>
-          ${memory.caption ? `<p class="item-caption-snippet">${escapeHtml(memory.caption)}</p>` : ''}
+          <div class="card-header-row">
+            <h3 class="item-title" title="${escapeHtml(memory.title)}">${escapeHtml(memory.title)}</h3>
+            <span class="card-category-pill"><i class="fa-solid ${categoryIcon}"></i> ${escapeHtml(categoryName)}</span>
+          </div>
+          ${memory.caption ? `<p class="item-caption-snippet">${escapeHtml(memory.caption)}</p>` : '<p class="item-caption-snippet" style="opacity:0.55; font-style:italic;">Kenangan manis kita...</p>'}
+          <div class="card-chips-row">
+            <span class="card-chip"><i class="fa-regular fa-calendar"></i> ${formattedDate}</span>
+            ${isLoved ? `<span class="card-chip card-chip-timeline" style="color:var(--pink-accent);"><i class="fa-solid fa-heart"></i> Timeline</span>` : ''}
+          </div>
+          <button type="button" class="btn-card-open" title="Buka Detail Kenangan">
+            <i class="fa-solid fa-expand"></i> Buka Kenangan
+          </button>
         </div>
       `;
 
-      // Open Lightbox when clicking photo or title
+      // Handle in-card carousel events if multiple photos
+      if (hasMultiplePhotos) {
+        const imgBox = itemEl.querySelector('.card-carousel');
+        const track = itemEl.querySelector('.carousel-track');
+        const badgeCurr = itemEl.querySelector('.carousel-curr');
+        const dots = itemEl.querySelectorAll('.carousel-dot');
+        const btnPrev = itemEl.querySelector('.card-carousel-prev');
+        const btnNext = itemEl.querySelector('.card-carousel-next');
+
+        function updateCardPhoto(newIdx) {
+          currentPhotoIndex = (newIdx + images.length) % images.length;
+          track.style.transform = `translateX(-${currentPhotoIndex * 100}%)`;
+          if (badgeCurr) badgeCurr.textContent = currentPhotoIndex + 1;
+          dots.forEach((dot, dIdx) => {
+            dot.classList.toggle('active', dIdx === currentPhotoIndex);
+          });
+          imgBox.setAttribute('data-photo-index', currentPhotoIndex);
+        }
+
+        if (btnPrev) {
+          btnPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateCardPhoto(currentPhotoIndex - 1);
+          });
+        }
+
+        if (btnNext) {
+          btnNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateCardPhoto(currentPhotoIndex + 1);
+          });
+        }
+
+        dots.forEach(dot => {
+          dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const dIdx = parseInt(dot.getAttribute('data-index'), 10) || 0;
+            updateCardPhoto(dIdx);
+          });
+        });
+
+        // Touch Swipe on card image
+        let touchStartX = 0;
+        let touchStartY = 0;
+        imgBox.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+          touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        imgBox.addEventListener('touchend', (e) => {
+          const touchEndX = e.changedTouches[0].screenX;
+          const touchEndY = e.changedTouches[0].screenY;
+          const diffX = touchEndX - touchStartX;
+          const diffY = touchEndY - touchStartY;
+          if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+            if (diffX < 0) updateCardPhoto(currentPhotoIndex + 1); // swipe left
+            else updateCardPhoto(currentPhotoIndex - 1); // swipe right
+          }
+        }, { passive: true });
+      }
+
+      // Open Lightbox via Buka Kenangan button
+      const btnOpen = itemEl.querySelector('.btn-card-open');
+      if (btnOpen) {
+        btnOpen.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openLightbox(memoryIndex, currentPhotoIndex);
+        });
+      }
+
+      // Open Lightbox when clicking photo or card details directly
       itemEl.querySelector('.img-box').addEventListener('click', (e) => {
-        if (e.target.closest('.btn-card-action')) return;
-        openLightbox(index);
+        if (e.target.closest('.btn-card-action') || e.target.closest('.card-carousel-btn') || e.target.closest('.carousel-dots')) return;
+        openLightbox(memoryIndex, currentPhotoIndex);
       });
+
       itemEl.querySelector('.item-details').addEventListener('click', (e) => {
-        openLightbox(index);
+        if (e.target.closest('.btn-card-open')) return;
+        openLightbox(memoryIndex, currentPhotoIndex);
       });
 
       // Quick action buttons
@@ -529,6 +681,281 @@
       }
 
       polaroidGrid.appendChild(itemEl);
+    });
+
+    updateGallerySliderState();
+    requestAnimationFrame(apply3DCurvedGlider);
+  }
+
+  /* --------------------------------------------------------------------------
+     5.2. GALLERY CARD SLIDER NAVIGATION & 3D CURVED PANORAMA (Foto 2)
+     -------------------------------------------------------------------------- */
+  let activeHoverItem = null;
+
+  function apply3DCurvedGlider() {
+    if (!polaroidGrid) return;
+    const gallerySliderWrapper = document.getElementById('gallery-slider-wrapper');
+    if (!gallerySliderWrapper || !gallerySliderWrapper.classList.contains('mode-slider')) return;
+
+    const items = polaroidGrid.querySelectorAll('.polaroid-item');
+    if (items.length === 0) return;
+
+    const gridRect = polaroidGrid.getBoundingClientRect();
+    const gridCenter = gridRect.left + gridRect.width / 2;
+    const scrollLeft = polaroidGrid.scrollLeft;
+    const maxScroll = polaroidGrid.scrollWidth - polaroidGrid.clientWidth;
+    const isMobile = window.innerWidth <= 600;
+
+    // Use single card pitch (width + gap) as normalized step unit
+    const sampleItem = items[0];
+    const itemWidth = sampleItem ? sampleItem.getBoundingClientRect().width : (isMobile ? 270 : 300);
+    const gap = isMobile ? 18 : 28;
+    const pitch = itemWidth + gap;
+
+    // Detect which card is currently primary (hovered > start edge > end edge > center closest)
+    let primaryIndex = -1;
+    if (activeHoverItem) {
+      items.forEach((item, idx) => {
+        if (item === activeHoverItem) primaryIndex = idx;
+      });
+    } else if (scrollLeft <= 25) {
+      // First card at start
+      primaryIndex = 0;
+    } else if (maxScroll > 0 && scrollLeft >= (maxScroll - 25)) {
+      // Last card at end
+      primaryIndex = items.length - 1;
+    } else {
+      // Card closest to visual center
+      let minDiff = Infinity;
+      items.forEach((item, idx) => {
+        const itemRect = item.getBoundingClientRect();
+        const itemCenter = itemRect.left + itemRect.width / 2;
+        const diff = Math.abs(itemCenter - gridCenter);
+        if (diff < minDiff) {
+          minDiff = diff;
+          primaryIndex = idx;
+        }
+      });
+    }
+
+    items.forEach((item, index) => {
+      const isPrimary = (index === primaryIndex);
+
+      if (isPrimary) {
+        // Spotlight active/hovered/center card: elevated, scaled up, upright, glowing
+        const translateY = isMobile ? -6 : -10;
+        const scale = isMobile ? 1.05 : 1.08;
+        item.style.transform = `translate3d(0, ${translateY}px, 0) rotateY(0deg) rotateZ(0deg) scale(${scale})`;
+        item.style.zIndex = '45';
+        item.style.opacity = '1';
+        item.style.boxShadow = '0 22px 48px rgba(58, 46, 57, 0.22), 0 8px 24px rgba(216, 131, 144, 0.28), 0 0 0 2px rgba(216, 131, 144, 0.55)';
+        item.classList.add('is-center-card');
+      } else {
+        // Side cards: gentle curved arc, 100% visible, elegant tilt
+        const itemRect = item.getBoundingClientRect();
+        const itemCenter = itemRect.left + itemRect.width / 2;
+        const dist = itemCenter - gridCenter;
+        const norm = dist / (pitch || 1);
+        const clampedNorm = Math.max(-2, Math.min(2, norm));
+        const clampedAbs = Math.abs(clampedNorm);
+
+        const arcY = Math.min(12, Math.pow(clampedAbs, 1.15) * 8);
+        const rotateZ = clampedNorm * 1.6;
+        const rotateY = -clampedNorm * 4;
+        const scale = Math.max(0.92, 1.0 - (clampedAbs * 0.06));
+
+        item.style.transform = `translate3d(0, ${arcY.toFixed(1)}px, 0) rotateY(${rotateY.toFixed(1)}deg) rotateZ(${rotateZ.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
+        item.style.zIndex = String(Math.max(5, Math.round(25 - clampedAbs * 6)));
+        item.style.opacity = '1';
+        item.style.boxShadow = '';
+        item.classList.remove('is-center-card');
+      }
+    });
+  }
+
+  function updateGallerySliderState() {
+    if (!polaroidGrid) return;
+    const gallerySliderWrapper = document.getElementById('gallery-slider-wrapper');
+    const gallerySliderPrev = document.getElementById('gallery-slider-prev');
+    const gallerySliderNext = document.getElementById('gallery-slider-next');
+    const galleryProgressFill = document.getElementById('gallery-progress-fill');
+    const galleryCurrentRange = document.getElementById('gallery-current-range');
+    const galleryTotalCount = document.getElementById('gallery-total-count');
+
+    const total = filteredMemories.length;
+    if (galleryTotalCount) galleryTotalCount.textContent = total;
+
+    if (total === 0) {
+      if (galleryCurrentRange) galleryCurrentRange.textContent = '0';
+      if (galleryProgressFill) galleryProgressFill.style.width = '0%';
+      if (gallerySliderPrev) gallerySliderPrev.disabled = true;
+      if (gallerySliderNext) gallerySliderNext.disabled = true;
+      return;
+    }
+
+    const scrollLeft = polaroidGrid.scrollLeft;
+    const maxScroll = polaroidGrid.scrollWidth - polaroidGrid.clientWidth;
+
+    // Progress bar fill
+    if (galleryProgressFill) {
+      if (maxScroll <= 0) {
+        galleryProgressFill.style.width = '100%';
+      } else {
+        const pct = Math.min(1, Math.max(0, scrollLeft / maxScroll));
+        galleryProgressFill.style.width = `${Math.min(100, Math.max(15, (pct * 85) + 15))}%`;
+      }
+    }
+
+    // Visible range estimate & active center card index
+    const items = polaroidGrid.querySelectorAll('.polaroid-item');
+    if (items.length > 0) {
+      const sampleItem = polaroidGrid.querySelector('.polaroid-item');
+      const itemWidth = sampleItem ? (sampleItem.clientWidth + 28) : 328;
+      const firstIdx = Math.min(total, Math.max(1, Math.floor((scrollLeft + 15) / itemWidth) + 1));
+      const visibleCount = Math.max(1, Math.round(polaroidGrid.clientWidth / itemWidth));
+      const lastIdx = Math.min(total, firstIdx + visibleCount - 1);
+
+      if (galleryCurrentRange) {
+        galleryCurrentRange.textContent = firstIdx >= lastIdx ? `${firstIdx}` : `${firstIdx} - ${lastIdx}`;
+      }
+    }
+
+    if (gallerySliderPrev) gallerySliderPrev.disabled = scrollLeft <= 15;
+    if (gallerySliderNext) gallerySliderNext.disabled = scrollLeft >= (maxScroll - 15);
+
+    // Apply 3D Panorama transform on items
+    apply3DCurvedGlider();
+  }
+
+  function setupGallerySliderEvents() {
+    const gallerySliderWrapper = document.getElementById('gallery-slider-wrapper');
+    const gallerySliderPrev = document.getElementById('gallery-slider-prev');
+    const gallerySliderNext = document.getElementById('gallery-slider-next');
+    const btnViewSlider = document.getElementById('btn-view-slider');
+    const btnViewGrid = document.getElementById('btn-view-grid');
+
+    const getSliderStep = () => {
+      const sampleItem = polaroidGrid ? polaroidGrid.querySelector('.polaroid-item') : null;
+      return sampleItem ? (sampleItem.offsetWidth + 28) : 328;
+    };
+
+    if (polaroidGrid) {
+      let scrollTimer = null;
+      polaroidGrid.addEventListener('scroll', () => {
+        if (scrollTimer) cancelAnimationFrame(scrollTimer);
+        scrollTimer = requestAnimationFrame(() => {
+          updateGallerySliderState();
+        });
+      }, { passive: true });
+
+      // Drag-to-Slide Support for Desktop Mouse Interaction
+      let isDown = false;
+      let startX = 0;
+      let scrollLeftStart = 0;
+      let dragDistance = 0;
+
+      polaroidGrid.addEventListener('mousedown', (e) => {
+        if (!gallerySliderWrapper || !gallerySliderWrapper.classList.contains('mode-slider')) return;
+        if (e.target.closest('button, a, input, select, textarea, .card-carousel-btn')) return;
+        isDown = true;
+        dragDistance = 0;
+        startX = e.pageX - polaroidGrid.offsetLeft;
+        scrollLeftStart = polaroidGrid.scrollLeft;
+        polaroidGrid.style.cursor = 'grabbing';
+        polaroidGrid.style.userSelect = 'none';
+        polaroidGrid.style.scrollBehavior = 'auto';
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (!isDown) return;
+        isDown = false;
+        if (polaroidGrid) {
+          polaroidGrid.style.cursor = '';
+          polaroidGrid.style.userSelect = '';
+          polaroidGrid.style.scrollBehavior = 'smooth';
+        }
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDown || !polaroidGrid) return;
+        const x = e.pageX - polaroidGrid.offsetLeft;
+        const walk = (x - startX);
+        dragDistance = Math.abs(walk);
+        polaroidGrid.scrollLeft = scrollLeftStart - walk;
+      });
+
+      // Suppress click on card if user just dragged to slide
+      polaroidGrid.addEventListener('click', (e) => {
+        if (dragDistance > 6) {
+          e.preventDefault();
+          e.stopPropagation();
+          dragDistance = 0;
+        }
+      }, true);
+
+      // Mouseover / Mouseout delegation to spotlight ANY card on hover (including card 1 and last card)
+      polaroidGrid.addEventListener('mouseover', (e) => {
+        if (!gallerySliderWrapper || !gallerySliderWrapper.classList.contains('mode-slider')) return;
+        const item = e.target.closest('.polaroid-item');
+        if (item && item !== activeHoverItem) {
+          activeHoverItem = item;
+          apply3DCurvedGlider();
+        }
+      });
+
+      polaroidGrid.addEventListener('mouseout', (e) => {
+        if (!gallerySliderWrapper || !gallerySliderWrapper.classList.contains('mode-slider')) return;
+        const item = e.target.closest('.polaroid-item');
+        if (item && !item.contains(e.relatedTarget)) {
+          activeHoverItem = null;
+          apply3DCurvedGlider();
+        }
+      });
+    }
+
+    if (gallerySliderPrev && polaroidGrid) {
+      gallerySliderPrev.addEventListener('click', () => {
+        polaroidGrid.scrollBy({ left: -getSliderStep(), behavior: 'smooth' });
+      });
+    }
+
+    if (gallerySliderNext && polaroidGrid) {
+      gallerySliderNext.addEventListener('click', () => {
+        polaroidGrid.scrollBy({ left: getSliderStep(), behavior: 'smooth' });
+      });
+    }
+
+    // View Switcher (Slider vs Grid)
+    if (btnViewSlider && btnViewGrid && gallerySliderWrapper) {
+      btnViewSlider.addEventListener('click', () => {
+        gallerySliderWrapper.classList.add('mode-slider');
+        gallerySliderWrapper.classList.remove('mode-grid');
+        btnViewSlider.classList.add('active');
+        btnViewGrid.classList.remove('active');
+        updateGallerySliderState();
+        requestAnimationFrame(apply3DCurvedGlider);
+      });
+
+      btnViewGrid.addEventListener('click', () => {
+        gallerySliderWrapper.classList.add('mode-grid');
+        gallerySliderWrapper.classList.remove('mode-slider');
+        btnViewGrid.classList.add('active');
+        btnViewSlider.classList.remove('active');
+        // Reset 3D styles on all items for flat grid view
+        if (polaroidGrid) {
+          polaroidGrid.querySelectorAll('.polaroid-item').forEach(item => {
+            item.style.transform = '';
+            item.style.opacity = '';
+            item.style.zIndex = '';
+            item.style.boxShadow = '';
+            item.classList.remove('is-center-card');
+          });
+        }
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      updateGallerySliderState();
     });
   }
 
@@ -584,11 +1011,15 @@
           <span class="timeline-date">${formattedDate}</span>
           <h3>${escapeHtml(memory.title)}</h3>
           <p>${escapeHtml(memory.caption || 'Momen manis yang terukir indah dalam perjalanan cinta kita.')}</p>
-          ${memory.imgUrl ? `
-            <div class="timeline-img-small">
-              <img src="${escapeHtml(memory.imgUrl)}" alt="${escapeHtml(memory.title)}" loading="lazy">
-            </div>
-          ` : ''}
+          ${(() => {
+            const imgs = getMemoryImages(memory);
+            const thumb = imgs[0] || memory.imgUrl;
+            return thumb ? `
+              <div class="timeline-img-small">
+                <img src="${escapeHtml(thumb)}" alt="${escapeHtml(memory.title)}" loading="lazy">
+              </div>
+            ` : '';
+          })()}
         </div>
       `;
 
@@ -700,40 +1131,135 @@
       if (e.key === 'ArrowRight') navigateLightbox(1);
     });
 
-    // Image Magnifier & Interactive Zoom Support
+    // Multi-Photo Sub-Nav Prev/Next inside Lightbox
+    const lightboxSubPrev = document.getElementById('lightbox-sub-prev');
+    const lightboxSubNext = document.getElementById('lightbox-sub-next');
+    if (lightboxSubPrev) {
+      lightboxSubPrev.addEventListener('click', (e) => {
+        e.stopPropagation();
+        switchLightboxPhoto(currentLightboxPhotoIndex - 1);
+      });
+    }
+    if (lightboxSubNext) {
+      lightboxSubNext.addEventListener('click', (e) => {
+        e.stopPropagation();
+        switchLightboxPhoto(currentLightboxPhotoIndex + 1);
+      });
+    }
+
+    // Touch swipe & mouse drag support for smooth horizontal photo slider
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isSwiping = false;
+
+    // Click photo to peek full image (toggle minimizing / restoring bottom info overlay)
     const lightboxImgWrap = document.getElementById('lightbox-img-wrap');
-    if (lightboxImgWrap && lightboxImg) {
-      lightboxImgWrap.addEventListener('mousemove', (e) => {
-        const rect = lightboxImgWrap.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        lightboxImg.style.transformOrigin = `${x}% ${y}%`;
-      });
+    if (lightboxImgWrap) {
+      lightboxImgWrap.addEventListener('touchstart', (e) => {
+        if (!e.touches || e.touches.length === 0) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        isSwiping = false;
+      }, { passive: true });
 
-      lightboxImgWrap.addEventListener('mouseleave', () => {
-        if (!lightboxImgWrap.classList.contains('is-zoomed')) {
-          lightboxImg.style.transformOrigin = 'center center';
+      lightboxImgWrap.addEventListener('touchmove', (e) => {
+        if (!e.touches || e.touches.length === 0) return;
+        const diffX = e.touches[0].clientX - touchStartX;
+        const diffY = e.touches[0].clientY - touchStartY;
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 12) {
+          isSwiping = true;
         }
+      }, { passive: true });
+
+      lightboxImgWrap.addEventListener('touchend', (e) => {
+        if (!isSwiping) return;
+        const touchEndX = e.changedTouches[0].clientX;
+        const diffX = touchEndX - touchStartX;
+        if (diffX < -38) {
+          switchLightboxPhoto(currentLightboxPhotoIndex + 1);
+        } else if (diffX > 38) {
+          switchLightboxPhoto(currentLightboxPhotoIndex - 1);
+        }
+        setTimeout(() => { isSwiping = false; }, 50);
       });
 
-      lightboxImgWrap.addEventListener('click', () => {
-        lightboxImgWrap.classList.toggle('is-zoomed');
+      lightboxImgWrap.addEventListener('click', (e) => {
+        if (e.target.closest('.lightbox-sub-nav') || e.target.closest('.lightbox-sub-dots') || isSwiping) return;
+        if (lightboxPolaroidCard) {
+          lightboxPolaroidCard.classList.toggle('info-minimized');
+        }
       });
     }
   }
 
-  function openLightbox(index) {
+  let currentLightboxPhotoIndex = 0;
+  let peekHintTimer = null;
+
+  function switchLightboxPhoto(newIndex) {
+    const memory = filteredMemories[currentLightboxIndex];
+    if (!memory) return;
+    const images = getMemoryImages(memory);
+    if (images.length <= 1) return;
+
+    currentLightboxPhotoIndex = (newIndex + images.length) % images.length;
+
+    // Buttery-smooth physical slide transition via CSS transform on track
+    const track = document.getElementById('lightbox-carousel-track');
+    if (track) {
+      track.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1)';
+      track.style.transform = `translateX(-${currentLightboxPhotoIndex * 100}%)`;
+    }
+
+    const currSpan = document.getElementById('lightbox-curr-photo');
+    if (currSpan) currSpan.textContent = currentLightboxPhotoIndex + 1;
+
+    const subDots = document.getElementById('lightbox-sub-dots');
+    if (subDots) {
+      subDots.querySelectorAll('.lightbox-sub-dot').forEach((dot, dIdx) => {
+        dot.classList.toggle('active', dIdx === currentLightboxPhotoIndex);
+      });
+    }
+  }
+
+  function openLightbox(index, photoIndex = 0) {
     currentLightboxIndex = index;
-    updateLightboxContent(filteredMemories[index]);
+    currentLightboxPhotoIndex = photoIndex || 0;
+    updateLightboxContent(filteredMemories[index], currentLightboxPhotoIndex);
+    if (lightboxPolaroidCard) {
+      lightboxPolaroidCard.classList.remove('info-minimized');
+    }
+
+    // Auto-dismissing hint: briefly displays as a helpful tip, then smoothly vanishes!
+    const hint = document.getElementById('lightbox-peek-hint');
+    if (hint) {
+      hint.classList.remove('fade-out');
+      hint.style.display = 'block';
+      clearTimeout(peekHintTimer);
+      peekHintTimer = setTimeout(() => {
+        hint.classList.add('fade-out');
+        setTimeout(() => {
+          if (hint.classList.contains('fade-out')) {
+            hint.style.display = 'none';
+          }
+        }, 400);
+      }, 1200);
+    }
+
     lightboxModal.classList.add('active');
     lightboxModal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
 
   function closeLightbox() {
-    const lightboxImgWrap = document.getElementById('lightbox-img-wrap');
-    if (lightboxImgWrap) lightboxImgWrap.classList.remove('is-zoomed');
-    if (lightboxImg) lightboxImg.style.transformOrigin = 'center center';
+    clearTimeout(peekHintTimer);
+    if (lightboxPolaroidCard) {
+      lightboxPolaroidCard.classList.remove('info-minimized');
+    }
+    const hint = document.getElementById('lightbox-peek-hint');
+    if (hint) {
+      hint.classList.add('fade-out');
+      hint.style.display = 'none';
+    }
 
     lightboxModal.classList.remove('active');
     lightboxModal.setAttribute('aria-hidden', 'true');
@@ -745,29 +1271,93 @@
     if (filteredMemories.length === 0) return;
 
     currentLightboxIndex = (currentLightboxIndex + direction + filteredMemories.length) % filteredMemories.length;
+    currentLightboxPhotoIndex = 0;
     const targetMemory = filteredMemories[currentLightboxIndex];
 
     lightboxPolaroidCard.classList.remove('zoom-fade-in');
     lightboxPolaroidCard.classList.add('zoom-fade-out');
 
     setTimeout(() => {
-      updateLightboxContent(targetMemory);
+      updateLightboxContent(targetMemory, 0);
       lightboxPolaroidCard.classList.remove('zoom-fade-out');
       lightboxPolaroidCard.classList.add('zoom-fade-in');
     }, 200);
   }
 
-  function updateLightboxContent(memory) {
+  function updateLightboxContent(memory, photoIndex = 0) {
     if (!memory) return;
     const dateObj = new Date(memory.date);
     const formattedDate = dateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    lightboxImg.src = memory.imgUrl;
-    lightboxImg.alt = memory.title;
+    const images = getMemoryImages(memory);
+    currentLightboxPhotoIndex = Math.min(Math.max(0, photoIndex), Math.max(0, images.length - 1));
+
+    // Populate smooth carousel slides in track
+    const track = document.getElementById('lightbox-carousel-track');
+    if (track) {
+      if (images.length > 0) {
+        track.innerHTML = images.map((url, i) => `
+          <div class="lightbox-carousel-slide ${i === currentLightboxPhotoIndex ? 'active' : ''}" data-idx="${i}">
+            <img src="${escapeHtml(url)}" alt="${escapeHtml(memory.title)} - Foto ${i + 1}">
+          </div>
+        `).join('');
+      } else {
+        track.innerHTML = `
+          <div class="lightbox-carousel-slide active">
+            <img id="lightbox-img" src="${escapeHtml(memory.imgUrl || '')}" alt="${escapeHtml(memory.title)}">
+          </div>
+        `;
+      }
+      track.style.transition = 'none';
+      track.style.transform = `translateX(-${currentLightboxPhotoIndex * 100}%)`;
+      requestAnimationFrame(() => {
+        if (track) track.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1)';
+      });
+    }
+
     lightboxTitle.textContent = memory.title;
     lightboxDate.textContent = formattedDate;
     lightboxCaption.textContent = memory.caption || '';
-    lightboxTag.textContent = memory.category || 'Momen';
+    const cat = memory.category || 'Momen';
+    const catIcon = cat === 'kencan' ? 'fa-heart' : (cat === 'liburan' ? 'fa-plane' : 'fa-star');
+    if (lightboxTag) {
+      lightboxTag.innerHTML = `<i class="fa-solid ${catIcon}"></i> ${escapeHtml(cat)}`;
+    }
+
+    // Multi-Photo Sub-Nav Controls
+    const subPrev = document.getElementById('lightbox-sub-prev');
+    const subNext = document.getElementById('lightbox-sub-next');
+    const counterBadge = document.getElementById('lightbox-carousel-counter');
+    const currSpan = document.getElementById('lightbox-curr-photo');
+    const totalSpan = document.getElementById('lightbox-total-photo');
+    const subDots = document.getElementById('lightbox-sub-dots');
+
+    if (images.length > 1) {
+      if (subPrev) subPrev.style.display = 'flex';
+      if (subNext) subNext.style.display = 'flex';
+      if (subDots) {
+        subDots.style.display = 'flex';
+        subDots.innerHTML = images.map((_, i) => `
+          <span class="lightbox-sub-dot ${i === currentLightboxPhotoIndex ? 'active' : ''}" data-idx="${i}"></span>
+        `).join('');
+
+        subDots.querySelectorAll('.lightbox-sub-dot').forEach(dot => {
+          dot.onclick = (e) => {
+            e.stopPropagation();
+            const idx = parseInt(dot.getAttribute('data-idx'), 10) || 0;
+            switchLightboxPhoto(idx);
+          };
+        });
+      }
+    } else {
+      if (subPrev) subPrev.style.display = 'none';
+      if (subNext) subNext.style.display = 'none';
+      if (counterBadge) counterBadge.style.display = 'none';
+      if (subDots) {
+        subDots.style.display = 'none';
+        subDots.innerHTML = '';
+      }
+    }
 
     const btnFeatured = document.getElementById('btn-toggle-featured-lightbox');
     const featuredText = document.getElementById('featured-btn-text');
@@ -805,35 +1395,60 @@
   // Edit photo upload elements
   const editUploadDropzone = document.getElementById('edit-upload-dropzone');
   const editFileInput = document.getElementById('edit-memory-file-input');
-  const editDropzoneContent = document.getElementById('edit-dropzone-content');
-  const editFilePreviewWrap = document.getElementById('edit-file-preview-wrap');
-  const editFilePreviewImg = document.getElementById('edit-file-preview-img');
-  const btnEditRemoveFile = document.getElementById('btn-edit-remove-file');
-  let editSelectedDataUrl = '';
+  let editCurrentImages = [];
+
+  function renderEditPhotoGrid() {
+    const editPhotoGrid = document.getElementById('edit-photo-grid');
+    if (!editPhotoGrid) return;
+    editPhotoGrid.innerHTML = '';
+
+    if (editCurrentImages.length === 0) {
+      editPhotoGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 0.85rem; color:var(--text-muted); font-size:0.85rem;">Belum ada foto yang dipilih. Silakan unggah minimal 1 foto di bawah.</div>`;
+      return;
+    }
+
+    editCurrentImages.forEach((imgUrl, idx) => {
+      const card = document.createElement('div');
+      card.className = 'multi-thumb-card';
+      card.innerHTML = `
+        <img src="${escapeHtml(imgUrl)}" alt="Foto ${idx + 1}">
+        <span class="thumb-badge">#${idx + 1}</span>
+        <button type="button" class="btn-thumb-remove" title="Hapus Foto ini"><i class="fa-solid fa-xmark"></i></button>
+      `;
+
+      card.querySelector('.btn-thumb-remove').addEventListener('click', (e) => {
+        e.stopPropagation();
+        editCurrentImages.splice(idx, 1);
+        renderEditPhotoGrid();
+      });
+
+      editPhotoGrid.appendChild(card);
+    });
+  }
 
   // Edit dropzone click → trigger file input
-  if (editUploadDropzone) {
-    editUploadDropzone.addEventListener('click', (e) => {
-      if (e.target.closest('#btn-edit-remove-file')) return;
+  if (editUploadDropzone && editFileInput) {
+    editUploadDropzone.addEventListener('click', () => {
       editFileInput.click();
     });
   }
 
-  // Edit file input change → compress & preview
+  // Edit file input change → compress & add to editCurrentImages
   if (editFileInput) {
     editFileInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+      const files = Array.from(e.target.files || []).filter(f => f.type.startsWith('image/'));
+      if (files.length === 0) return;
 
-      try {
-        const dataUrl = await compressAndReadImage(file);
-        editSelectedDataUrl = dataUrl;
-        if (editFilePreviewImg) editFilePreviewImg.src = dataUrl;
-        if (editDropzoneContent) editDropzoneContent.style.display = 'none';
-        if (editFilePreviewWrap) editFilePreviewWrap.style.display = 'block';
-      } catch (err) {
-        showToast('⚠️ Gagal membaca foto. Silakan coba foto lain.');
+      for (const file of files) {
+        try {
+          const dataUrl = await compressAndReadImage(file);
+          editCurrentImages.push(dataUrl);
+        } catch (err) {
+          console.warn('Error reading edit photo:', err);
+        }
       }
+      renderEditPhotoGrid();
+      editFileInput.value = '';
     });
   }
 
@@ -855,29 +1470,16 @@
 
     editUploadDropzone.addEventListener('drop', async (e) => {
       const dt = e.dataTransfer;
-      const file = dt.files[0];
-      if (file && file.type.startsWith('image/')) {
+      const files = Array.from(dt.files || []).filter(f => f.type.startsWith('image/'));
+      for (const file of files) {
         try {
           const dataUrl = await compressAndReadImage(file);
-          editSelectedDataUrl = dataUrl;
-          if (editFilePreviewImg) editFilePreviewImg.src = dataUrl;
-          if (editDropzoneContent) editDropzoneContent.style.display = 'none';
-          if (editFilePreviewWrap) editFilePreviewWrap.style.display = 'block';
+          editCurrentImages.push(dataUrl);
         } catch (err) {
-          showToast('⚠️ Gagal membaca foto. Silakan coba foto lain.');
+          console.warn('Error reading edit dropped photo:', err);
         }
       }
-    });
-  }
-
-  // Edit remove file button
-  if (btnEditRemoveFile) {
-    btnEditRemoveFile.addEventListener('click', (e) => {
-      e.stopPropagation();
-      editSelectedDataUrl = '';
-      if (editFileInput) editFileInput.value = '';
-      if (editFilePreviewWrap) editFilePreviewWrap.style.display = 'none';
-      if (editDropzoneContent) editDropzoneContent.style.display = 'block';
+      renderEditPhotoGrid();
     });
   }
 
@@ -891,15 +1493,12 @@
     document.getElementById('edit-memory-category').value = memory.category || 'spesial';
     document.getElementById('edit-memory-caption').value = memory.caption || '';
 
-    // Show current photo preview
-    const currentPhoto = document.getElementById('edit-current-photo');
-    if (currentPhoto) currentPhoto.src = memory.imgUrl || '';
+    // Load existing photos
+    editCurrentImages = [...getMemoryImages(memory)];
+    renderEditPhotoGrid();
 
-    // Reset upload state
-    editSelectedDataUrl = '';
+    // Reset URL input and file input
     if (editFileInput) editFileInput.value = '';
-    if (editFilePreviewWrap) editFilePreviewWrap.style.display = 'none';
-    if (editDropzoneContent) editDropzoneContent.style.display = 'block';
     const editImgUrl = document.getElementById('edit-memory-img-url');
     if (editImgUrl) editImgUrl.value = '';
 
@@ -934,12 +1533,20 @@
       memory.category = document.getElementById('edit-memory-category').value;
       memory.caption = document.getElementById('edit-memory-caption').value.trim();
 
-      // Update photo if a new one was selected
+      // Check URL input for additional links
       const editImgUrlInput = document.getElementById('edit-memory-img-url');
-      const newImgUrl = editSelectedDataUrl || (editImgUrlInput ? editImgUrlInput.value.trim() : '');
-      if (newImgUrl) {
-        memory.imgUrl = newImgUrl;
+      if (editImgUrlInput && editImgUrlInput.value.trim()) {
+        const rawUrls = editImgUrlInput.value.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+        editCurrentImages.push(...rawUrls);
       }
+
+      if (editCurrentImages.length === 0) {
+        showToast('⚠️ Momen harus memiliki minimal 1 foto.');
+        return;
+      }
+
+      memory.images = editCurrentImages;
+      memory.imgUrl = editCurrentImages[0];
 
       memoriesList.sort((a, b) => new Date(b.date) - new Date(a.date));
       safeSetLocalStorage('love_journey_memories', memoriesList);
@@ -949,7 +1556,7 @@
 
       // Update lightbox if it's still open
       if (lightboxModal && lightboxModal.classList.contains('active')) {
-        updateLightboxContent(memory);
+        updateLightboxContent(memory, 0);
       }
 
       closeEditModal();
@@ -1092,10 +1699,9 @@
     if (btnAddMemory) {
       btnAddMemory.addEventListener('click', () => {
         formAddMemory.reset();
-        selectedUploadedDataUrl = '';
+        addSelectedImages = [];
         if (memoryFileInput) memoryFileInput.value = '';
-        if (filePreviewWrap) filePreviewWrap.style.display = 'none';
-        if (dropzoneContent) dropzoneContent.style.display = 'block';
+        renderAddPhotoGrid();
         openModal(modalAddMemory);
       });
     }
@@ -1110,10 +1716,11 @@
       formAddMemory.addEventListener('submit', async (e) => {
         e.preventDefault();
         const inputUrl = document.getElementById('memory-img-url').value.trim();
-        const finalImgUrl = selectedUploadedDataUrl || inputUrl;
+        const urlList = inputUrl ? inputUrl.split(/[\n,]+/).map(u => u.trim()).filter(Boolean) : [];
+        const allImages = [...addSelectedImages, ...urlList];
 
-        if (!finalImgUrl) {
-          showToast('⚠️ Silakan unggah foto dari HP/Laptop atau masukkan URL gambar.');
+        if (allImages.length === 0) {
+          showToast('⚠️ Silakan pilih minimal 1 foto dari HP/Laptop atau masukkan URL gambar.');
           return;
         }
 
@@ -1122,7 +1729,8 @@
           title: document.getElementById('memory-title').value.trim(),
           date: document.getElementById('memory-date').value,
           category: document.getElementById('memory-category').value,
-          imgUrl: finalImgUrl,
+          images: allImages,
+          imgUrl: allImages[0],
           caption: document.getElementById('memory-caption').value.trim(),
           isFeatured: true
         };
@@ -1132,7 +1740,7 @@
         renderPolaroidGrid();
         renderTimelineSection();
         closeModal(modalAddMemory);
-        showToast('💖 Kenangan Baru Berhasil Ditambahkan!');
+        showToast(allImages.length > 1 ? `💖 Kenangan Baru (${allImages.length} Foto Carousel) Berhasil Ditambahkan!` : '💖 Kenangan Baru Berhasil Ditambahkan!');
 
         await syncMemoryToCloud(newMemory);
       });
@@ -1140,17 +1748,54 @@
   }
 
   /* --------------------------------------------------------------------------
-     8.1. FILE UPLOAD & CANVAS IMAGE COMPRESSION
+     8.1. FILE UPLOAD & CANVAS IMAGE COMPRESSION (MULTI-PHOTO SUPPORT)
      -------------------------------------------------------------------------- */
-  let selectedUploadedDataUrl = '';
+  let addSelectedImages = [];
   const uploadDropzone = document.getElementById('upload-dropzone');
   const memoryFileInput = document.getElementById('memory-file-input');
   const dropzoneContent = document.getElementById('dropzone-content');
   const filePreviewWrap = document.getElementById('file-preview-wrap');
-  const filePreviewImg = document.getElementById('file-preview-img');
-  const btnRemoveFile = document.getElementById('btn-remove-file');
+  const multiPhotoGrid = document.getElementById('multi-photo-grid');
+  const multiFileCount = document.getElementById('multi-file-count');
+  const btnAddMoreFiles = document.getElementById('btn-add-more-files');
 
-  function compressAndReadImage(file, maxWidth = 900, quality = 0.72) {
+  function renderAddPhotoGrid() {
+    if (!multiPhotoGrid) return;
+    multiPhotoGrid.innerHTML = '';
+
+    if (addSelectedImages.length === 0) {
+      if (filePreviewWrap) filePreviewWrap.style.display = 'none';
+      if (dropzoneContent) dropzoneContent.style.display = 'block';
+      return;
+    }
+
+    if (dropzoneContent) dropzoneContent.style.display = 'none';
+    if (filePreviewWrap) filePreviewWrap.style.display = 'block';
+
+    if (multiFileCount) {
+      multiFileCount.innerHTML = `<i class="fa-solid fa-images"></i> ${addSelectedImages.length} Foto Terpilih ${addSelectedImages.length > 1 ? '(Mode Carousel Aktif)' : ''}`;
+    }
+
+    addSelectedImages.forEach((imgUrl, idx) => {
+      const card = document.createElement('div');
+      card.className = 'multi-thumb-card';
+      card.innerHTML = `
+        <img src="${escapeHtml(imgUrl)}" alt="Foto ${idx + 1}">
+        <span class="thumb-badge">#${idx + 1}</span>
+        <button type="button" class="btn-thumb-remove" title="Hapus Foto ini"><i class="fa-solid fa-xmark"></i></button>
+      `;
+
+      card.querySelector('.btn-thumb-remove').addEventListener('click', (e) => {
+        e.stopPropagation();
+        addSelectedImages.splice(idx, 1);
+        renderAddPhotoGrid();
+      });
+
+      multiPhotoGrid.appendChild(card);
+    });
+  }
+
+  function compressAndReadImage(file, maxWidth = 850, quality = 0.72) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -1182,41 +1827,42 @@
     });
   }
 
+  async function handleAddSelectedFiles(files) {
+    const fileList = Array.from(files || []).filter(f => f.type.startsWith('image/'));
+    if (fileList.length === 0) return;
+
+    for (const file of fileList) {
+      try {
+        const dataUrl = await compressAndReadImage(file);
+        addSelectedImages.push(dataUrl);
+      } catch (err) {
+        console.warn('Error reading upload photo:', err);
+      }
+    }
+    renderAddPhotoGrid();
+    if (memoryFileInput) memoryFileInput.value = '';
+  }
+
   function setupFileUploadEvents() {
     if (!uploadDropzone || !memoryFileInput) return;
 
     uploadDropzone.addEventListener('click', (e) => {
-      if (e.target.id === 'btn-remove-file' || e.target.closest('#btn-remove-file')) {
+      if (e.target.closest('#btn-add-more-files') || e.target.closest('.btn-thumb-remove')) {
         return;
       }
       memoryFileInput.click();
     });
 
-    memoryFileInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        try {
-          const dataUrl = await compressAndReadImage(file);
-          selectedUploadedDataUrl = dataUrl;
-          if (filePreviewImg) filePreviewImg.src = dataUrl;
-          if (dropzoneContent) dropzoneContent.style.display = 'none';
-          if (filePreviewWrap) filePreviewWrap.style.display = 'block';
-        } catch (err) {
-          showToast('⚠️ Gagal membaca foto. Silakan coba foto lain.');
-        }
-      }
-    });
-
-    if (btnRemoveFile) {
-      btnRemoveFile.addEventListener('click', (e) => {
+    if (btnAddMoreFiles) {
+      btnAddMoreFiles.addEventListener('click', (e) => {
         e.stopPropagation();
-        selectedUploadedDataUrl = '';
-        memoryFileInput.value = '';
-        if (filePreviewImg) filePreviewImg.src = '';
-        if (filePreviewWrap) filePreviewWrap.style.display = 'none';
-        if (dropzoneContent) dropzoneContent.style.display = 'block';
+        memoryFileInput.click();
       });
     }
+
+    memoryFileInput.addEventListener('change', async (e) => {
+      await handleAddSelectedFiles(e.target.files);
+    });
 
     ['dragenter', 'dragover'].forEach(eventName => {
       uploadDropzone.addEventListener(eventName, (e) => {
@@ -1234,19 +1880,247 @@
 
     uploadDropzone.addEventListener('drop', async (e) => {
       const dt = e.dataTransfer;
-      const file = dt.files[0];
-      if (file && file.type.startsWith('image/')) {
-        try {
-          const dataUrl = await compressAndReadImage(file);
-          selectedUploadedDataUrl = dataUrl;
-          if (filePreviewImg) filePreviewImg.src = dataUrl;
-          if (dropzoneContent) dropzoneContent.style.display = 'none';
-          if (filePreviewWrap) filePreviewWrap.style.display = 'block';
-        } catch (err) {
-          showToast('⚠️ Gagal membaca foto. Silakan coba foto lain.');
+      await handleAddSelectedFiles(dt.files);
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     8.5. HERO 3D SCRAPBOOK ALBUM INTERACTION (PHYSICAL PAGE TURNING)
+     -------------------------------------------------------------------------- */
+  function playPaperRustle() {
+    if (typeof window === 'undefined') return;
+    try {
+      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtxClass) return;
+      if (!audioCtx) {
+        audioCtx = new AudioCtxClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.025, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.11);
+    } catch (e) {
+      // Ignore audio synthesis errors on autoplay-restricted browsers
+    }
+  }
+
+  function setupHeroScrapbook() {
+    const scrapbookBook = document.getElementById('scrapbook-book');
+    const scrapbookPages = Array.from(document.querySelectorAll('.scrapbook-page'));
+    const bookPrevBtn = document.getElementById('book-prev-btn');
+    const bookNextBtn = document.getElementById('book-next-btn');
+    const bookPageIndicator = document.getElementById('book-page-indicator');
+    const bookDots = Array.from(document.querySelectorAll('.book-dot'));
+
+    if (!scrapbookBook || scrapbookPages.length === 0) return;
+
+    let currentPage = 0;
+    const totalPages = scrapbookPages.length;
+    let isFlipping = false;
+
+    function updateNavUI() {
+      // Update Teks Indikator Halaman
+      if (bookPageIndicator) {
+        bookPageIndicator.textContent = `Halaman ${currentPage + 1} / ${totalPages}`;
+      }
+
+      // Update Titik Navigasi (Dots)
+      bookDots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentPage);
+      });
+
+      // Update Tombol Navigasi
+      if (bookPrevBtn) {
+        bookPrevBtn.style.opacity = currentPage === 0 ? '0.4' : '1';
+        bookPrevBtn.style.pointerEvents = currentPage === 0 ? 'none' : 'auto';
+      }
+      if (bookNextBtn) {
+        if (currentPage === totalPages - 1) {
+          bookNextBtn.innerHTML = '<i class="fa-solid fa-rotate-left"></i>';
+          bookNextBtn.title = 'Ulang dari Halaman Pertama';
+          bookNextBtn.setAttribute('aria-label', 'Ulang dari Halaman Pertama');
+        } else {
+          bookNextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+          bookNextBtn.title = 'Halaman Selanjutnya';
+          bookNextBtn.setAttribute('aria-label', 'Halaman Selanjutnya');
         }
       }
+    }
+
+    function goToPage(targetIndex) {
+      if (isFlipping || targetIndex === currentPage) return;
+      if (targetIndex < 0 || targetIndex >= totalPages) return;
+
+      const fromIndex = currentPage;
+      const toIndex = targetIndex;
+      isFlipping = true;
+      currentPage = toIndex;
+
+      updateNavUI();
+      playPaperRustle();
+
+      if (toIndex > fromIndex) {
+        // MAJU KE DEPAN: Halaman fromIndex berputar maju (0deg -> -180deg) di LAPISAN TERATAS (z-index 35)
+        const flippingPage = scrapbookPages[fromIndex];
+        const targetPage = scrapbookPages[toIndex];
+
+        // Pastikan targetPage berada tepat di bawahnya dalam posisi diam siap tampil
+        targetPage.classList.remove('turned', 'flipping-forward', 'flipping-backward');
+        targetPage.classList.add('active');
+        targetPage.style.zIndex = 10;
+
+        // Atur halaman perantara jika loncat lebih dari 1 halaman
+        for (let i = fromIndex + 1; i < toIndex; i++) {
+          scrapbookPages[i].classList.add('turned');
+          scrapbookPages[i].classList.remove('active', 'flipping-forward', 'flipping-backward');
+          scrapbookPages[i].style.zIndex = i + 1;
+        }
+
+        // Jalankan animasi buka buku pada flippingPage (z-index 35 paling atas!)
+        flippingPage.classList.remove('active');
+        flippingPage.classList.add('flipping-forward');
+
+        setTimeout(() => {
+          flippingPage.classList.remove('flipping-forward');
+          flippingPage.classList.add('turned');
+          flippingPage.style.zIndex = fromIndex + 1;
+
+          targetPage.style.zIndex = totalPages + 5;
+          isFlipping = false;
+        }, 850);
+
+      } else {
+        // MUNDUR KE BELAKANG: Halaman toIndex berputar balik (-180deg -> 0deg) di LAPISAN TERATAS (z-index 35)
+        const targetPage = scrapbookPages[toIndex];
+        const currentPageEl = scrapbookPages[fromIndex];
+
+        currentPageEl.classList.remove('active', 'flipping-forward', 'flipping-backward');
+        currentPageEl.style.zIndex = 10;
+
+        // Jika loncat mundur lebih dari 1 halaman (misal reset dari akhir ke cover)
+        if (fromIndex - toIndex > 1) {
+          for (let i = toIndex + 1; i < fromIndex; i++) {
+            scrapbookPages[i].classList.remove('turned', 'flipping-forward', 'flipping-backward');
+            scrapbookPages[i].classList.remove('active');
+            scrapbookPages[i].style.zIndex = totalPages - i;
+          }
+        }
+
+        targetPage.classList.remove('turned', 'active');
+        targetPage.classList.add('flipping-backward');
+
+        setTimeout(() => {
+          targetPage.classList.remove('flipping-backward');
+          targetPage.classList.add('active');
+          targetPage.style.zIndex = totalPages + 5;
+
+          // Halaman setelah toIndex berada di bawahnya
+          for (let i = toIndex + 1; i < totalPages; i++) {
+            scrapbookPages[i].classList.remove('turned', 'flipping-forward', 'flipping-backward');
+            scrapbookPages[i].classList.remove('active');
+            scrapbookPages[i].style.zIndex = totalPages - i;
+          }
+          isFlipping = false;
+        }, 850);
+      }
+    }
+
+    function flipNext() {
+      if (isFlipping) return;
+      if (currentPage < totalPages - 1) {
+        goToPage(currentPage + 1);
+      } else {
+        // Dari halaman terakhir kembali ke halaman pertama (tutup buku ke cover)
+        goToPage(0);
+      }
+    }
+
+    function flipPrev() {
+      if (isFlipping) return;
+      if (currentPage > 0) {
+        goToPage(currentPage - 1);
+      }
+    }
+
+    // Tombol Next & Prev
+    if (bookNextBtn) {
+      bookNextBtn.addEventListener('click', flipNext);
+    }
+
+    if (bookPrevBtn) {
+      bookPrevBtn.addEventListener('click', flipPrev);
+    }
+
+    // Klik Dot Navigasi
+    bookDots.forEach((dot, idx) => {
+      dot.addEventListener('click', () => goToPage(idx));
     });
+
+    // Klik langsung pada Halaman Scrapbook untuk membalik
+    scrapbookPages.forEach((page, idx) => {
+      page.addEventListener('click', () => {
+        if (idx === currentPage) {
+          flipNext();
+        } else if (idx < currentPage) {
+          goToPage(idx);
+        }
+      });
+    });
+
+    // Gestur Swipe Layar Sentuh di HP / Tablet
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    scrapbookBook.addEventListener('touchstart', (e) => {
+      if (e.changedTouches && e.changedTouches[0]) {
+        touchStartX = e.changedTouches[0].clientX;
+        touchStartY = e.changedTouches[0].clientY;
+      }
+    }, { passive: true });
+
+    scrapbookBook.addEventListener('touchend', (e) => {
+      if (!e.changedTouches || !e.changedTouches[0]) return;
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX < 0) {
+          flipNext();
+        } else {
+          flipPrev();
+        }
+      }
+    }, { passive: true });
+
+    // Render Awal (Halaman 1)
+    function initBookState() {
+      currentPage = 0;
+      scrapbookPages.forEach((page, idx) => {
+        page.classList.remove('turned', 'flipping-forward', 'flipping-backward');
+        if (idx === 0) {
+          page.classList.add('active');
+          page.style.zIndex = totalPages + 5;
+        } else {
+          page.classList.remove('active');
+          page.style.zIndex = totalPages - idx;
+        }
+      });
+      updateNavUI();
+    }
+
+    initBookState();
   }
 
   /* --------------------------------------------------------------------------
