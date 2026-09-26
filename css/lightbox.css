@@ -330,15 +330,15 @@
   box-shadow: 0 6px 18px rgba(255, 71, 126, 0.5);
 }
 
-/* Instagram Sub-nav inside image */
+/* Instagram Sub-nav inside image - Tersembunyi secara default agar tidak menutupi foto */
 .glass-card-modal .lightbox-sub-nav {
   position: absolute;
   top: 45%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) scale(0.9);
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(14, 9, 18, 0.6);
+  background: rgba(14, 9, 18, 0.65);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: #ffffff;
@@ -350,13 +350,29 @@
   cursor: pointer;
   z-index: 25;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+  pointer-events: auto;
+  transition: opacity 0.35s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
 }
 
-.glass-card-modal .lightbox-sub-nav:hover {
-  background: var(--pink-accent);
-  color: #ffffff;
-  transform: translateY(-50%) scale(1.15);
+/* Muncul sementara saat diklik / berpindah foto selama ~0.5 detik */
+.glass-card-modal .lightbox-sub-nav.is-visible {
+  opacity: 0.88;
+  transform: translateY(-50%) scale(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .glass-card-modal .lightbox-sub-nav:hover {
+    background: var(--pink-accent);
+    color: #ffffff;
+    transform: translateY(-50%) scale(1.12);
+    opacity: 1;
+  }
+}
+
+.glass-card-modal .lightbox-sub-nav:active {
+  transform: translateY(-50%) scale(0.92);
+  opacity: 1;
 }
 
 .glass-card-modal .lightbox-sub-nav.lightbox-sub-prev {

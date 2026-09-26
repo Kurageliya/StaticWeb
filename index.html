@@ -32,7 +32,7 @@
   <canvas id="ambient-canvas"></canvas>
 
   <!-- HTML PARTIALS -->
-    <!-- Top Sticky Romantic Header/Navbar -->
+  <!-- Top Sticky Romantic Header/Navbar -->
   <nav class="navbar">
     <div class="nav-container">
       <a href="#hero" class="nav-brand">
@@ -62,7 +62,7 @@
 
   <main>
     <!-- HERO SECTION -->
-      <section id="hero" class="hero-section">
+    <section id="hero" class="hero-section">
       <div class="hero-bg-shapes">
         <div class="shape shape-1"></div>
         <div class="shape shape-2"></div>
@@ -256,7 +256,7 @@
     </section>
 
     <!-- REAL-TIME TIMER COUNTER SECTION -->
-      <section id="counter" class="counter-section">
+    <section id="counter" class="counter-section">
       <div class="container">
         <div class="section-header text-center reveal">
           <span class="section-tag"><i class="fa-solid fa-hourglass-half"></i> Perjalanan Waktu</span>
@@ -308,7 +308,7 @@
     </section>
 
     <!-- GALERI KENANGAN (POLAROID SCRAPBOOK GRID) -->
-      <section id="gallery" class="gallery-section">
+    <section id="gallery" class="gallery-section">
       <div class="container">
         <div class="section-header text-center reveal">
           <span class="section-tag"><i class="fa-solid fa-camera-retro"></i> Album Foto</span>
@@ -328,7 +328,8 @@
           <div class="gallery-action-group">
             <!-- View Mode Switcher: Card Slider vs Full Grid -->
             <div class="gallery-view-switcher" id="gallery-view-switcher">
-              <button type="button" class="view-switch-btn active" id="btn-view-slider" title="Mode Card Slider Horizontal">
+              <button type="button" class="view-switch-btn active" id="btn-view-slider"
+                title="Mode Card Slider Horizontal">
                 <i class="fa-solid fa-sliders"></i> Slider
               </button>
               <button type="button" class="view-switch-btn" id="btn-view-grid" title="Mode Grid Lengkap">
@@ -345,7 +346,8 @@
         <!-- Polaroid Card Slider Wrapper -->
         <div class="gallery-slider-wrapper mode-slider" id="gallery-slider-wrapper">
           <!-- Floating Nav Arrows for Gallery Slider -->
-          <button type="button" class="gallery-slider-nav nav-prev" id="gallery-slider-prev" aria-label="Kenangan Sebelumnya" title="Geser ke Kiri">
+          <button type="button" class="gallery-slider-nav nav-prev" id="gallery-slider-prev"
+            aria-label="Kenangan Sebelumnya" title="Geser ke Kiri">
             <i class="fa-solid fa-chevron-left"></i>
           </button>
 
@@ -354,13 +356,14 @@
             <!-- Grid/Slider items inserted dynamically by app.js -->
           </div>
 
-          <button type="button" class="gallery-slider-nav nav-next" id="gallery-slider-next" aria-label="Kenangan Selanjutnya" title="Geser ke Kanan">
+          <button type="button" class="gallery-slider-nav nav-next" id="gallery-slider-next"
+            aria-label="Kenangan Selanjutnya" title="Geser ke Kanan">
             <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
 
         <!-- Gallery Slider Progress & Counter Footer -->
-        <div class="gallery-slider-footer reveal" id="gallery-slider-footer">
+        <!-- <div class="gallery-slider-footer reveal" id="gallery-slider-footer">
           <div class="gallery-progress-bar">
             <div class="gallery-progress-fill" id="gallery-progress-fill"></div>
           </div>
@@ -368,11 +371,11 @@
             <i class="fa-solid fa-images"></i> Menampilkan <span id="gallery-current-range">1 - 3</span> dari <span id="gallery-total-count">0</span> kenangan
           </div>
         </div>
-      </div>
+      </div> -->
     </section>
 
     <!-- TIMELINE CERITA KRONOLOGIS -->
-      <section id="timeline" class="timeline-section">
+    <section id="timeline" class="timeline-section">
       <div class="container">
         <div class="section-header text-center reveal">
           <span class="section-tag"><i class="fa-solid fa-heart-pulse"></i> Jejak Langkah</span>
@@ -390,7 +393,7 @@
     </section>
 
     <!-- HALAMAN SURAT CINTA INTERAKTIF (FLIP CARD: 2 SURAT) -->
-      <section id="letter" class="letter-section">
+    <section id="letter" class="letter-section">
       <div class="container">
         <div class="section-header text-center reveal">
           <span class="section-tag"><i class="fa-solid fa-paper-plane"></i> Pesan Spesial</span>
@@ -531,7 +534,7 @@
   </main>
 
   <!-- FOOTER -->
-    <footer class="footer">
+  <footer class="footer">
     <div class="container text-center">
       <div class="footer-heart">💖</div>
       <p class="footer-title"><span id="footer-names">Rijal & Cilpaaa</span></p>
@@ -540,11 +543,12 @@
     </div>
   </footer>
 
-    <!-- LIGHTBOX MODAL (ZOOM + FADE TRANSITION FOR NEXT/PREV) -->
+  <!-- LIGHTBOX MODAL (ZOOM + FADE TRANSITION FOR NEXT/PREV) -->
   <div id="lightbox-modal" class="lightbox-modal" aria-hidden="true">
     <div class="lightbox-backdrop"></div>
     <div class="lightbox-content">
-      <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Foto Sebelumnya" title="Kenangan Sebelumnya">
+      <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Foto Sebelumnya"
+        title="Kenangan Sebelumnya">
         <i class="fa-solid fa-chevron-left"></i>
       </button>
 
@@ -560,13 +564,16 @@
             </div>
 
             <!-- Toast-like Brief Info Hint (Fades out automatically) -->
-            <span class="lightbox-zoom-hint" id="lightbox-peek-hint"><i class="fa-solid fa-hand-pointer"></i> Klik foto sembunyikan/tampilkan info</span>
+            <span class="lightbox-zoom-hint" id="lightbox-peek-hint"><i class="fa-solid fa-hand-pointer"></i> Klik foto
+              sembunyikan/tampilkan info</span>
 
             <!-- Multi-Photo Sub Nav Controls (Instagram-like) -->
-            <button type="button" class="lightbox-sub-nav lightbox-sub-prev" id="lightbox-sub-prev" aria-label="Foto Sebelumnya" title="Foto Sebelumnya">
+            <button type="button" class="lightbox-sub-nav lightbox-sub-prev" id="lightbox-sub-prev"
+              aria-label="Foto Sebelumnya" title="Foto Sebelumnya">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <button type="button" class="lightbox-sub-nav lightbox-sub-next" id="lightbox-sub-next" aria-label="Foto Selanjutnya" title="Foto Selanjutnya">
+            <button type="button" class="lightbox-sub-nav lightbox-sub-next" id="lightbox-sub-next"
+              aria-label="Foto Selanjutnya" title="Foto Selanjutnya">
               <i class="fa-solid fa-chevron-right"></i>
             </button>
           </div>
@@ -605,13 +612,14 @@
         </div>
       </div>
 
-      <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Foto Selanjutnya" title="Kenangan Selanjutnya">
+      <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Foto Selanjutnya"
+        title="Kenangan Selanjutnya">
         <i class="fa-solid fa-chevron-right"></i>
       </button>
     </div>
   </div>
 
-    <!-- MODAL: PILIH TEMA WARNA BACKGROUND -->
+  <!-- MODAL: PILIH TEMA WARNA BACKGROUND -->
   <div id="modal-theme-picker" class="modal" aria-hidden="true">
     <div class="modal-backdrop"></div>
     <div class="modal-dialog">
@@ -774,11 +782,13 @@
                   style="font-size: 2.2rem; color: var(--pink-accent); margin-bottom: 0.5rem; display:block;"></i>
                 <p style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.2rem;">Klik
                   untuk Pilih Foto dari HP / Laptop</p>
-                <small style="color: var(--text-muted); font-size: 0.8rem;">Bisa pilih 1 atau banyak foto sekaligus (JPG, PNG, WEBP, HEIC)</small>
+                <small style="color: var(--text-muted); font-size: 0.8rem;">Bisa pilih 1 atau banyak foto sekaligus
+                  (JPG, PNG, WEBP, HEIC)</small>
               </div>
               <div id="file-preview-wrap" style="display:none;">
                 <div class="multi-preview-header">
-                  <span id="multi-file-count" class="multi-count-badge"><i class="fa-solid fa-images"></i> 0 Foto Terpilih</span>
+                  <span id="multi-file-count" class="multi-count-badge"><i class="fa-solid fa-images"></i> 0 Foto
+                    Terpilih</span>
                   <button type="button" id="btn-add-more-files" class="btn btn-sm btn-pink">
                     <i class="fa-solid fa-plus"></i> Tambah Foto Lagi
                   </button>
@@ -839,7 +849,8 @@
               placeholder="Tuliskan cerita momen ini..."></textarea>
           </div>
           <div class="form-group">
-            <label><i class="fa-solid fa-images"></i> Kelola Foto Momen Ini (Bisa Lebih dari 1 Foto Ala Instagram)</label>
+            <label><i class="fa-solid fa-images"></i> Kelola Foto Momen Ini (Bisa Lebih dari 1 Foto Ala
+              Instagram)</label>
             <div id="edit-photos-manager" style="margin-bottom: 0.75rem;">
               <div class="edit-photo-grid" id="edit-photo-grid"></div>
             </div>
@@ -852,7 +863,8 @@
                   style="font-size: 1.6rem; color: var(--pink-accent); margin-bottom: 0.3rem; display:block;"></i>
                 <p style="font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.15rem;">Klik
                   untuk Tambah Foto Baru</p>
-                <small style="color: var(--text-muted); font-size: 0.75rem;">Bisa pilih banyak foto sekaligus (JPG, PNG, WEBP, HEIC)</small>
+                <small style="color: var(--text-muted); font-size: 0.75rem;">Bisa pilih banyak foto sekaligus (JPG, PNG,
+                  WEBP, HEIC)</small>
               </div>
             </div>
           </div>

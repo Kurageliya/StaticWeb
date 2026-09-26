@@ -9,7 +9,27 @@ import { getMemoryImages } from './gallery.js';
 let currentLightboxIndex = 0;
 let currentLightboxPhotoIndex = 0;
 let peekHintTimer = null;
+let subNavTimer = null;
 let currentGetFilteredMemories = () => [];
+
+/**
+ * Memunculkan tombol panah sub-nav selama durasi tertentu (default 0.5s),
+ * lalu otomatis memudarkannya kembali agar tidak menutupi foto.
+ */
+export function flashSubNav(duration = 500) {
+  const subPrev = document.getElementById('lightbox-sub-prev');
+  const subNext = document.getElementById('lightbox-sub-next');
+  if (!subPrev && !subNext) return;
+
+  if (subPrev) subPrev.classList.add('is-visible');
+  if (subNext) subNext.classList.add('is-visible');
+
+  clearTimeout(subNavTimer);
+  subNavTimer = setTimeout(() => {
+    if (subPrev) subPrev.classList.remove('is-visible');
+    if (subNext) subNext.classList.remove('is-visible');
+  }, duration);
+}
 
 export function setupLightboxEvents({
   getFilteredMemories = () => [],
@@ -57,12 +77,14 @@ export function setupLightboxEvents({
     lightboxSubPrev.addEventListener('click', (e) => {
       e.stopPropagation();
       switchLightboxPhoto(currentLightboxPhotoIndex - 1);
+      flashSubNav(500);
     });
   }
   if (lightboxSubNext) {
     lightboxSubNext.addEventListener('click', (e) => {
       e.stopPropagation();
       switchLightboxPhoto(currentLightboxPhotoIndex + 1);
+      flashSubNav(500);
     });
   }
 
@@ -99,8 +121,20 @@ export function setupLightboxEvents({
       setTimeout(() => { isSwiping = false; }, 50);
     });
 
+    // Munculkan panah saat mouse bergerak, otomatis hilang jika diam/keluar
+    lightboxImgWrap.addEventListener('mousemove', () => {
+      flashSubNav(800);
+    });
+
+    lightboxImgWrap.addEventListener('mouseleave', () => {
+      clearTimeout(subNavTimer);
+      if (lightboxSubPrev) lightboxSubPrev.classList.remove('is-visible');
+      if (lightboxSubNext) lightboxSubNext.classList.remove('is-visible');
+    });
+
     lightboxImgWrap.addEventListener('click', (e) => {
       if (e.target.closest('.lightbox-sub-nav') || e.target.closest('.lightbox-sub-dots') || isSwiping) return;
+      flashSubNav(500);
       if (lightboxPolaroidCard) {
         lightboxPolaroidCard.classList.toggle('info-minimized');
       }
@@ -159,6 +193,9 @@ export function switchLightboxPhoto(newIndex) {
       dot.classList.toggle('active', dIdx === currentLightboxPhotoIndex);
     });
   }
+
+  // Tampilkan tombol panah selama 0.5 detik saat berpindah foto
+  flashSubNav(500);
 }
 
 export function openLightbox(index, photoIndex = 0, callbacks = {}) {
@@ -200,6 +237,12 @@ export function openLightbox(index, photoIndex = 0, callbacks = {}) {
 
 export function closeLightbox() {
   clearTimeout(peekHintTimer);
+  clearTimeout(subNavTimer);
+  const subPrev = document.getElementById('lightbox-sub-prev');
+  const subNext = document.getElementById('lightbox-sub-next');
+  if (subPrev) subPrev.classList.remove('is-visible');
+  if (subNext) subNext.classList.remove('is-visible');
+
   const lightboxPolaroidCard = document.querySelector('.lightbox-polaroid');
   if (lightboxPolaroidCard) {
     lightboxPolaroidCard.classList.remove('info-minimized');
@@ -293,6 +336,7 @@ export function updateLightboxContent(memory, photoIndex = 0, callbacks = {}) {
   if (images.length > 1) {
     if (subPrev) subPrev.style.display = 'flex';
     if (subNext) subNext.style.display = 'flex';
+    flashSubNav(500);
     if (subDots) {
       subDots.style.display = 'flex';
       subDots.innerHTML = images.map((_, i) => `
