@@ -142,11 +142,10 @@
 .gallery-slider-wrapper.mode-slider .polaroid-grid {
   display: flex;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   scroll-behavior: smooth;
   gap: 1.75rem;
   padding: 2.25rem 1.25rem 3.5rem 1.25rem;
-  padding-right: calc(100% - 340px);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   transform-style: preserve-3d;
@@ -183,7 +182,6 @@
 @media (max-width: 600px) {
   .gallery-slider-wrapper.mode-slider .polaroid-grid {
     padding: 1.75rem 0.75rem 2.75rem;
-    padding-right: calc(100% - 290px);
     gap: 1.15rem;
   }
   .gallery-slider-wrapper.mode-slider .polaroid-item {
