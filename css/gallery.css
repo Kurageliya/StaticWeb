@@ -171,8 +171,12 @@
   transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.25, 1), box-shadow 0.35s ease, border-color 0.35s ease, opacity 0.25s ease;
 }
 
+.gallery-slider-wrapper.mode-slider .polaroid-item:hover {
+  border-color: rgba(232, 180, 184, 0.55);
+}
+
 .gallery-slider-wrapper.mode-slider .polaroid-item.is-center-card {
-  border-color: rgba(216, 131, 144, 0.65) !important;
+  border-color: rgba(216, 131, 144, 0.85) !important;
 }
 
 @media (max-width: 600px) {

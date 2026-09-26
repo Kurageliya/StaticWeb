@@ -5,7 +5,7 @@
  */
 import { escapeHtml } from '../utils/helpers.js';
 
-let activeHoverItem = null;
+let selectedGliderIndex = null;
 
 export function getMemoryImages(memory) {
   if (!memory) return [];
@@ -39,28 +39,9 @@ export function apply3DCurvedGlider() {
   const gap = isMobile ? 18 : 28;
   const pitch = itemWidth + gap;
 
-  // Deteksi kartu primer: kartu yang sedang di-hover > tepi kiri awal > tepi kanan akhir > kartu terdekat di tengah
-  let primaryIndex = -1;
-  if (activeHoverItem) {
-    items.forEach((item, idx) => {
-      if (item === activeHoverItem) primaryIndex = idx;
-    });
-  } else if (scrollLeft <= 25) {
-    primaryIndex = 0;
-  } else if (maxScroll > 0 && scrollLeft >= (maxScroll - 25)) {
-    primaryIndex = items.length - 1;
-  } else {
-    let minDiff = Infinity;
-    items.forEach((item, idx) => {
-      const itemRect = item.getBoundingClientRect();
-      const itemCenter = itemRect.left + itemRect.width / 2;
-      const diff = Math.abs(itemCenter - gridCenter);
-      if (diff < minDiff) {
-        minDiff = diff;
-        primaryIndex = idx;
-      }
-    });
-  }
+  // Kartu spotlight HANYA aktif jika diklik oleh pengguna.
+  // Jika belum ada yang diklik (default awal), primaryIndex = -1 sehingga semua kartu tampil seimbang tanpa efek hover yang meloncat.
+  const primaryIndex = (selectedGliderIndex !== null && selectedGliderIndex >= 0 && selectedGliderIndex < items.length) ? selectedGliderIndex : -1;
 
   items.forEach((item, index) => {
     const isPrimary = (index === primaryIndex);
@@ -342,6 +323,8 @@ export function renderPolaroidGrid({
     if (btnOpen) {
       btnOpen.addEventListener('click', (e) => {
         e.stopPropagation();
+        selectedGliderIndex = memoryIndex;
+        apply3DCurvedGlider();
         if (typeof onOpenLightbox === 'function') {
           onOpenLightbox(memoryIndex, currentPhotoIndex);
         }
@@ -350,6 +333,8 @@ export function renderPolaroidGrid({
 
     itemEl.querySelector('.img-box').addEventListener('click', (e) => {
       if (e.target.closest('.btn-card-action') || e.target.closest('.card-carousel-btn') || e.target.closest('.carousel-dots')) return;
+      selectedGliderIndex = memoryIndex;
+      apply3DCurvedGlider();
       if (typeof onOpenLightbox === 'function') {
         onOpenLightbox(memoryIndex, currentPhotoIndex);
       }
@@ -357,9 +342,8 @@ export function renderPolaroidGrid({
 
     itemEl.querySelector('.item-details').addEventListener('click', (e) => {
       if (e.target.closest('.btn-card-open')) return;
-      if (typeof onOpenLightbox === 'function') {
-        onOpenLightbox(memoryIndex, currentPhotoIndex);
-      }
+      selectedGliderIndex = (selectedGliderIndex === memoryIndex) ? null : memoryIndex;
+      apply3DCurvedGlider();
     });
 
     const btnEdit = itemEl.querySelector('.btn-card-edit');
@@ -465,24 +449,6 @@ export function setupGallerySliderEvents() {
         dragDistance = 0;
       }
     }, true);
-
-    polaroidGrid.addEventListener('mouseover', (e) => {
-      if (!gallerySliderWrapper || !gallerySliderWrapper.classList.contains('mode-slider')) return;
-      const item = e.target.closest('.polaroid-item');
-      if (item && item !== activeHoverItem) {
-        activeHoverItem = item;
-        apply3DCurvedGlider();
-      }
-    });
-
-    polaroidGrid.addEventListener('mouseout', (e) => {
-      if (!gallerySliderWrapper || !gallerySliderWrapper.classList.contains('mode-slider')) return;
-      const item = e.target.closest('.polaroid-item');
-      if (item && !item.contains(e.relatedTarget)) {
-        activeHoverItem = null;
-        apply3DCurvedGlider();
-      }
-    });
   }
 
   if (gallerySliderPrev && polaroidGrid) {
@@ -535,6 +501,7 @@ export function setupFilterEvents(onFilterChange) {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      selectedGliderIndex = null;
       const newFilter = btn.getAttribute('data-filter') || 'all';
       if (typeof onFilterChange === 'function') {
         onFilterChange(newFilter);
