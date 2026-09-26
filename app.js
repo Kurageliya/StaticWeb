@@ -17,7 +17,7 @@ import {
   setupCloudListeners
 } from './js/repositories/storageRepository.js';
 import { startLiveCounter } from './js/services/counterService.js';
-import { setupAudioSynth } from './js/services/audioService.js';
+import { setupAudioSynth, onMusicUrlChanged } from './js/services/audioService.js';
 import { initAmbientCanvas } from './js/services/canvasService.js';
 import { showToast } from './js/utils/toast.js';
 import { safeGetLocalStorage } from './js/utils/helpers.js';
@@ -158,11 +158,15 @@ async function handleAddMemory(newMemory) {
  * Handler Simpan Pengaturan Pasangan & Surat Cinta
  */
 async function handleSaveSettings(updatedSettings) {
+  const prevMusicUrl = coupleSettings.musicUrl;
   coupleSettings = { ...coupleSettings, ...updatedSettings };
   saveCoupleSettings(coupleSettings);
 
   updateCoupleDisplay(coupleSettings);
-  showToast('✨ Pengaturan Pasangan & Kedua Surat Cinta Berhasil Disimpan!');
+  if (updatedSettings.musicUrl !== undefined && updatedSettings.musicUrl !== prevMusicUrl) {
+    onMusicUrlChanged(updatedSettings.musicUrl);
+  }
+  showToast('✨ Pengaturan Pasangan & Musik Berhasil Disimpan!');
 
   await syncSettingsToCloud(coupleSettings);
 }
@@ -252,8 +256,12 @@ function initApp() {
       refreshGalleryAndTimeline();
     },
     onSettingsUpdate: (cloudSettings) => {
+      const prevMusicUrl = coupleSettings ? coupleSettings.musicUrl : '';
       coupleSettings = cloudSettings;
       updateCoupleDisplay(coupleSettings);
+      if (cloudSettings && cloudSettings.musicUrl && cloudSettings.musicUrl !== prevMusicUrl) {
+        onMusicUrlChanged(cloudSettings.musicUrl);
+      }
     }
   });
 }
