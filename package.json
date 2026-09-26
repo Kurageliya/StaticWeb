@@ -1,0 +1,16 @@
+{
+  "name": "our-love-journey",
+  "version": "3.0.0",
+  "description": "Scrapbook digital romantis perjalanan cinta Rijal & Cilpaaa",
+  "scripts": {
+    "build": "node build.js",
+    "watch": "node build.js --watch",
+    "serve": "python -m http.server 3000"
+  },
+  "keywords": [
+    "scrapbook",
+    "static-web"
+  ],
+  "author": "Muhtarur Rijal",
+  "license": "MIT"
+}

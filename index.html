@@ -12,7 +12,7 @@
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
 
-  <!-- Google Fonts: Cinzel Decorative (Royal Romance), Great Vibes (Romantic Script), Caveat, Plus Jakarta Sans -->
+  <!-- Google Fonts: Cinzel Decorative, Great Vibes, Caveat, Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -22,8 +22,8 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=1.4.0">
+  <!-- Main Stylesheet (Modular CSS Entry Point) -->
+  <link rel="stylesheet" href="style.css?v=2.0.0">
 </head>
 
 <body>
@@ -31,7 +31,8 @@
   <!-- Floating Decorative Background Canvas -->
   <canvas id="ambient-canvas"></canvas>
 
-  <!-- Top Sticky Romantic Header/Navbar -->
+  <!-- HTML PARTIALS -->
+    <!-- Top Sticky Romantic Header/Navbar -->
   <nav class="navbar">
     <div class="nav-container">
       <a href="#hero" class="nav-brand">
@@ -61,7 +62,7 @@
 
   <main>
     <!-- HERO SECTION -->
-    <section id="hero" class="hero-section">
+      <section id="hero" class="hero-section">
       <div class="hero-bg-shapes">
         <div class="shape shape-1"></div>
         <div class="shape shape-2"></div>
@@ -258,7 +259,7 @@
     </section>
 
     <!-- REAL-TIME TIMER COUNTER SECTION -->
-    <section id="counter" class="counter-section">
+      <section id="counter" class="counter-section">
       <div class="container">
         <div class="section-header text-center reveal">
           <span class="section-tag"><i class="fa-solid fa-hourglass-half"></i> Perjalanan Waktu</span>
@@ -310,7 +311,7 @@
     </section>
 
     <!-- GALERI KENANGAN (POLAROID SCRAPBOOK GRID) -->
-    <section id="gallery" class="gallery-section">
+      <section id="gallery" class="gallery-section">
       <div class="container">
         <div class="section-header text-center reveal">
           <span class="section-tag"><i class="fa-solid fa-camera-retro"></i> Album Foto</span>
@@ -374,7 +375,7 @@
     </section>
 
     <!-- TIMELINE CERITA KRONOLOGIS -->
-    <section id="timeline" class="timeline-section">
+      <section id="timeline" class="timeline-section">
       <div class="container">
         <div class="section-header text-center reveal">
           <span class="section-tag"><i class="fa-solid fa-heart-pulse"></i> Jejak Langkah</span>
@@ -392,7 +393,7 @@
     </section>
 
     <!-- HALAMAN SURAT CINTA INTERAKTIF (FLIP CARD: 2 SURAT) -->
-    <section id="letter" class="letter-section">
+      <section id="letter" class="letter-section">
       <div class="container">
         <div class="section-header text-center reveal">
           <span class="section-tag"><i class="fa-solid fa-paper-plane"></i> Pesan Spesial</span>
@@ -533,7 +534,7 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="footer">
+    <footer class="footer">
     <div class="container text-center">
       <div class="footer-heart">💖</div>
       <p class="footer-title"><span id="footer-names">Rijal & Cilpaaa</span></p>
@@ -542,7 +543,7 @@
     </div>
   </footer>
 
-  <!-- LIGHTBOX MODAL (ZOOM + FADE TRANSITION FOR NEXT/PREV) -->
+    <!-- LIGHTBOX MODAL (ZOOM + FADE TRANSITION FOR NEXT/PREV) -->
   <div id="lightbox-modal" class="lightbox-modal" aria-hidden="true">
     <div class="lightbox-backdrop"></div>
     <div class="lightbox-content">
@@ -613,7 +614,7 @@
     </div>
   </div>
 
-  <!-- MODAL: PILIH TEMA WARNA BACKGROUND -->
+    <!-- MODAL: PILIH TEMA WARNA BACKGROUND -->
   <div id="modal-theme-picker" class="modal" aria-hidden="true">
     <div class="modal-backdrop"></div>
     <div class="modal-dialog">

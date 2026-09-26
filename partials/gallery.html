@@ -1,0 +1,64 @@
+    <section id="gallery" class="gallery-section">
+      <div class="container">
+        <div class="section-header text-center reveal">
+          <span class="section-tag"><i class="fa-solid fa-camera-retro"></i> Album Foto</span>
+          <h2 class="section-title">Galeri Kenangan Indah</h2>
+          <p class="section-subtitle">Klik pada foto untuk melihat momen favorit kita secara utuh</p>
+        </div>
+
+        <!-- Filter & Action Controls -->
+        <div class="gallery-controls reveal">
+          <div class="filter-tabs">
+            <button class="filter-btn active" data-filter="all">Semua Momen</button>
+            <button class="filter-btn" data-filter="kencan">Kencan</button>
+            <button class="filter-btn" data-filter="liburan">Liburan</button>
+            <button class="filter-btn" data-filter="spesial">Spesial</button>
+          </div>
+
+          <div class="gallery-action-group">
+            <!-- View Mode Switcher: Card Slider vs Full Grid -->
+            <div class="gallery-view-switcher" id="gallery-view-switcher">
+              <button type="button" class="view-switch-btn active" id="btn-view-slider" title="Mode Card Slider Horizontal">
+                <i class="fa-solid fa-sliders"></i> Slider
+              </button>
+              <button type="button" class="view-switch-btn" id="btn-view-grid" title="Mode Grid Lengkap">
+                <i class="fa-solid fa-border-all"></i> Grid
+              </button>
+            </div>
+
+            <button id="btn-add-memory" class="btn btn-sm btn-gold">
+              <i class="fa-solid fa-plus"></i> Tambah Kenangan Baru
+            </button>
+          </div>
+        </div>
+
+        <!-- Polaroid Card Slider Wrapper -->
+        <div class="gallery-slider-wrapper mode-slider" id="gallery-slider-wrapper">
+          <!-- Floating Nav Arrows for Gallery Slider -->
+          <button type="button" class="gallery-slider-nav nav-prev" id="gallery-slider-prev" aria-label="Kenangan Sebelumnya" title="Geser ke Kiri">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+
+          <!-- Polaroid Grid / Slider Track -->
+          <div class="polaroid-grid" id="polaroid-grid">
+            <!-- Grid/Slider items inserted dynamically by app.js -->
+          </div>
+
+          <button type="button" class="gallery-slider-nav nav-next" id="gallery-slider-next" aria-label="Kenangan Selanjutnya" title="Geser ke Kanan">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- Gallery Slider Progress & Counter Footer -->
+        <div class="gallery-slider-footer reveal" id="gallery-slider-footer">
+          <div class="gallery-progress-bar">
+            <div class="gallery-progress-fill" id="gallery-progress-fill"></div>
+          </div>
+          <div class="gallery-slider-counter" id="gallery-slider-counter">
+            <i class="fa-solid fa-images"></i> Menampilkan <span id="gallery-current-range">1 - 3</span> dari <span id="gallery-total-count">0</span> kenangan
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIMELINE CERITA KRONOLOGIS -->

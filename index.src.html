@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Love Journey — Muhtarur Rijal & Dida Silva</title>
+  <meta name="description"
+    content="Scrapbook digital perjalanan cinta Muhtarur Rijal & Dida Silva. Hitungan waktu jadian real-time, galeri polaroid kenangan LDR Jakarta-Kudus, timeline cerita & surat cinta.">
+
+  <!-- Favicon -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+
+  <!-- Google Fonts: Cinzel Decorative, Great Vibes, Caveat, Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Main Stylesheet (Modular CSS Entry Point) -->
+  <link rel="stylesheet" href="style.css?v=2.0.0">
+</head>
+
+<body>
+
+  <!-- Floating Decorative Background Canvas -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- HTML PARTIALS -->
+  <!-- @@include('partials/navbar.html') -->
+  <!-- @@include('partials/hero-book.html') -->
+  <!-- @@include('partials/counter.html') -->
+  <!-- @@include('partials/gallery.html') -->
+  <!-- @@include('partials/timeline.html') -->
+  <!-- @@include('partials/envelope.html') -->
+  <!-- @@include('partials/footer.html') -->
+  <!-- @@include('partials/lightbox.html') -->
+  <!-- @@include('partials/modals.html') -->
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Audio Element for Custom MP3 Music -->
+  <audio id="bg-music" loop preload="auto"></audio>
+
+  <!-- Firebase Cloud SDK (v10 Compat for Realtime Cross-Device Sync) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Main JavaScript File (ES Modules Architecture) -->
+  <script type="module" src="app.js?v=3.0.0"></script>
+</body>
+
+</html>
