@@ -24,7 +24,7 @@ import { showToast } from './js/utils/toast.js';
 import { safeGetLocalStorage, getMemoryTimestamp, ensureDocumentUnderLimit } from './js/utils/helpers.js';
 
 // Feature Modules
-import { setupHeroScrapbook, setupEnvelopeInteraction } from './js/modules/book.js';
+import { setupHeroScrapbook, refreshHeroBook, setupEnvelopeInteraction } from './js/modules/book.js';
 import { renderTimelineSection } from './js/modules/timeline.js';
 import {
   renderPolaroidGrid,
@@ -96,6 +96,8 @@ function refreshGalleryAndTimeline() {
       }
     });
   });
+
+  refreshHeroBook();
 }
 
 /**
@@ -206,7 +208,11 @@ function initApp() {
   setupThemeEvents(savedTheme);
 
   // 2. Scrapbook Album Fisik 3D & Amplop Surat Cinta
-  setupHeroScrapbook();
+  setupHeroScrapbook({
+    getCoupleSettings: () => coupleSettings,
+    getMemoriesList: () => memoriesList,
+    onSaveSettings: handleSaveSettings
+  });
   setupEnvelopeInteraction(() => coupleSettings);
 
   // 3. Tampilan Pasangan & Surat Cinta
@@ -289,6 +295,7 @@ function initApp() {
       const prevMusicUrl = coupleSettings ? coupleSettings.musicUrl : '';
       coupleSettings = cloudSettings;
       updateCoupleDisplay(coupleSettings);
+      refreshHeroBook();
       if (cloudSettings && cloudSettings.musicUrl && cloudSettings.musicUrl !== prevMusicUrl) {
         onMusicUrlChanged(cloudSettings.musicUrl);
       }
