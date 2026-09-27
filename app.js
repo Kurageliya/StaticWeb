@@ -185,7 +185,7 @@ async function handleAddMemory(newMemory) {
 /**
  * Handler Simpan Pengaturan Pasangan & Surat Cinta
  */
-async function handleSaveSettings(updatedSettings) {
+async function handleSaveSettings(updatedSettings, options = {}) {
   const prevMusicUrl = coupleSettings.musicUrl;
   coupleSettings = { ...coupleSettings, ...updatedSettings };
   saveCoupleSettings(coupleSettings);
@@ -194,7 +194,9 @@ async function handleSaveSettings(updatedSettings) {
   if (updatedSettings.musicUrl !== undefined && updatedSettings.musicUrl !== prevMusicUrl) {
     onMusicUrlChanged(updatedSettings.musicUrl);
   }
-  showToast('✨ Pengaturan Pasangan & Musik Berhasil Disimpan!');
+  if (!options.silent) {
+    showToast('✨ Pengaturan Pasangan & Musik Berhasil Disimpan!');
+  }
 
   await syncSettingsToCloud(coupleSettings);
 }

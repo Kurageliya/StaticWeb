@@ -8,6 +8,7 @@ import { escapeHtml, formatIndoDate } from '../utils/helpers.js';
 import { getMemoryImages } from './gallery.js';
 import { openModal, closeModal } from './modals.js';
 import { showToast } from '../utils/toast.js';
+import { getScrapbookCustomPages, saveScrapbookCustomPages } from '../repositories/storageRepository.js';
 
 let audioCtx = null;
 let currentRefreshHeroBook = null;
@@ -99,71 +100,102 @@ const PAGE_TAPE_CLASSES = [
   'washi-tape tape-page-br'
 ];
 
-/**
- * Mengonversi data memory ke format halaman scrapbook
- */
-function memoryToPageItem(memory, index) {
-  const imgs = getMemoryImages(memory);
-  const imgUrl = imgs[0] || memory.imgUrl || 'assets/images/nembak.jpeg';
-  const formattedDate = formatIndoDate(memory.date) || 'Kenangan Indah';
-  const catLower = (memory.category || 'spesial').toLowerCase().trim();
+const SCRAPBOOK_STAMPS = [
+  { text: 'Sealed with Love', icon: 'fa-stamp', class: '' },
+  { text: 'First Met', icon: 'fa-heart', class: 'stamp-heart' },
+  { text: 'Sweet Memories', icon: 'fa-sparkles', class: 'stamp-star' },
+  { text: 'Jakarta — Kudus', icon: 'fa-plane-departure', class: '' },
+  { text: 'The Beginning', icon: 'fa-comment-dots', class: 'stamp-love' },
+  { text: 'Forever & Always', icon: 'fa-infinity', class: 'stamp-star' }
+];
 
-  let stampText = 'Momen Indah';
-  let stampIcon = 'fa-sparkles';
-  let stampClass = 'stamp-star';
-
-  if (catLower === 'kencan') {
-    stampText = 'Kencan Manis';
-    stampIcon = 'fa-champagne-glasses';
-    stampClass = 'stamp-heart';
-  } else if (catLower === 'liburan') {
-    stampText = 'Liburan Seru';
-    stampIcon = 'fa-plane-departure';
-    stampClass = '';
-  } else if (catLower === 'spesial') {
-    stampText = 'Momen Spesial';
-    stampIcon = 'fa-heart';
-    stampClass = 'stamp-love';
-  } else if (memory.category) {
-    stampText = memory.category.charAt(0).toUpperCase() + memory.category.slice(1);
-    stampIcon = 'fa-tag';
-    stampClass = '';
-  }
-
-  return {
-    id: memory.id,
-    imgUrl,
-    title: memory.title || `Kenangan #${index + 1}`,
-    formattedDate,
-    stampText,
-    stampIcon,
-    stampClass
-  };
+function getStampForIndex(idx) {
+  return SCRAPBOOK_STAMPS[idx % SCRAPBOOK_STAMPS.length];
 }
 
 /**
- * Mendapatkan daftar halaman aktif untuk album buku
+ * Mengambil SEMUA foto dari galeri (mendukung multi-foto / album dalam satu momen)
  */
-export function getEffectiveBookItems(memoriesList = [], scrapbookMemoryIds = []) {
-  if (Array.isArray(scrapbookMemoryIds) && scrapbookMemoryIds.length > 0) {
-    const memoryMap = new Map();
-    memoriesList.forEach(m => {
-      if (m && m.id) memoryMap.set(m.id, m);
-    });
+export function getAllAvailableMemoryPhotos(memoriesList = []) {
+  const photoList = [];
+  if (!Array.isArray(memoriesList)) return photoList;
 
-    const chosenItems = [];
-    scrapbookMemoryIds.forEach((id, idx) => {
-      const mem = memoryMap.get(id);
-      if (mem) {
-        chosenItems.push(memoryToPageItem(mem, idx));
-      }
-    });
+  memoriesList.forEach((mem) => {
+    if (!mem || !mem.id) return;
+    const images = getMemoryImages(mem);
+    const totalInMem = images.length;
 
-    if (chosenItems.length > 0) {
-      return chosenItems;
-    }
+    images.forEach((imgUrl, photoIndex) => {
+      if (!imgUrl || typeof imgUrl !== 'string' || !imgUrl.trim()) return;
+      photoList.push({
+        id: `${mem.id}__p${photoIndex}`,
+        memoryId: mem.id,
+        photoIndex: photoIndex,
+        imgUrl: imgUrl.trim(),
+        title: mem.title || 'Momen Spesial',
+        date: mem.date || '',
+        formattedDate: formatIndoDate(mem.date) || 'Kenangan Indah',
+        category: mem.category || 'Momen',
+        isMultiple: totalInMem > 1,
+        photoNumberText: totalInMem > 1 ? `Foto ${photoIndex + 1}/${totalInMem}` : ''
+      });
+    });
+  });
+
+  return photoList;
+}
+
+/**
+ * Mendapatkan daftar halaman aktif untuk album buku (Prioritas: Kustom Lokal -> Default)
+ */
+export function getEffectiveBookItems(memoriesList = [], customPages = null) {
+  let pages = customPages;
+  if (!pages || !Array.isArray(pages) || pages.length === 0) {
+    pages = getScrapbookCustomPages();
   }
 
+  // Jika user sudah memiliki kustomisasi foto album buku:
+  if (Array.isArray(pages) && pages.length > 0) {
+    const memoryMap = new Map();
+    if (Array.isArray(memoriesList)) {
+      memoriesList.forEach(m => {
+        if (m && m.id) memoryMap.set(m.id, m);
+      });
+    }
+
+    return pages.map((page, idx) => {
+      const stamp = getStampForIndex(idx);
+      if (page.memoryId && memoryMap.has(page.memoryId)) {
+        const mem = memoryMap.get(page.memoryId);
+        const images = getMemoryImages(mem);
+        const imgUrl = (images && images[page.photoIndex]) || page.imgUrl;
+        return {
+          id: page.id || `custom_page_${idx}`,
+          memoryId: page.memoryId,
+          photoIndex: page.photoIndex,
+          imgUrl: imgUrl,
+          title: mem.title || page.title || 'Momen Spesial',
+          formattedDate: formatIndoDate(mem.date) || page.formattedDate || 'Kenangan Berdua',
+          stampText: page.stampText || stamp.text,
+          stampIcon: page.stampIcon || stamp.icon,
+          stampClass: page.stampClass || stamp.class
+        };
+      }
+      return {
+        id: page.id || `custom_page_${idx}`,
+        memoryId: page.memoryId || null,
+        photoIndex: page.photoIndex !== undefined ? page.photoIndex : 0,
+        imgUrl: page.imgUrl,
+        title: page.title || 'Momen Spesial',
+        formattedDate: page.formattedDate || 'Kenangan Berdua',
+        stampText: page.stampText || stamp.text,
+        stampIcon: page.stampIcon || stamp.icon,
+        stampClass: page.stampClass || stamp.class
+      };
+    });
+  }
+
+  // Fallback HANYA jika belum ada kustomisasi sama sekali
   return DEFAULT_SCRAPBOOK_ITEMS;
 }
 
@@ -188,6 +220,13 @@ export function renderHeroBookPages(items = []) {
       <div class="scrapbook-page page-${pageNum} ${isFirst ? 'active' : ''}" data-page="${pageNum}" style="z-index: ${zIndex};">
         <div class="page-paper">
           <div class="${tapeClass}"></div>
+          
+          <!-- Tombol Sunting/Pensil di atas Kertas Buku -->
+          <button type="button" class="btn-paper-edit" data-page-index="${idx}" title="Sunting atau ganti foto album buku ini" aria-label="Sunting Foto">
+            <i class="fa-solid fa-pencil"></i>
+            <span>Sunting</span>
+          </button>
+
           <div class="page-photo-card">
             <div class="img-wrapper">
               <img src="${escapeHtml(item.imgUrl)}" alt="${escapeHtml(item.title)}" loading="lazy">
@@ -222,8 +261,7 @@ export function setupHeroScrapbook({
   onSaveSettings = null
 } = {}) {
   const scrapbookBook = document.getElementById('scrapbook-book');
-  const bookPageIndicator = document.getElementById('book-page-indicator');
-  const btnEditScrapbook = document.getElementById('btn-edit-scrapbook');
+  const scrapbookPagesContainer = document.getElementById('scrapbook-pages');
   const modalEditScrapbook = document.getElementById('modal-edit-scrapbook');
   const modalScrapbookClose = document.getElementById('modal-scrapbook-close');
   const btnScrapbookCancel = document.getElementById('btn-scrapbook-cancel');
@@ -237,85 +275,59 @@ export function setupHeroScrapbook({
   let currentPage = 0;
   let isFlipping = false;
   let currentPages = [];
-  let tempSelectedIds = [];
-
-  function updateNavUI() {
-    const totalPages = currentPages.length;
-    if (bookPageIndicator && totalPages > 0) {
-      bookPageIndicator.innerHTML = `<i class="fa-solid fa-book-open"></i> Halaman ${currentPage + 1} / ${totalPages}`;
-    }
-  }
+  let tempSelectedItems = [];
 
   function goToPage(targetIndex) {
     const totalPages = currentPages.length;
-    if (isFlipping || targetIndex === currentPage) return;
+    if (isFlipping || targetIndex === currentPage || totalPages === 0) return;
     if (targetIndex < 0 || targetIndex >= totalPages) return;
 
-    const fromIndex = currentPage;
-    const toIndex = targetIndex;
     isFlipping = true;
-    currentPage = toIndex;
-
-    updateNavUI();
     playPaperRustle();
 
-    if (toIndex > fromIndex) {
-      const flippingPage = currentPages[fromIndex];
-      const targetPage = currentPages[toIndex];
-
-      targetPage.classList.remove('turned', 'flipping-forward', 'flipping-backward');
-      targetPage.classList.add('active');
-      targetPage.style.zIndex = 10;
-
-      for (let i = fromIndex + 1; i < toIndex; i++) {
-        currentPages[i].classList.add('turned');
-        currentPages[i].classList.remove('active', 'flipping-forward', 'flipping-backward');
-        currentPages[i].style.zIndex = i + 1;
+    if (targetIndex > currentPage) {
+      for (let i = currentPage; i < targetIndex; i++) {
+        const pageToTurn = currentPages[i];
+        if (pageToTurn) {
+          pageToTurn.classList.add('flipping-forward');
+          setTimeout(() => {
+            pageToTurn.classList.remove('active', 'flipping-forward');
+            pageToTurn.classList.add('turned');
+          }, 350);
+        }
       }
-
-      flippingPage.classList.remove('active');
-      flippingPage.classList.add('flipping-forward');
-
-      setTimeout(() => {
-        flippingPage.classList.remove('flipping-forward');
-        flippingPage.classList.add('turned');
-        flippingPage.style.zIndex = fromIndex + 1;
-
-        targetPage.style.zIndex = totalPages + 5;
-        isFlipping = false;
-      }, 850);
-
     } else {
-      const targetPage = currentPages[toIndex];
-      const currentPageEl = currentPages[fromIndex];
-
-      currentPageEl.classList.remove('active', 'flipping-forward', 'flipping-backward');
-      currentPageEl.style.zIndex = 10;
-
-      if (fromIndex - toIndex > 1) {
-        for (let i = toIndex + 1; i < fromIndex; i++) {
-          currentPages[i].classList.remove('turned', 'flipping-forward', 'flipping-backward');
-          currentPages[i].classList.remove('active');
-          currentPages[i].style.zIndex = totalPages - i;
+      for (let i = currentPage - 1; i >= targetIndex; i--) {
+        const pageToTurnBack = currentPages[i];
+        if (pageToTurnBack) {
+          pageToTurnBack.classList.remove('turned');
+          pageToTurnBack.classList.add('flipping-backward');
+          setTimeout(() => {
+            pageToTurnBack.classList.remove('flipping-backward');
+            pageToTurnBack.classList.add('active');
+          }, 350);
         }
       }
-
-      targetPage.classList.remove('turned', 'active');
-      targetPage.classList.add('flipping-backward');
-
-      setTimeout(() => {
-        targetPage.classList.remove('flipping-backward');
-        targetPage.classList.add('active');
-        targetPage.style.zIndex = totalPages + 5;
-
-        for (let i = toIndex + 1; i < totalPages; i++) {
-          currentPages[i].classList.remove('turned', 'flipping-forward', 'flipping-backward');
-          currentPages[i].classList.remove('active');
-          currentPages[i].style.zIndex = totalPages - i;
-        }
-        isFlipping = false;
-      }, 850);
     }
+
+    setTimeout(() => {
+      currentPage = targetIndex;
+      currentPages.forEach((page, idx) => {
+        if (idx < currentPage) {
+          page.classList.add('turned');
+          page.classList.remove('active');
+          page.style.zIndex = idx;
+        } else if (idx === currentPage) {
+          page.classList.remove('turned');
+          page.classList.add('active');
+          page.style.zIndex = totalPages + 5;
+        } else {
+          page.classList.remove('turned', 'active');
+          page.style.zIndex = totalPages - idx;
+        }
+      });
+      isFlipping = false;
+    }, 400);
   }
 
   function flipNext() {
@@ -337,9 +349,9 @@ export function setupHeroScrapbook({
   }
 
   function refreshBook() {
-    const settings = typeof getCoupleSettings === 'function' ? getCoupleSettings() : {};
     const mems = typeof getMemoriesList === 'function' ? getMemoriesList() : [];
-    const items = getEffectiveBookItems(mems, settings.scrapbookMemoryIds);
+    const customPages = getScrapbookCustomPages();
+    const items = getEffectiveBookItems(mems, customPages);
 
     renderHeroBookPages(items);
     currentPages = Array.from(document.querySelectorAll('.scrapbook-page'));
@@ -356,7 +368,10 @@ export function setupHeroScrapbook({
         page.style.zIndex = totalPages - idx;
       }
 
-      page.addEventListener('click', () => {
+      page.addEventListener('click', (e) => {
+        // Jangan balik halaman jika tombol edit di atas kertas diklik
+        if (e.target.closest('.btn-paper-edit')) return;
+
         if (idx === currentPage) {
           flipNext();
         } else if (idx < currentPage) {
@@ -364,11 +379,20 @@ export function setupHeroScrapbook({
         }
       });
     });
-
-    updateNavUI();
   }
 
   currentRefreshHeroBook = refreshBook;
+
+  // Delegasi klik tombol sunting foto di atas kertas buku
+  if (scrapbookPagesContainer) {
+    scrapbookPagesContainer.addEventListener('click', (e) => {
+      const editBtn = e.target.closest('.btn-paper-edit');
+      if (editBtn) {
+        e.stopPropagation();
+        openPickerModal();
+      }
+    });
+  }
 
   // Interaksi Touch Swipe pada Buku
   let touchStartX = 0;
@@ -397,31 +421,26 @@ export function setupHeroScrapbook({
     }
   }, { passive: true });
 
-  // Klik pada indikator halaman juga membalik ke halaman berikutnya
-  if (bookPageIndicator) {
-    bookPageIndicator.addEventListener('click', flipNext);
-  }
-
   // --- Modal Pemilih Foto Album Buku ---
   function updatePickerUI() {
     if (!scrapbookMemoriesPicker) return;
     const cards = scrapbookMemoriesPicker.querySelectorAll('.scrapbook-picker-card');
     cards.forEach(card => {
-      const id = card.getAttribute('data-id');
-      const idx = tempSelectedIds.indexOf(id);
-      const isSelected = idx !== -1;
+      const itemId = card.getAttribute('data-item-id');
+      const orderIdx = tempSelectedItems.findIndex(item => item.id === itemId);
+      const isSelected = orderIdx !== -1;
       card.classList.toggle('is-selected', isSelected);
       const badge = card.querySelector('.scrapbook-picker-badge');
       if (badge) {
-        badge.textContent = isSelected ? `#${idx + 1}` : '+';
+        badge.innerHTML = isSelected ? `#${orderIdx + 1}` : '<i class="fa-solid fa-plus"></i>';
       }
     });
 
     if (scrapbookSelectedCounter) {
-      if (tempSelectedIds.length === 0) {
+      if (tempSelectedItems.length === 0) {
         scrapbookSelectedCounter.textContent = '0 / 6 (Bawaan Awal)';
       } else {
-        scrapbookSelectedCounter.textContent = `${tempSelectedIds.length} / 6 Dipilih`;
+        scrapbookSelectedCounter.textContent = `${tempSelectedItems.length} / 6 Dipilih`;
       }
     }
   }
@@ -429,8 +448,9 @@ export function setupHeroScrapbook({
   function renderPickerGrid() {
     if (!scrapbookMemoriesPicker) return;
     const mems = typeof getMemoriesList === 'function' ? getMemoriesList() : [];
+    const allPhotos = getAllAvailableMemoryPhotos(mems);
 
-    if (mems.length === 0) {
+    if (allPhotos.length === 0) {
       scrapbookMemoriesPicker.innerHTML = `
         <div style="grid-column: 1 / -1; text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
           <i class="fa-regular fa-images" style="font-size: 2.2rem; color: var(--pink-accent); margin-bottom: 0.6rem; display: block;"></i>
@@ -441,20 +461,20 @@ export function setupHeroScrapbook({
       return;
     }
 
-    scrapbookMemoriesPicker.innerHTML = mems.map(memory => {
-      const imgs = getMemoryImages(memory);
-      const thumb = imgs[0] || memory.imgUrl || 'assets/images/nembak.jpeg';
-      const formattedDate = formatIndoDate(memory.date) || 'Kenangan Indah';
-      const isSelected = tempSelectedIds.includes(memory.id);
-      const orderIdx = tempSelectedIds.indexOf(memory.id);
+    scrapbookMemoriesPicker.innerHTML = allPhotos.map(photo => {
+      const orderIdx = tempSelectedItems.findIndex(item => item.id === photo.id || (item.memoryId === photo.memoryId && item.photoIndex === photo.photoIndex));
+      const isSelected = orderIdx !== -1;
 
       return `
-        <div class="scrapbook-picker-card ${isSelected ? 'is-selected' : ''}" data-id="${escapeHtml(memory.id)}" title="Klik untuk memilih atau membatalkan pilihan">
-          <img src="${escapeHtml(thumb)}" alt="${escapeHtml(memory.title)}" class="scrapbook-picker-thumb" loading="lazy">
-          <span class="scrapbook-picker-badge">${isSelected ? `#${orderIdx + 1}` : '+'}</span>
+        <div class="scrapbook-picker-card ${isSelected ? 'is-selected' : ''}" data-item-id="${escapeHtml(photo.id)}" title="Klik untuk memilih foto ini ke buku">
+          <div class="scrapbook-picker-thumb-wrap" style="position: relative; overflow: hidden; width: 100%; aspect-ratio: 4/3; background: #eee;">
+            <img src="${escapeHtml(photo.imgUrl)}" alt="${escapeHtml(photo.title)}" class="scrapbook-picker-thumb" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
+            ${photo.photoNumberText ? `<span class="picker-subphoto-badge"><i class="fa-solid fa-layer-group"></i> ${escapeHtml(photo.photoNumberText)}</span>` : ''}
+            <span class="scrapbook-picker-badge">${isSelected ? `#${orderIdx + 1}` : '<i class="fa-solid fa-plus"></i>'}</span>
+          </div>
           <div class="scrapbook-picker-info">
-            <h4 class="scrapbook-picker-title">${escapeHtml(memory.title || 'Momen')}</h4>
-            <span class="scrapbook-picker-date">${escapeHtml(formattedDate)}</span>
+            <h4 class="scrapbook-picker-title">${escapeHtml(photo.title || 'Momen')}</h4>
+            <span class="scrapbook-picker-date">${escapeHtml(photo.formattedDate)}</span>
           </div>
         </div>
       `;
@@ -462,16 +482,19 @@ export function setupHeroScrapbook({
 
     scrapbookMemoriesPicker.querySelectorAll('.scrapbook-picker-card').forEach(card => {
       card.addEventListener('click', () => {
-        const id = card.getAttribute('data-id');
-        const pos = tempSelectedIds.indexOf(id);
+        const itemId = card.getAttribute('data-item-id');
+        const pos = tempSelectedItems.findIndex(item => item.id === itemId);
         if (pos !== -1) {
-          tempSelectedIds.splice(pos, 1);
+          tempSelectedItems.splice(pos, 1);
         } else {
-          if (tempSelectedIds.length >= 6) {
+          if (tempSelectedItems.length >= 6) {
             showToast('⚠️ Maksimal 6 foto kenangan untuk album buku.');
             return;
           }
-          tempSelectedIds.push(id);
+          const matchedPhoto = allPhotos.find(p => p.id === itemId);
+          if (matchedPhoto) {
+            tempSelectedItems.push({ ...matchedPhoto });
+          }
         }
         updatePickerUI();
       });
@@ -481,14 +504,14 @@ export function setupHeroScrapbook({
   }
 
   function openPickerModal() {
-    const settings = typeof getCoupleSettings === 'function' ? getCoupleSettings() : {};
-    tempSelectedIds = Array.isArray(settings.scrapbookMemoryIds) ? [...settings.scrapbookMemoryIds] : [];
+    const custom = getScrapbookCustomPages();
+    if (Array.isArray(custom) && custom.length > 0) {
+      tempSelectedItems = custom.map(item => ({ ...item }));
+    } else {
+      tempSelectedItems = [];
+    }
     renderPickerGrid();
     openModal(modalEditScrapbook);
-  }
-
-  if (btnEditScrapbook) {
-    btnEditScrapbook.addEventListener('click', openPickerModal);
   }
 
   if (modalScrapbookClose) {
@@ -504,26 +527,71 @@ export function setupHeroScrapbook({
 
   if (btnScrapbookResetDefault) {
     btnScrapbookResetDefault.addEventListener('click', () => {
-      tempSelectedIds = [];
+      tempSelectedItems = [];
       updatePickerUI();
-      showToast('ℹ️ Pilihan dikosongkan (akan kembali ke 5 momen bawaan awal saat disimpan).');
+      showToast('ℹ️ Pilihan dikosongkan. Klik "Terapkan ke Buku" untuk kembali ke momen bawaan.');
     });
   }
 
   if (btnScrapbookSave) {
     btnScrapbookSave.addEventListener('click', async () => {
-      const settings = typeof getCoupleSettings === 'function' ? getCoupleSettings() : {};
-      const updated = {
-        ...settings,
-        scrapbookMemoryIds: [...tempSelectedIds]
-      };
-
       closeModal(modalEditScrapbook);
-      if (typeof onSaveSettings === 'function') {
-        await onSaveSettings(updated);
+
+      if (tempSelectedItems.length > 0) {
+        const pagesToSave = tempSelectedItems.map((item, idx) => {
+          const stamp = getStampForIndex(idx);
+          return {
+            id: item.id || `page_${Date.now()}_${idx}`,
+            memoryId: item.memoryId || null,
+            photoIndex: item.photoIndex !== undefined ? item.photoIndex : 0,
+            imgUrl: item.imgUrl,
+            title: item.title || 'Momen Spesial',
+            formattedDate: item.formattedDate || 'Kenangan Berdua',
+            stampText: stamp.text,
+            stampIcon: stamp.icon,
+            stampClass: stamp.class
+          };
+        });
+
+        // 1. Simpan ke LocalStorage agar langsung aktif seketika
+        saveScrapbookCustomPages(pagesToSave);
+
+        // 2. Simpan ke Couple Settings & Sync ke Firestore
+        const settings = typeof getCoupleSettings === 'function' ? getCoupleSettings() : {};
+        const updated = {
+          ...settings,
+          scrapbookCustomPages: pagesToSave,
+          scrapbookPageRefs: pagesToSave.map(p => ({
+            memoryId: p.memoryId,
+            photoIndex: p.photoIndex,
+            id: p.id
+          }))
+        };
+
+        if (typeof onSaveSettings === 'function') {
+          await onSaveSettings(updated, { silent: true });
+        }
+
+        refreshBook();
+        showToast(`📖 Album buku berhasil diperbarui (${pagesToSave.length} halaman)!`);
+      } else {
+        // Reset kembali ke default bawaan
+        saveScrapbookCustomPages(null);
+
+        const settings = typeof getCoupleSettings === 'function' ? getCoupleSettings() : {};
+        const updated = {
+          ...settings,
+          scrapbookCustomPages: null,
+          scrapbookPageRefs: null
+        };
+
+        if (typeof onSaveSettings === 'function') {
+          await onSaveSettings(updated, { silent: true });
+        }
+
+        refreshBook();
+        showToast('📖 Album buku kembali ke momen bawaan awal!');
       }
-      refreshBook();
-      showToast(tempSelectedIds.length > 0 ? `📖 Album buku berhasil diperbarui (${tempSelectedIds.length} halaman)!` : '📖 Album buku kembali ke momen bawaan awal!');
     });
   }
 
@@ -538,7 +606,7 @@ export function refreshHeroBook() {
 }
 
 /**
- * Interaksi Amplop Surat Cinta Ganda (Flip & Buka/Tutup)
+ * Interaksi Amplop Surat Cinta Ganda (Surat 1 & Surat 2)
  */
 export function setupEnvelopeInteraction(getCoupleSettings) {
   const envelope = document.getElementById('envelope');

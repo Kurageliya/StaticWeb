@@ -37,6 +37,25 @@ export function getMemoriesList() {
   return Array.isArray(list) ? list : [];
 }
 
+
+export function getScrapbookCustomPages() {
+  const cached = safeGetLocalStorage('love_journey_scrapbook_custom', null);
+  if (Array.isArray(cached) && cached.length > 0) {
+    return cached;
+  }
+  return null;
+}
+
+export function saveScrapbookCustomPages(pages) {
+  if (Array.isArray(pages) && pages.length > 0) {
+    safeSetLocalStorage('love_journey_scrapbook_custom', pages);
+  } else {
+    try {
+      localStorage.removeItem('love_journey_scrapbook_custom');
+    } catch (e) {}
+  }
+}
+
 export function saveMemoriesList(list) {
   safeSetLocalStorage('love_journey_memories', Array.isArray(list) ? list : []);
 }
