@@ -48,48 +48,47 @@ export const DEFAULT_SCRAPBOOK_ITEMS = [
     id: '__default_1__',
     imgUrl: 'assets/images/nembak.jpeg',
     title: 'Rijal & Cilpaaa',
-    formattedDate: '15 Februari 2026',
-    stampText: 'Sealed with Love',
-    stampIcon: 'fa-stamp',
-    stampClass: ''
+    formattedDate: '15 Februari 2026'
   },
   {
     id: '__default_2__',
     imgUrl: 'assets/images/pertemuan.jpeg',
     title: 'Tatap Muka Perdana',
-    formattedDate: 'Pertemuan Pertama',
-    stampText: 'First Met',
-    stampIcon: 'fa-heart',
-    stampClass: 'stamp-heart'
+    formattedDate: 'Pertemuan Pertama'
   },
   {
     id: '__default_3__',
     imgUrl: 'assets/images/kedua.jpeg',
     title: 'Tawa & Bahagia',
-    formattedDate: 'Kencan Berdua',
-    stampText: 'Sweet Memories',
-    stampIcon: 'fa-sparkles',
-    stampClass: 'stamp-star'
+    formattedDate: 'Kencan Berdua'
   },
   {
     id: '__default_4__',
     imgUrl: 'assets/images/kisah.jpeg',
     title: 'Menembus Jarak',
-    formattedDate: 'Perjalanan Bersama',
-    stampText: 'Jakarta — Kudus',
-    stampIcon: 'fa-plane-departure',
-    stampClass: ''
+    formattedDate: 'Perjalanan Bersama'
   },
   {
     id: '__default_5__',
     imgUrl: 'assets/images/pesanpertama.jpeg',
     title: 'Awal Kisah Kita',
-    formattedDate: '9 Desember 2025',
-    stampText: 'The Beginning',
-    stampIcon: 'fa-comment-dots',
-    stampClass: 'stamp-love'
+    formattedDate: '9 Desember 2025'
   }
 ];
+
+
+export const PAGE_STICKER_SVGS = [
+  "<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"sticker-svg sticker-panda\">\n    <ellipse cx=\"32\" cy=\"34\" rx=\"25\" ry=\"23\" fill=\"#ffffff\"/>\n    <circle cx=\"16\" cy=\"18\" r=\"9\" fill=\"#2d2a32\"/>\n    <circle cx=\"16\" cy=\"18\" r=\"5\" fill=\"#433e49\"/>\n    <circle cx=\"48\" cy=\"18\" r=\"9\" fill=\"#2d2a32\"/>\n    <circle cx=\"48\" cy=\"18\" r=\"5\" fill=\"#433e49\"/>\n    <circle cx=\"32\" cy=\"34\" r=\"21\" fill=\"#fdfdfd\" stroke=\"#ffffff\" stroke-width=\"2\"/>\n    <ellipse cx=\"23\" cy=\"31\" rx=\"6.5\" ry=\"5.5\" transform=\"rotate(-15 23 31)\" fill=\"#2d2a32\"/>\n    <ellipse cx=\"41\" cy=\"31\" rx=\"6.5\" ry=\"5.5\" transform=\"rotate(15 41 31)\" fill=\"#2d2a32\"/>\n    <circle cx=\"23\" cy=\"30.5\" r=\"2.4\" fill=\"#ffffff\"/>\n    <circle cx=\"24.5\" cy=\"32\" r=\"1\" fill=\"#ffffff\"/>\n    <circle cx=\"41\" cy=\"30.5\" r=\"2.4\" fill=\"#ffffff\"/>\n    <circle cx=\"42.5\" cy=\"32\" r=\"1\" fill=\"#ffffff\"/>\n    <ellipse cx=\"16\" cy=\"38\" rx=\"4\" ry=\"2.2\" fill=\"#ffb4c2\" opacity=\"0.85\"/>\n    <ellipse cx=\"48\" cy=\"38\" rx=\"4\" ry=\"2.2\" fill=\"#ffb4c2\" opacity=\"0.85\"/>\n    <ellipse cx=\"32\" cy=\"36\" rx=\"2.5\" ry=\"1.8\" fill=\"#2d2a32\"/>\n    <path d=\"M30 38.5 C31 40, 32 40, 32 38.5 C32 40, 33 40, 34 38.5\" stroke=\"#2d2a32\" stroke-width=\"1.3\" stroke-linecap=\"round\" fill=\"none\"/>\n    <path d=\"M32 49 C32 49 25 43 25 39.5 C25 37 27 35.5 29.5 35.5 C31 35.5 32 36.5 32 36.5 C32 36.5 33 35.5 34.5 35.5 C37 35.5 39 37 39 39.5 C39 43 32 49 32 49 Z\" fill=\"#ff4d6d\" stroke=\"#ffffff\" stroke-width=\"1.2\"/>\n    <circle cx=\"25.5\" cy=\"42\" r=\"3.2\" fill=\"#2d2a32\"/>\n    <circle cx=\"38.5\" cy=\"42\" r=\"3.2\" fill=\"#2d2a32\"/>\n  </svg>",
+  "<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"sticker-svg sticker-bunny\">\n    <ellipse cx=\"32\" cy=\"36\" rx=\"24\" ry=\"21\" fill=\"#ffffff\"/>\n    <ellipse cx=\"22\" cy=\"17\" rx=\"6.5\" ry=\"14\" transform=\"rotate(-10 22 17)\" fill=\"#ffffff\"/>\n    <ellipse cx=\"22\" cy=\"17\" rx=\"3.5\" ry=\"10\" transform=\"rotate(-10 22 17)\" fill=\"#ffb4c2\"/>\n    <ellipse cx=\"42\" cy=\"17\" rx=\"6.5\" ry=\"14\" transform=\"rotate(10 42 17)\" fill=\"#ffffff\"/>\n    <ellipse cx=\"42\" cy=\"17\" rx=\"3.5\" ry=\"10\" transform=\"rotate(10 42 17)\" fill=\"#ffb4c2\"/>\n    <ellipse cx=\"32\" cy=\"38\" rx=\"21\" ry=\"18\" fill=\"#ffffff\" stroke=\"#f0e2e5\" stroke-width=\"1\"/>\n    <circle cx=\"24\" cy=\"22\" r=\"3\" fill=\"#ffd166\"/>\n    <circle cx=\"24\" cy=\"22\" r=\"1.5\" fill=\"#ff7597\"/>\n    <ellipse cx=\"23\" cy=\"36\" rx=\"2.5\" ry=\"3\" fill=\"#2d2a32\"/>\n    <circle cx=\"22.2\" cy=\"35\" r=\"1\" fill=\"#ffffff\"/>\n    <ellipse cx=\"41\" cy=\"36\" rx=\"2.5\" ry=\"3\" fill=\"#2d2a32\"/>\n    <circle cx=\"40.2\" cy=\"35\" r=\"1\" fill=\"#ffffff\"/>\n    <ellipse cx=\"17\" cy=\"41\" rx=\"4.5\" ry=\"2.5\" fill=\"#ffccd5\" opacity=\"0.9\"/>\n    <ellipse cx=\"47\" cy=\"41\" rx=\"4.5\" ry=\"2.5\" fill=\"#ffccd5\" opacity=\"0.9\"/>\n    <polygon points=\"32,40 30.5,38 33.5,38\" fill=\"#ff7597\"/>\n    <path d=\"M30.5 41 C31.2 42.2 32 42.2 32 41 C32 42.2 32.8 42.2 33.5 41\" stroke=\"#2d2a32\" stroke-width=\"1.2\" stroke-linecap=\"round\" fill=\"none\"/>\n    <path d=\"M32 54 C30 54 28 50 28 47 C28 45.5 29.5 44 32 44 C34.5 44 36 45.5 36 47 C36 50 34 54 32 54 Z\" fill=\"#ff3366\"/>\n    <polygon points=\"32,43 30.5,41 33.5,41\" fill=\"#48cae4\"/>\n  </svg>",
+  "<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"sticker-svg sticker-bear\">\n    <ellipse cx=\"32\" cy=\"35\" rx=\"25\" ry=\"23\" fill=\"#ffffff\"/>\n    <circle cx=\"16\" cy=\"18\" r=\"8.5\" fill=\"#c48b58\"/>\n    <circle cx=\"16\" cy=\"18\" r=\"4.5\" fill=\"#eed0aa\"/>\n    <circle cx=\"48\" cy=\"18\" r=\"8.5\" fill=\"#c48b58\"/>\n    <circle cx=\"48\" cy=\"18\" r=\"4.5\" fill=\"#eed0aa\"/>\n    <circle cx=\"32\" cy=\"35\" r=\"20\" fill=\"#c48b58\"/>\n    <ellipse cx=\"32\" cy=\"39\" rx=\"8\" ry=\"6\" fill=\"#eed0aa\"/>\n    <ellipse cx=\"32\" cy=\"37\" rx=\"3\" ry=\"2\" fill=\"#4a2e18\"/>\n    <path d=\"M30.5 40 C31.2 41.5 32 41.5 32 40 C32 41.5 32.8 41.5 33.5 40\" stroke=\"#4a2e18\" stroke-width=\"1.2\" stroke-linecap=\"round\" fill=\"none\"/>\n    <circle cx=\"23\" cy=\"32\" r=\"2.3\" fill=\"#2d2a32\"/>\n    <circle cx=\"22.2\" cy=\"31.2\" r=\"0.8\" fill=\"#ffffff\"/>\n    <circle cx=\"41\" cy=\"32\" r=\"2.3\" fill=\"#2d2a32\"/>\n    <circle cx=\"40.2\" cy=\"31.2\" r=\"0.8\" fill=\"#ffffff\"/>\n    <ellipse cx=\"17\" cy=\"37\" rx=\"3.5\" ry=\"2\" fill=\"#ff99a8\" opacity=\"0.8\"/>\n    <ellipse cx=\"47\" cy=\"37\" rx=\"3.5\" ry=\"2\" fill=\"#ff99a8\" opacity=\"0.8\"/>\n    <polygon points=\"32,44 34.5,49 40,49.5 36,53.5 37,59 32,56 27,59 28,53.5 24,49.5 29.5,49\" fill=\"#ffb703\" stroke=\"#ffffff\" stroke-width=\"1\"/>\n  </svg>",
+  "<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"sticker-svg sticker-cat\">\n    <ellipse cx=\"32\" cy=\"35\" rx=\"25\" ry=\"22\" fill=\"#ffffff\"/>\n    <polygon points=\"14,24 24,12 28,24\" fill=\"#ffffff\" stroke=\"#f0e2e5\" stroke-width=\"1.5\"/>\n    <polygon points=\"16,23 23,15 26,23\" fill=\"#ffccd5\"/>\n    <polygon points=\"50,24 40,12 36,24\" fill=\"#ffffff\" stroke=\"#f0e2e5\" stroke-width=\"1.5\"/>\n    <polygon points=\"48,23 41,15 38,23\" fill=\"#ffccd5\"/>\n    <ellipse cx=\"32\" cy=\"37\" rx=\"21\" ry=\"18\" fill=\"#ffffff\" stroke=\"#f0e2e5\" stroke-width=\"1\"/>\n    <polygon points=\"21,18 27,22 21,26\" fill=\"#ff4d6d\"/>\n    <polygon points=\"29,18 23,22 29,26\" fill=\"#ff4d6d\"/>\n    <circle cx=\"25\" cy=\"22\" r=\"2\" fill=\"#ff7597\"/>\n    <path d=\"M21 34 Q24 31 27 34\" stroke=\"#2d2a32\" stroke-width=\"1.8\" stroke-linecap=\"round\" fill=\"none\"/>\n    <path d=\"M37 34 Q40 31 43 34\" stroke=\"#2d2a32\" stroke-width=\"1.8\" stroke-linecap=\"round\" fill=\"none\"/>\n    <line x1=\"14\" y1=\"36\" x2=\"20\" y2=\"37\" stroke=\"#998090\" stroke-width=\"1\" stroke-linecap=\"round\"/>\n    <line x1=\"14\" y1=\"39\" x2=\"19\" y2=\"40\" stroke=\"#998090\" stroke-width=\"1\" stroke-linecap=\"round\"/>\n    <line x1=\"50\" y1=\"36\" x2=\"44\" y2=\"37\" stroke=\"#998090\" stroke-width=\"1\" stroke-linecap=\"round\"/>\n    <line x1=\"50\" y1=\"39\" x2=\"45\" y2=\"40\" stroke=\"#998090\" stroke-width=\"1\" stroke-linecap=\"round\"/>\n    <polygon points=\"32,38 31,37 33,37\" fill=\"#ff7597\"/>\n    <path d=\"M30.5 39 C31.2 40.5 32 40.5 32 39 C32 40.5 32.8 40.5 33.5 39\" stroke=\"#2d2a32\" stroke-width=\"1.2\" stroke-linecap=\"round\" fill=\"none\"/>\n    <ellipse cx=\"18\" cy=\"38\" rx=\"4\" ry=\"2\" fill=\"#ffb4c2\" opacity=\"0.85\"/>\n    <ellipse cx=\"46\" cy=\"38\" rx=\"4\" ry=\"2\" fill=\"#ffb4c2\" opacity=\"0.85\"/>\n    <path d=\"M32 52 C32 52 27 48 27 45 C27 43.5 28.5 42 30.5 42 C31.5 42 32 43 32 43 C32 43 32.5 42 33.5 42 C35.5 42 37 43.5 37 45 C37 48 32 52 32 52 Z\" fill=\"#ff4d6d\" stroke=\"#ffffff\" stroke-width=\"1\"/>\n  </svg>",
+  "<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"sticker-svg sticker-penguin\">\n    <ellipse cx=\"32\" cy=\"35\" rx=\"24\" ry=\"22\" fill=\"#ffffff\"/>\n    <ellipse cx=\"32\" cy=\"35\" rx=\"20\" ry=\"19\" fill=\"#2b2d42\"/>\n    <ellipse cx=\"25\" cy=\"32\" rx=\"7\" ry=\"8\" fill=\"#ffffff\"/>\n    <ellipse cx=\"39\" cy=\"32\" rx=\"7\" ry=\"8\" fill=\"#ffffff\"/>\n    <ellipse cx=\"32\" cy=\"40\" rx=\"12\" ry=\"11\" fill=\"#ffffff\"/>\n    <circle cx=\"25\" cy=\"31\" r=\"2.2\" fill=\"#2b2d42\"/>\n    <circle cx=\"24.2\" cy=\"30.2\" r=\"0.8\" fill=\"#ffffff\"/>\n    <circle cx=\"39\" cy=\"31\" r=\"2.2\" fill=\"#2b2d42\"/>\n    <circle cx=\"38.2\" cy=\"30.2\" r=\"0.8\" fill=\"#ffffff\"/>\n    <polygon points=\"32,38 29.5,35 34.5,35\" fill=\"#f77f00\"/>\n    <ellipse cx=\"19\" cy=\"35\" rx=\"3.5\" ry=\"1.8\" fill=\"#ff99a8\" opacity=\"0.9\"/>\n    <ellipse cx=\"45\" cy=\"35\" rx=\"3.5\" ry=\"1.8\" fill=\"#ff99a8\" opacity=\"0.9\"/>\n    <path d=\"M20 44 C24 46, 40 46, 44 44 C45 47, 43 49, 39 49 C33 49, 27 49, 21 48 C19 47, 19 45, 20 44 Z\" fill=\"#e63946\"/>\n    <rect x=\"36\" y=\"47\" width=\"5\" height=\"10\" rx=\"1.5\" fill=\"#d90429\"/>\n    <circle cx=\"32\" cy=\"20\" r=\"3\" fill=\"#ffccd5\"/>\n  </svg>",
+  "<svg viewBox=\"0 0 64 64\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"sticker-svg sticker-fox\">\n    <ellipse cx=\"32\" cy=\"35\" rx=\"25\" ry=\"22\" fill=\"#ffffff\"/>\n    <polygon points=\"15,22 25,10 29,22\" fill=\"#e06d44\" stroke=\"#ffffff\" stroke-width=\"1.5\"/>\n    <polygon points=\"18,21 24,13 27,21\" fill=\"#ffffff\"/>\n    <polygon points=\"49,22 39,10 35,22\" fill=\"#e06d44\" stroke=\"#ffffff\" stroke-width=\"1.5\"/>\n    <polygon points=\"46,21 40,13 37,21\" fill=\"#ffffff\"/>\n    <circle cx=\"32\" cy=\"35\" r=\"20\" fill=\"#e06d44\"/>\n    <ellipse cx=\"23\" cy=\"39\" rx=\"8\" ry=\"7\" fill=\"#ffffff\"/>\n    <ellipse cx=\"41\" cy=\"39\" rx=\"8\" ry=\"7\" fill=\"#ffffff\"/>\n    <ellipse cx=\"32\" cy=\"40\" rx=\"6\" ry=\"5\" fill=\"#ffffff\"/>\n    <circle cx=\"24\" cy=\"32\" r=\"2.4\" fill=\"#2d2a32\"/>\n    <circle cx=\"23.2\" cy=\"31.2\" r=\"0.8\" fill=\"#ffffff\"/>\n    <circle cx=\"40\" cy=\"32\" r=\"2.4\" fill=\"#2d2a32\"/>\n    <circle cx=\"39.2\" cy=\"31.2\" r=\"0.8\" fill=\"#ffffff\"/>\n    <ellipse cx=\"32\" cy=\"37.5\" rx=\"2.2\" ry=\"1.5\" fill=\"#2d2a32\"/>\n    <path d=\"M30.5 39.5 C31.2 41 32 41 32 39.5 C32 41 32.8 41 33.5 39.5\" stroke=\"#2d2a32\" stroke-width=\"1.2\" stroke-linecap=\"round\" fill=\"none\"/>\n    <circle cx=\"24\" cy=\"27\" r=\"1.6\" fill=\"#ffffff\"/>\n    <circle cx=\"40\" cy=\"27\" r=\"1.6\" fill=\"#ffffff\"/>\n    <ellipse cx=\"17\" cy=\"38\" rx=\"3.5\" ry=\"2\" fill=\"#ff99a8\" opacity=\"0.85\"/>\n    <ellipse cx=\"47\" cy=\"38\" rx=\"3.5\" ry=\"2\" fill=\"#ff99a8\" opacity=\"0.85\"/>\n    <path d=\"M32 52 C32 52 28 48 28 45.5 C28 44 29.5 42.5 31 42.5 C31.8 42.5 32 43 32 43 C32 43 32.2 42.5 33 42.5 C34.5 42.5 36 44 36 45.5 C36 48 32 52 32 52 Z\" fill=\"#ff4d6d\" stroke=\"#ffffff\" stroke-width=\"1\"/>\n  </svg>"
+];
+
+export function getStickerForIndex(idx) {
+  return PAGE_STICKER_SVGS[idx % PAGE_STICKER_SVGS.length];
+}
 
 const PAGE_TAPE_CLASSES = [
   'washi-tape tape-page-tl',
@@ -99,19 +98,6 @@ const PAGE_TAPE_CLASSES = [
   'washi-tape tape-page-bl',
   'washi-tape tape-page-br'
 ];
-
-const SCRAPBOOK_STAMPS = [
-  { text: 'Sealed with Love', icon: 'fa-stamp', class: '' },
-  { text: 'First Met', icon: 'fa-heart', class: 'stamp-heart' },
-  { text: 'Sweet Memories', icon: 'fa-sparkles', class: 'stamp-star' },
-  { text: 'Jakarta — Kudus', icon: 'fa-plane-departure', class: '' },
-  { text: 'The Beginning', icon: 'fa-comment-dots', class: 'stamp-love' },
-  { text: 'Forever & Always', icon: 'fa-infinity', class: 'stamp-star' }
-];
-
-function getStampForIndex(idx) {
-  return SCRAPBOOK_STAMPS[idx % SCRAPBOOK_STAMPS.length];
-}
 
 /**
  * Mengambil SEMUA foto dari galeri (mendukung multi-foto / album dalam satu momen)
@@ -164,7 +150,6 @@ export function getEffectiveBookItems(memoriesList = [], customPages = null) {
     }
 
     return pages.map((page, idx) => {
-      const stamp = getStampForIndex(idx);
       if (page.memoryId && memoryMap.has(page.memoryId)) {
         const mem = memoryMap.get(page.memoryId);
         const images = getMemoryImages(mem);
@@ -175,10 +160,7 @@ export function getEffectiveBookItems(memoriesList = [], customPages = null) {
           photoIndex: page.photoIndex,
           imgUrl: imgUrl,
           title: mem.title || page.title || 'Momen Spesial',
-          formattedDate: formatIndoDate(mem.date) || page.formattedDate || 'Kenangan Berdua',
-          stampText: page.stampText || stamp.text,
-          stampIcon: page.stampIcon || stamp.icon,
-          stampClass: page.stampClass || stamp.class
+          formattedDate: formatIndoDate(mem.date) || page.formattedDate || 'Kenangan Berdua'
         };
       }
       return {
@@ -187,10 +169,7 @@ export function getEffectiveBookItems(memoriesList = [], customPages = null) {
         photoIndex: page.photoIndex !== undefined ? page.photoIndex : 0,
         imgUrl: page.imgUrl,
         title: page.title || 'Momen Spesial',
-        formattedDate: page.formattedDate || 'Kenangan Berdua',
-        stampText: page.stampText || stamp.text,
-        stampIcon: page.stampIcon || stamp.icon,
-        stampClass: page.stampClass || stamp.class
+        formattedDate: page.formattedDate || 'Kenangan Berdua'
       };
     });
   }
@@ -215,6 +194,7 @@ export function renderHeroBookPages(items = []) {
     const isLast = idx === totalPages - 1;
     const zIndex = totalPages - idx;
     const tapeClass = PAGE_TAPE_CLASSES[idx % PAGE_TAPE_CLASSES.length];
+    const stickerSvg = getStickerForIndex(idx);
 
     html += `
       <div class="scrapbook-page page-${pageNum} ${isFirst ? 'active' : ''}" data-page="${pageNum}" style="z-index: ${zIndex};">
@@ -235,8 +215,9 @@ export function renderHeroBookPages(items = []) {
               <span class="caption-date">${escapeHtml(item.formattedDate)}</span>
               <p class="caption-title">${escapeHtml(item.title)}</p>
             </div>
-            <div class="stamp-badge ${item.stampClass || ''}">
-              <i class="fa-solid ${item.stampIcon || 'fa-sparkles'}"></i> ${escapeHtml(item.stampText || 'Sealed with Love')}
+            <!-- Stiker Estetik di Pojok Bingkai Foto -->
+            <div class="photo-corner-sticker" title="Stiker kenangan manis">
+              ${stickerSvg}
             </div>
           </div>
           <div class="page-corner-fold ${isLast ? 'page-corner-reset' : ''}" title="${isLast ? 'Klik untuk kembali ke halaman awal' : 'Klik untuk membalik halaman'}">
@@ -538,20 +519,14 @@ export function setupHeroScrapbook({
       closeModal(modalEditScrapbook);
 
       if (tempSelectedItems.length > 0) {
-        const pagesToSave = tempSelectedItems.map((item, idx) => {
-          const stamp = getStampForIndex(idx);
-          return {
-            id: item.id || `page_${Date.now()}_${idx}`,
-            memoryId: item.memoryId || null,
-            photoIndex: item.photoIndex !== undefined ? item.photoIndex : 0,
-            imgUrl: item.imgUrl,
-            title: item.title || 'Momen Spesial',
-            formattedDate: item.formattedDate || 'Kenangan Berdua',
-            stampText: stamp.text,
-            stampIcon: stamp.icon,
-            stampClass: stamp.class
-          };
-        });
+        const pagesToSave = tempSelectedItems.map((item, idx) => ({
+          id: item.id || `page_${Date.now()}_${idx}`,
+          memoryId: item.memoryId || null,
+          photoIndex: item.photoIndex !== undefined ? item.photoIndex : 0,
+          imgUrl: item.imgUrl,
+          title: item.title || 'Momen Spesial',
+          formattedDate: item.formattedDate || 'Kenangan Berdua'
+        }));
 
         // 1. Simpan ke LocalStorage agar langsung aktif seketika
         saveScrapbookCustomPages(pagesToSave);
