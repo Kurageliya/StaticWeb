@@ -26,17 +26,49 @@
   border-radius: var(--radius-full);
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-muted);
-  background: #ffffff;
-  border: 1px solid var(--pink-dusty);
+  color: var(--text-dark);
+  background: var(--bg-cream-card);
+  border: 1.5px solid var(--pink-dusty);
+  cursor: pointer;
   transition: all var(--transition-fast);
 }
 
-.filter-btn:hover,
+.filter-btn:hover {
+  background: var(--pink-soft);
+  color: var(--pink-deep);
+  border-color: var(--pink-accent);
+}
+
 .filter-btn.active {
   background: var(--pink-accent);
   color: #ffffff;
   border-color: var(--pink-accent);
+  box-shadow: 0 4px 12px rgba(164, 90, 130, 0.35);
+}
+
+/* Dark Mode Filter Buttons */
+[data-theme="dark"] .filter-btn,
+[data-theme="midnight-romance"] .filter-btn {
+  background: #22182c;
+  color: #fbf1f6;
+  border: 1.5px solid rgba(197, 179, 211, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .filter-btn:hover,
+[data-theme="midnight-romance"] .filter-btn:hover {
+  background: #332040;
+  color: #ffffff;
+  border-color: var(--pink-accent);
+}
+
+[data-theme="dark"] .filter-btn.active,
+[data-theme="midnight-romance"] .filter-btn.active {
+  background: linear-gradient(135deg, #ff7597, #e05b82);
+  color: #130e19;
+  font-weight: 700;
+  border-color: #ff7597;
+  box-shadow: 0 4px 18px rgba(255, 117, 151, 0.45);
 }
 
 .gallery-action-group {
@@ -49,19 +81,20 @@
 /* Gallery View Switcher: Slider vs Grid */
 .gallery-view-switcher {
   display: inline-flex;
-  background: rgba(232, 180, 184, 0.25);
-  padding: 3px;
+  background: var(--pink-soft);
+  padding: 4px;
   border-radius: 30px;
-  border: 1px solid rgba(232, 180, 184, 0.45);
+  border: 1.5px solid var(--pink-dusty);
+  box-shadow: var(--shadow-sm);
 }
 
 .view-switch-btn {
   border: none;
   background: transparent;
   color: var(--text-muted);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 6px 15px;
   border-radius: 25px;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -70,10 +103,41 @@
   gap: 6px;
 }
 
+.view-switch-btn:hover {
+  color: var(--text-dark);
+}
+
 .view-switch-btn.active {
   background: #ffffff;
-  color: var(--primary-pink);
-  box-shadow: 0 2px 8px rgba(162, 75, 92, 0.15);
+  color: var(--pink-deep);
+  box-shadow: 0 2px 8px rgba(94, 40, 74, 0.15);
+  font-weight: 700;
+}
+
+/* Dark Mode View Switcher (Fixing white-on-white text & poor contrast) */
+[data-theme="dark"] .gallery-view-switcher,
+[data-theme="midnight-romance"] .gallery-view-switcher {
+  background: #251a30;
+  border: 1.5px solid rgba(197, 179, 211, 0.3);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .view-switch-btn,
+[data-theme="midnight-romance"] .view-switch-btn {
+  color: #d1c0d6;
+}
+
+[data-theme="dark"] .view-switch-btn:hover,
+[data-theme="midnight-romance"] .view-switch-btn:hover {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .view-switch-btn.active,
+[data-theme="midnight-romance"] .view-switch-btn.active {
+  background: linear-gradient(135deg, #ff7597, #e05b82);
+  color: #130e19 !important;
+  font-weight: 800;
+  box-shadow: 0 2px 14px rgba(255, 117, 151, 0.5);
 }
 
 /* Gallery Slider Wrapper & Nav Arrows */
@@ -89,10 +153,10 @@
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--primary-pink);
-  border: 1.5px solid rgba(232, 180, 184, 0.65);
-  box-shadow: 0 8px 24px rgba(162, 75, 92, 0.2);
+  background: var(--bg-cream-card);
+  color: var(--pink-deep);
+  border: 1.5px solid var(--pink-dusty);
+  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -112,10 +176,25 @@
 }
 
 .gallery-slider-nav:hover {
-  background: var(--primary-pink);
+  background: var(--pink-accent);
   color: #ffffff;
   transform: translateY(-50%) scale(1.12);
-  box-shadow: 0 12px 28px rgba(162, 75, 92, 0.35);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .gallery-slider-nav,
+[data-theme="midnight-romance"] .gallery-slider-nav {
+  background: #23192d;
+  color: #ff7597;
+  border: 1.5px solid rgba(197, 179, 211, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .gallery-slider-nav:hover,
+[data-theme="midnight-romance"] .gallery-slider-nav:hover {
+  background: #ff7597;
+  color: #130e19;
+  box-shadow: 0 10px 30px rgba(255, 117, 151, 0.5);
 }
 
 .gallery-slider-nav:disabled {
@@ -474,6 +553,7 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
+[data-theme="dark"] .card-category-pill,
 [data-theme="midnight-romance"] .card-category-pill {
   background: rgba(255, 255, 255, 0.18);
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -520,6 +600,7 @@
   gap: 4px;
 }
 
+[data-theme="dark"] .card-chip,
 [data-theme="midnight-romance"] .card-chip {
   background: rgba(255, 101, 132, 0.15);
   color: var(--text-dark);
@@ -554,11 +635,13 @@
 }
 
 /* Dark Mode Pill Button (White button with dark text, matching Foto 1 dark variant) */
+[data-theme="dark"] .btn-card-open,
 [data-theme="midnight-romance"] .btn-card-open {
   background: #ffffff;
   color: #140f18;
 }
 
+[data-theme="dark"] .btn-card-open:hover,
 [data-theme="midnight-romance"] .btn-card-open:hover {
   background: var(--pink-accent);
   color: #ffffff;

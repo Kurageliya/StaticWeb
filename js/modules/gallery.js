@@ -3,7 +3,7 @@
  * Mengelola Galeri Polaroid, 3D Curved Slider Panorama, Filter Kategori, Drag-to-Slide,
  * dan Carousel Foto mini di dalam kartu polaroid.
  */
-import { escapeHtml } from '../utils/helpers.js';
+import { escapeHtml, formatMemoryDate } from '../utils/helpers.js';
 
 let selectedGliderIndex = null;
 
@@ -142,7 +142,8 @@ export function renderPolaroidGrid({
 
   const filteredMemories = memoriesList.filter(item => {
     if (currentFilter === 'all') return true;
-    return item.category === currentFilter;
+    const itemCat = (item.category || '').toLowerCase().trim();
+    return itemCat === currentFilter.toLowerCase().trim();
   });
 
   const galleryTotalCount = document.getElementById('gallery-total-count');
@@ -175,8 +176,7 @@ export function renderPolaroidGrid({
     const itemEl = document.createElement('div');
     itemEl.className = 'polaroid-item';
 
-    const dateObj = new Date(memory.date);
-    const formattedDate = dateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
+    const formattedDate = formatMemoryDate(memory, true);
     const isLoved = memory.isFeatured !== false;
     const images = getMemoryImages(memory);
     const hasMultiplePhotos = images.length > 1;
@@ -241,8 +241,13 @@ export function renderPolaroidGrid({
       `;
     }
 
-    const categoryName = memory.category || 'Momen';
-    const categoryIcon = categoryName === 'kencan' ? 'fa-heart' : (categoryName === 'liburan' ? 'fa-plane' : 'fa-star');
+    const cat = memory.category || 'Momen';
+    const catLower = cat.toLowerCase().trim();
+    let categoryIcon = 'fa-tag';
+    if (catLower === 'kencan') categoryIcon = 'fa-champagne-glasses';
+    else if (catLower === 'liburan') categoryIcon = 'fa-plane-departure';
+    else if (catLower === 'spesial') categoryIcon = 'fa-heart';
+    const categoryName = cat.charAt(0).toUpperCase() + cat.slice(1);
 
     itemEl.innerHTML = `
       ${imgBoxHtml}
@@ -515,7 +520,80 @@ export function setupGallerySliderEvents() {
   });
 }
 
+/**
+ * Render tombol filter kategori galeri secara dinamis:
+ * Hanya menampilkan kategori yang saat ini memiliki setidaknya 1 momen aktif.
+ * Jika kategori kustom yang dibuat user sudah tidak ada isinya, filternya otomatis hilang.
+ */
+export function renderFilterTabs(memoriesList = [], currentFilter = 'all', onFilterChange = null) {
+  const filterTabsContainer = document.getElementById('gallery-filter-tabs');
+  if (!filterTabsContainer) return currentFilter;
+
+  // 1. Kumpulkan semua kategori unik dari memoriesList yang memiliki setidaknya 1 foto
+  const categoryCounts = new Map();
+  memoriesList.forEach(m => {
+    const rawCat = (m.category || 'spesial').trim();
+    if (!rawCat) return;
+    const lower = rawCat.toLowerCase();
+    if (!categoryCounts.has(lower)) {
+      const words = rawCat.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+      const displayName = words.join(' ');
+      categoryCounts.set(lower, { key: lower, label: displayName, count: 1 });
+    } else {
+      categoryCounts.get(lower).count++;
+    }
+  });
+
+  // Jika filter yang sedang aktif bukan 'all' dan kategorinya sudah tidak ada momennya
+  let effectiveFilter = currentFilter;
+  if (currentFilter !== 'all' && !categoryCounts.has(currentFilter.toLowerCase())) {
+    effectiveFilter = 'all';
+    if (typeof onFilterChange === 'function') {
+      onFilterChange('all');
+    }
+  }
+
+  // 2. Susun tombol filter:
+  // Tombol 'all' (Semua Momen) selalu ada di paling depan
+  let html = `<button type="button" class="filter-btn ${effectiveFilter === 'all' ? 'active' : ''}" data-filter="all">Semua Momen</button>`;
+
+  // Urutkan: bawaan ('kencan', 'liburan', 'spesial') jika ada, diikuti kategori kustom alfabetis
+  const standardKeys = ['kencan', 'liburan', 'spesial'];
+  const sortedCategories = Array.from(categoryCounts.values()).sort((a, b) => {
+    const aStd = standardKeys.indexOf(a.key);
+    const bStd = standardKeys.indexOf(b.key);
+    if (aStd !== -1 && bStd !== -1) return aStd - bStd;
+    if (aStd !== -1) return -1;
+    if (bStd !== -1) return 1;
+    return a.label.localeCompare(b.label);
+  });
+
+  sortedCategories.forEach(cat => {
+    const isActive = effectiveFilter.toLowerCase() === cat.key;
+    html += `<button type="button" class="filter-btn ${isActive ? 'active' : ''}" data-filter="${escapeHtml(cat.key)}">${escapeHtml(cat.label)}</button>`;
+  });
+
+  filterTabsContainer.innerHTML = html;
+
+  // 3. Pasang event listener ke setiap tombol filter
+  const filterBtns = filterTabsContainer.querySelectorAll('.filter-btn');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedGliderIndex = null;
+      const newFilter = btn.getAttribute('data-filter') || 'all';
+      if (typeof onFilterChange === 'function') {
+        onFilterChange(newFilter);
+      }
+    });
+  });
+
+  return effectiveFilter;
+}
+
 export function setupFilterEvents(onFilterChange) {
+  // Kompatibilitas mundur: panggil delegasi jika tombol statis diklik sebelum render pertama
   const filterBtns = document.querySelectorAll('.filter-btn');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {

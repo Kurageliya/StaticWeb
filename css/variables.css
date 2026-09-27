@@ -1,22 +1,42 @@
 /* === DESIGN TOKENS & ROOT VARIABLES === */
 /* --------------------------------------------------------------------------
-   1. DESIGN TOKENS & ROOT VARIABLES
+   1. DESIGN TOKENS & ROOT VARIABLES (2 TEMA: LIGHT & DARK)
+   - Light Mode: Palet Custom (#FBEFEF, #FFE2E2, #F5CBCB, #C5B3D3)
+   - Dark Mode : Midnight Velvet Amethyst (Menyesuaikan dengan aksen Lavender & Muted Rose)
    -------------------------------------------------------------------------- */
+
 :root,
+[data-theme="light"],
 [data-theme="dusty-rose"] {
-  /* Theme 1: Soft Dusty Rose (Default Classic - Warm Rosy Peach Tint) */
-  --bg-cream: #faf0f2;
-  --bg-cream-card: #fff7f8;
-  --nav-bg: rgba(250, 240, 242, 0.92);
-  --pink-soft: #f4c2c2;
-  --pink-dusty: #e8b4b8;
-  --pink-accent: #d88390;
-  --pink-deep: #a24b5c;
-  --gold-soft: #e5c158;
-  --gold-accent: #d4af37;
-  --text-dark: #3a2e39;
-  --text-muted: #7c6877;
-  --text-light: #9e8899;
+  /* ========================================================================
+     TEMA 1: LIGHT MODE (Blush, Rose & Lavender Lilac)
+     Palet Utama:
+     #FBEFEF -> --bg-cream (Base background lembut nan hangat)
+     #FFE2E2 -> --pink-soft (Fill lembut, hover, tag background)
+     #F5CBCB -> --pink-dusty (Garis batas, frame polaroid, chips)
+     #C5B3D3 -> --lavender-soft (Aksen lilac romantis yang anggun)
+     ======================================================================== */
+  --bg-cream: #fbefef;
+  --bg-cream-card: #ffffff;
+  --nav-bg: rgba(251, 239, 239, 0.75);
+  --nav-border: rgba(197, 179, 211, 0.35);
+  --nav-shadow: 0 4px 20px -2px rgba(164, 90, 130, 0.07);
+  
+  --pink-soft: #ffe2e2;
+  --pink-dusty: #f5cbcb;
+  --pink-accent: #a45a82;      /* Mauve-rose harmonis antara dusty rose & lavender */
+  --pink-deep: #5e284a;        /* Royal plum berry mewah dengan kontras tinggi */
+  --primary-pink: var(--pink-accent); /* Alias kompatibilitas */
+  
+  --lavender-soft: #c5b3d3;    /* Sentuhan lavender lilac sesuai palet user */
+  --lavender-accent: #9a78b5;
+  
+  --gold-soft: #eedac8;
+  --gold-accent: #c69460;
+  
+  --text-dark: #2c1b29;        /* Espresso plum gelap nan elegan & sangat terbaca */
+  --text-muted: #725b70;       /* Dusty mauve gray lembut */
+  --text-light: #9c8498;
 
   /* Typography */
   --font-cinzel: 'Cinzel Decorative', Georgia, serif;
@@ -26,10 +46,10 @@
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* Shadows */
-  --shadow-sm: 0 4px 12px rgba(90, 62, 67, 0.06);
-  --shadow-md: 0 8px 24px rgba(90, 62, 67, 0.1);
-  --shadow-lg: 0 16px 40px rgba(90, 62, 67, 0.14);
-  --shadow-polaroid: 0 10px 30px -5px rgba(58, 46, 57, 0.15);
+  --shadow-sm: 0 4px 12px rgba(94, 40, 74, 0.06);
+  --shadow-md: 0 8px 24px rgba(94, 40, 74, 0.10);
+  --shadow-lg: 0 16px 40px rgba(94, 40, 74, 0.14);
+  --shadow-polaroid: 0 10px 30px -5px rgba(44, 27, 41, 0.14);
 
   /* Transitions */
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -43,8 +63,65 @@
   --radius-full: 9999px;
 }
 
+[data-theme="dark"],
+[data-theme="midnight-romance"] {
+  /* ========================================================================
+     TEMA 2: DARK MODE (Midnight Velvet & Amethyst Glow)
+     Menyesuaikan palet light dengan latar obsidian plum, aksen lavender (#C5B3D3)
+     dan sentuhan neon rose yang nyaman di mata & dramatis di malam hari.
+     ======================================================================== */
+  --bg-cream: #130e19;
+  --bg-cream-card: #1e1526;
+  --nav-bg: rgba(19, 14, 25, 0.75);
+  --nav-border: rgba(197, 179, 211, 0.18);
+  --nav-shadow: 0 4px 25px -2px rgba(0, 0, 0, 0.45);
+  
+  --pink-soft: #2e1e35;
+  --pink-dusty: #5d3a65;
+  --pink-accent: #ff7597;      /* Glowing vibrant romantic rose */
+  --pink-deep: #c5b3d3;        /* Lilac Lavender glow (#C5B3D3) bercahaya di dark mode */
+  --primary-pink: var(--pink-accent); /* Alias kompatibilitas */
+  
+  --lavender-soft: #c5b3d3;
+  --lavender-accent: #d8c3ea;
+
+  --gold-soft: #f4c478;
+  --gold-accent: #ffd166;
+  
+  --text-dark: #fbf1f6;        /* Teks terang soft luminous rose-white */
+  --text-muted: #c6b5ca;       /* Lavender gray yang nyaman dibaca */
+  --text-light: #948096;
+  
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
+  --shadow-polaroid: 0 10px 30px -5px rgba(0, 0, 0, 0.75);
+}
+
+[data-theme="dark"] .envelope-open-bg,
+[data-theme="midnight-romance"] .envelope-open-bg {
+  background: linear-gradient(165deg, #26162c 0%, #3a1c3f 50%, #1a0d20 100%);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 0 2px rgba(197, 179, 211, 0.4);
+}
+
+[data-theme="dark"] .envelope-open-flap,
+[data-theme="midnight-romance"] .envelope-open-flap {
+  background: linear-gradient(to top, #3a1c3f, #26162c);
+}
+
+[data-theme="dark"] .envelope-open-pocket,
+[data-theme="midnight-romance"] .envelope-open-pocket {
+  background: linear-gradient(to bottom, #431f4a 0%, #2e1233 100%);
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.5);
+}
+
+
+/* ==========================================================================
+   PRESERVED / TERSIMPAN AMAN: CHERRY SAKURA & MIDNIGHT PINK (ORIGINAL)
+   Disimpan di sini & di theme-presets-backup.css agar palet aslinya tetap aman.
+   ========================================================================== */
 [data-theme="cherry-sakura"] {
-  /* Theme 2: Cherry Blossom (Sakura Pink) */
+  /* Theme: Cherry Blossom (Sakura Pink) - Original Preserved */
   --bg-cream: #fbf0f4;
   --bg-cream-card: #fff7fa;
   --nav-bg: rgba(251, 240, 244, 0.92);
@@ -63,48 +140,8 @@
   --shadow-polaroid: 0 10px 30px -5px rgba(43, 27, 36, 0.15);
 }
 
-[data-theme="berry-velvet"] {
-  /* Theme 3: Velvet Berry & Lavender */
-  --bg-cream: #f7eff9;
-  --bg-cream-card: #fcf7fe;
-  --nav-bg: rgba(247, 239, 249, 0.92);
-  --pink-soft: #e8d7f1;
-  --pink-dusty: #d8a7ca;
-  --pink-accent: #b565a7;
-  --pink-deep: #7b2cbf;
-  --gold-soft: #f3d5b5;
-  --gold-accent: #e0a96d;
-  --text-dark: #2d182e;
-  --text-muted: #674c69;
-  --text-light: #917594;
-  --shadow-sm: 0 4px 12px rgba(123, 44, 191, 0.08);
-  --shadow-md: 0 8px 24px rgba(123, 44, 191, 0.12);
-  --shadow-lg: 0 16px 40px rgba(123, 44, 191, 0.16);
-  --shadow-polaroid: 0 10px 30px -5px rgba(45, 24, 46, 0.15);
-}
-
-[data-theme="sunset-peach"] {
-  /* Theme 4: Sunset Peach & Coral */
-  --bg-cream: #faefe7;
-  --bg-cream-card: #fff8f4;
-  --nav-bg: rgba(250, 239, 231, 0.92);
-  --pink-soft: #ffd8cc;
-  --pink-dusty: #ffb3a7;
-  --pink-accent: #ff758c;
-  --pink-deep: #d93856;
-  --gold-soft: #f7d070;
-  --gold-accent: #e5a024;
-  --text-dark: #3d2426;
-  --text-muted: #7e5659;
-  --text-light: #a37b7e;
-  --shadow-sm: 0 4px 12px rgba(255, 117, 140, 0.08);
-  --shadow-md: 0 8px 24px rgba(255, 117, 140, 0.12);
-  --shadow-lg: 0 16px 40px rgba(255, 117, 140, 0.16);
-  --shadow-polaroid: 0 10px 30px -5px rgba(61, 36, 38, 0.15);
-}
-
-[data-theme="midnight-romance"] {
-  /* Theme 5: Midnight Romance (Luxury Dark Pink) */
+[data-theme="midnight-pink-original"] {
+  /* Theme: Midnight Romance / Midnight Pink - Original Preserved */
   --bg-cream: #140f18;
   --bg-cream-card: #201826;
   --nav-bg: rgba(20, 15, 24, 0.92);
@@ -122,18 +159,3 @@
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
   --shadow-polaroid: 0 10px 30px -5px rgba(0, 0, 0, 0.7);
 }
-
-[data-theme="midnight-romance"] .envelope-open-bg {
-  background: linear-gradient(165deg, #2d182b 0%, #3e1b36 50%, #200f20 100%);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 0 2px rgba(212, 175, 55, 0.4);
-}
-
-[data-theme="midnight-romance"] .envelope-open-flap {
-  background: linear-gradient(to top, #3e1b36, #2d182b);
-}
-
-[data-theme="midnight-romance"] .envelope-open-pocket {
-  background: linear-gradient(to bottom, #4a1f40 0%, #35152d 100%);
-  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.5);
-}
-

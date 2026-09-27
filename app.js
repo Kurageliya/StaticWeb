@@ -21,13 +21,14 @@ import { startBirthdayReminder } from './js/services/reminderService.js';
 import { setupAudioSynth, onMusicUrlChanged } from './js/services/audioService.js';
 import { initAmbientCanvas } from './js/services/canvasService.js';
 import { showToast } from './js/utils/toast.js';
-import { safeGetLocalStorage } from './js/utils/helpers.js';
+import { safeGetLocalStorage, getMemoryTimestamp, ensureDocumentUnderLimit } from './js/utils/helpers.js';
 
 // Feature Modules
 import { setupHeroScrapbook, setupEnvelopeInteraction } from './js/modules/book.js';
 import { renderTimelineSection } from './js/modules/timeline.js';
 import {
   renderPolaroidGrid,
+  renderFilterTabs,
   setupGallerySliderEvents,
   setupFilterEvents,
   updateGallerySliderState
@@ -35,6 +36,7 @@ import {
 import {
   setupLightboxEvents,
   openLightbox,
+  openLightboxByMemory,
   closeLightbox,
   updateLightboxContent
 } from './js/modules/lightbox.js';
@@ -59,6 +61,11 @@ let filteredMemories = [];
  * Memperbarui tampilan Galeri Polaroid dan Timeline secara terkoordinasi
  */
 function refreshGalleryAndTimeline() {
+  currentFilter = renderFilterTabs(memoriesList, currentFilter, (newFilter) => {
+    currentFilter = newFilter;
+    refreshGalleryAndTimeline();
+  });
+
   filteredMemories = renderPolaroidGrid({
     memoriesList,
     currentFilter,
@@ -67,7 +74,7 @@ function refreshGalleryAndTimeline() {
     },
     onEditMemory: (id) => {
       const memory = memoriesList.find(m => m.id === id);
-      if (memory) openEditMemoryModal(memory);
+      if (memory) openEditMemoryModal(memory, memoriesList);
     },
     onToggleFeatured: handleToggleFeatured,
     onDeleteMemory: (id) => {
@@ -76,7 +83,19 @@ function refreshGalleryAndTimeline() {
     }
   });
 
-  renderTimelineSection(memoriesList, setupScrollReveal);
+  renderTimelineSection(memoriesList, setupScrollReveal, (memory) => {
+    openLightboxByMemory(memory, 0, {
+      onToggleFeatured: handleToggleFeatured,
+      onDeleteMemory: (id) => {
+        const mem = memoriesList.find(m => m.id === id);
+        if (mem) openDeleteConfirm(mem.id, mem.title);
+      },
+      onEditMemory: (id) => {
+        const mem = memoriesList.find(m => m.id === id);
+        if (mem) openEditMemoryModal(mem, memoriesList);
+      }
+    });
+  });
 }
 
 /**
@@ -124,8 +143,9 @@ async function handleSaveEdit(updatedData) {
   const memory = memoriesList.find(m => m.id === updatedData.id);
   if (!memory) return;
 
+  await ensureDocumentUnderLimit(updatedData);
   Object.assign(memory, updatedData);
-  memoriesList.sort((a, b) => new Date(b.date) - new Date(a.date));
+  memoriesList.sort((a, b) => getMemoryTimestamp(b) - getMemoryTimestamp(a));
   saveMemoriesList(memoriesList);
 
   refreshGalleryAndTimeline();
@@ -135,24 +155,29 @@ async function handleSaveEdit(updatedData) {
     updateLightboxContent(memory, 0);
   }
 
-  showToast('✏️ Kenangan Berhasil Diperbarui!');
-  await syncMemoryToCloud(memory);
+  const cloudSaved = await syncMemoryToCloud(memory);
+  if (cloudSaved) {
+    showToast('✏️ Kenangan Berhasil Diperbarui!');
+  }
 }
 
 /**
  * Handler Tambah Kenangan Baru
  */
 async function handleAddMemory(newMemory) {
+  await ensureDocumentUnderLimit(newMemory);
+
   memoriesList.unshift(newMemory);
-  memoriesList.sort((a, b) => new Date(b.date) - new Date(a.date));
+  memoriesList.sort((a, b) => getMemoryTimestamp(b) - getMemoryTimestamp(a));
   saveMemoriesList(memoriesList);
 
   refreshGalleryAndTimeline();
 
   const photoCount = newMemory.images ? newMemory.images.length : 1;
-  showToast(photoCount > 1 ? `💖 Kenangan Baru (${photoCount} Foto Carousel) Berhasil Ditambahkan!` : '💖 Kenangan Baru Berhasil Ditambahkan!');
-
-  await syncMemoryToCloud(newMemory);
+  const cloudSaved = await syncMemoryToCloud(newMemory);
+  if (cloudSaved) {
+    showToast(photoCount > 1 ? `💖 Kenangan Baru (${photoCount} Foto Carousel) Berhasil Ditambahkan!` : '💖 Kenangan Baru Berhasil Ditambahkan!');
+  }
 }
 
 /**
@@ -176,8 +201,8 @@ async function handleSaveSettings(updatedSettings) {
  * Inisialisasi Utama Aplikasi (Bootstrap)
  */
 function initApp() {
-  // 1. Tema Warna Background
-  const savedTheme = safeGetLocalStorage('love_journey_theme', 'dusty-rose');
+  // 1. Tema Tampilan (Light & Dark)
+  const savedTheme = safeGetLocalStorage('love_journey_theme', 'light');
   setupThemeEvents(savedTheme);
 
   // 2. Scrapbook Album Fisik 3D & Amplop Surat Cinta
@@ -226,7 +251,7 @@ function initApp() {
     },
     onEditMemory: (id) => {
       const memory = memoriesList.find(m => m.id === id);
-      if (memory) openEditMemoryModal(memory);
+      if (memory) openEditMemoryModal(memory, memoriesList);
     }
   });
 
@@ -242,7 +267,8 @@ function initApp() {
   setupModalEvents({
     getCoupleSettings: () => coupleSettings,
     onSaveSettings: handleSaveSettings,
-    onAddMemory: handleAddMemory
+    onAddMemory: handleAddMemory,
+    getMemoriesList: () => memoriesList
   });
 
   // 8. Musik & Ambient Audio Synthesizer

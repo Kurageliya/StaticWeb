@@ -46,9 +46,9 @@
         <li><a href="#letter"><i class="fa-solid fa-envelope-open-text"></i> Surat Cinta</a></li>
       </ul>
       <div class="nav-actions">
-        <button id="btn-theme-toggle" class="btn-icon" title="Pilih Tema Warna Background"
-          aria-label="Pilih Tema Warna">
-          <i class="fa-solid fa-palette"></i>
+        <button id="btn-theme-toggle" class="btn-icon" title="Tema Tampilan (Light / Dark)"
+          aria-label="Tema Tampilan">
+          <i class="fa-solid fa-circle-half-stroke"></i>
         </button>
         <button id="btn-audio-toggle" class="btn-icon" title="Musik Ambient Romantis" aria-label="Toggle Musik">
           <i class="fa-solid fa-music"></i>
@@ -474,7 +474,7 @@
 
         <!-- Filter & Action Controls -->
         <div class="gallery-controls reveal">
-          <div class="filter-tabs">
+          <div class="filter-tabs" id="gallery-filter-tabs">
             <button class="filter-btn active" data-filter="all">Semua Momen</button>
             <button class="filter-btn" data-filter="kencan">Kencan</button>
             <button class="filter-btn" data-filter="liburan">Liburan</button>
@@ -780,70 +780,42 @@
     <div class="modal-backdrop"></div>
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-palette"></i> Pilih Tema Warna Romantis</h3>
+        <h3><i class="fa-solid fa-circle-half-stroke"></i> Tema Tampilan (Light & Dark)</h3>
         <button class="modal-close" id="modal-theme-close"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">
-          Pilih suasana & skema warna favoritmu untuk mempercantik tampilan scrapbook ini:
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+          Pilih suasana tampilan yang kamu sukai (Tersedia Mode Terang & Mode Gelap):
         </p>
 
         <div class="theme-options-grid" id="theme-options-grid">
 
-          <div class="theme-card-option active" data-theme-id="dusty-rose">
+          <div class="theme-card-option active" data-theme-id="light">
             <div class="theme-swatch-wrap">
-              <span class="theme-swatch" style="background: #e8b4b8;"></span>
-              <span class="theme-swatch" style="background: #fdfbf7;"></span>
-              <span class="theme-swatch" style="background: #a24b5c;"></span>
+              <span class="theme-swatch" style="background: #fbefef;" title="#FBEFEF (Base Cream/Blush)"></span>
+              <span class="theme-swatch" style="background: #ffe2e2;" title="#FFE2E2 (Soft Pink)"></span>
+              <span class="theme-swatch" style="background: #f5cbcb;" title="#F5CBCB (Dusty Rose)"></span>
+              <span class="theme-swatch" style="background: #c5b3d3;" title="#C5B3D3 (Pastel Lilac)"></span>
             </div>
-            <span class="theme-name-label">🌸 Dusty Rose</span>
-            <span class="theme-desc-label">Soft Pastel Classic</span>
+            <span class="theme-name-label">☀️ Light Mode</span>
+            <span class="theme-desc-label">Blush & Lavender Lilac (Pastel Lembut)</span>
           </div>
 
-          <div class="theme-card-option" data-theme-id="cherry-sakura">
+          <div class="theme-card-option" data-theme-id="dark">
             <div class="theme-swatch-wrap">
-              <span class="theme-swatch" style="background: #ff85a1;"></span>
-              <span class="theme-swatch" style="background: #fff9fb;"></span>
-              <span class="theme-swatch" style="background: #c9184a;"></span>
+              <span class="theme-swatch" style="background: #130e19;" title="#130E19 (Midnight Obsidian)"></span>
+              <span class="theme-swatch" style="background: #1e1526;" title="#1E1526 (Velvet Card)"></span>
+              <span class="theme-swatch" style="background: #c5b3d3;" title="#C5B3D3 (Lilac Glow)"></span>
+              <span class="theme-swatch" style="background: #ff7597;" title="#FF7597 (Neon Rose)"></span>
             </div>
-            <span class="theme-name-label">🌺 Cherry Sakura</span>
-            <span class="theme-desc-label">Pink Cerah Romantis</span>
-          </div>
-
-          <div class="theme-card-option" data-theme-id="berry-velvet">
-            <div class="theme-swatch-wrap">
-              <span class="theme-swatch" style="background: #d8a7ca;"></span>
-              <span class="theme-swatch" style="background: #faf6fd;"></span>
-              <span class="theme-swatch" style="background: #7b2cbf;"></span>
-            </div>
-            <span class="theme-name-label">🍇 Velvet Berry</span>
-            <span class="theme-desc-label">Lavender & Magenta</span>
-          </div>
-
-          <div class="theme-card-option" data-theme-id="sunset-peach">
-            <div class="theme-swatch-wrap">
-              <span class="theme-swatch" style="background: #ffb3a7;"></span>
-              <span class="theme-swatch" style="background: #fff7f2;"></span>
-              <span class="theme-swatch" style="background: #d93856;"></span>
-            </div>
-            <span class="theme-name-label">🌇 Sunset Peach</span>
-            <span class="theme-desc-label">Warm Coral Pink</span>
-          </div>
-
-          <div class="theme-card-option" data-theme-id="midnight-romance">
-            <div class="theme-swatch-wrap">
-              <span class="theme-swatch" style="background: #75355a;"></span>
-              <span class="theme-swatch" style="background: #140f18;"></span>
-              <span class="theme-swatch" style="background: #ff6584;"></span>
-            </div>
-            <span class="theme-name-label">🌙 Midnight Pink</span>
-            <span class="theme-desc-label">Luxury Dark Mode</span>
+            <span class="theme-name-label">🌙 Dark Mode</span>
+            <span class="theme-desc-label">Midnight Velvet & Lavender Glow</span>
           </div>
 
         </div>
 
         <div class="modal-footer" style="margin-top: 1.5rem;">
-          <button type="button" class="btn btn-primary modal-theme-done" style="width: 100%;">Terapkan Tema
+          <button type="button" class="btn btn-primary modal-theme-done" style="width: 100%;">Terapkan Mode
             Pilihan</button>
         </div>
       </div>
@@ -935,22 +907,33 @@
             <label for="memory-title">Judul Momen</label>
             <input type="text" id="memory-title" class="form-control" placeholder="Contoh: Piknik di Taman" required>
           </div>
-          <div class="form-group">
-            <label for="memory-date">Tanggal Momen</label>
-            <input type="date" id="memory-date" class="form-control" required>
+          <div class="row-fields">
+            <div class="form-group flex-1">
+              <label for="memory-date"><i class="fa-regular fa-calendar"></i> Tanggal Momen</label>
+              <input type="date" id="memory-date" class="form-control" required>
+            </div>
+            <div class="form-group" style="width: 145px;">
+              <label for="memory-time"><i class="fa-regular fa-clock"></i> Jam (Waktu)</label>
+              <input type="time" id="memory-time" class="form-control" title="Jam kejadian (Opsional)">
+            </div>
           </div>
           <div class="form-group">
-            <label for="memory-category">Kategori</label>
+            <label for="memory-category"><i class="fa-solid fa-tags"></i> Kategori Momen</label>
             <select id="memory-category" class="form-control">
               <option value="kencan">Kencan</option>
               <option value="liburan">Liburan</option>
               <option value="spesial">Spesial</option>
+              <option value="__custom__">✨ + Tulis Kategori Kustom / Baru...</option>
             </select>
+            <div id="custom-category-wrap" style="display: none; margin-top: 0.6rem;">
+              <input type="text" id="memory-custom-category" class="form-control"
+                placeholder="Ketik nama kategori baru (misal: Kuliner, Anniversary, Nonton)..." maxlength="30">
+            </div>
           </div>
           <div class="form-group">
             <label><i class="fa-solid fa-images"></i> Unggah Foto (Bisa Lebih dari 1 Foto Ala Instagram)</label>
             <div class="upload-dropzone" id="upload-dropzone">
-              <input type="file" id="memory-file-input" accept="image/*" multiple style="display:none;">
+              <input type="file" id="memory-file-input" accept="image/*,image/heic,image/heif,.heic,.heif,.HEIC,.HEIF" multiple style="display:none;">
               <div class="dropzone-content" id="dropzone-content">
                 <i class="fa-solid fa-cloud-arrow-up"
                   style="font-size: 2.2rem; color: var(--pink-accent); margin-bottom: 0.5rem; display:block;"></i>
@@ -1005,17 +988,28 @@
             <label for="edit-memory-title">Judul Momen</label>
             <input type="text" id="edit-memory-title" class="form-control" placeholder="Judul kenangan..." required>
           </div>
-          <div class="form-group">
-            <label for="edit-memory-date"><i class="fa-regular fa-calendar"></i> Tanggal Momen</label>
-            <input type="date" id="edit-memory-date" class="form-control" required>
+          <div class="row-fields">
+            <div class="form-group flex-1">
+              <label for="edit-memory-date"><i class="fa-regular fa-calendar"></i> Tanggal Momen</label>
+              <input type="date" id="edit-memory-date" class="form-control" required>
+            </div>
+            <div class="form-group" style="width: 145px;">
+              <label for="edit-memory-time"><i class="fa-regular fa-clock"></i> Jam (Waktu)</label>
+              <input type="time" id="edit-memory-time" class="form-control" title="Jam kejadian (Opsional)">
+            </div>
           </div>
           <div class="form-group">
-            <label for="edit-memory-category">Kategori</label>
+            <label for="edit-memory-category"><i class="fa-solid fa-tags"></i> Kategori Momen</label>
             <select id="edit-memory-category" class="form-control">
               <option value="spesial">Spesial</option>
               <option value="kencan">Kencan</option>
               <option value="liburan">Liburan</option>
+              <option value="__custom__">✨ + Tulis Kategori Kustom / Baru...</option>
             </select>
+            <div id="edit-custom-category-wrap" style="display: none; margin-top: 0.6rem;">
+              <input type="text" id="edit-memory-custom-category" class="form-control"
+                placeholder="Ketik nama kategori baru (misal: Kuliner, Anniversary, Nonton)..." maxlength="30">
+            </div>
           </div>
           <div class="form-group">
             <label for="edit-memory-caption">Catatan / Kenangan Manis</label>
@@ -1031,7 +1025,7 @@
 
             <label><i class="fa-solid fa-cloud-arrow-up"></i> Tambah Foto Baru (HP / Laptop)</label>
             <div class="upload-dropzone" id="edit-upload-dropzone" style="padding: 1rem;">
-              <input type="file" id="edit-memory-file-input" accept="image/*" multiple style="display:none;">
+              <input type="file" id="edit-memory-file-input" accept="image/*,image/heic,image/heif,.heic,.heif,.HEIC,.HEIF" multiple style="display:none;">
               <div id="edit-dropzone-content">
                 <i class="fa-solid fa-camera-rotate"
                   style="font-size: 1.6rem; color: var(--pink-accent); margin-bottom: 0.3rem; display:block;"></i>
@@ -1084,12 +1078,15 @@
   <!-- Toast Notification Container -->
   <div id="toast-container" class="toast-container"></div>
 
-  <!-- Audio Element for Custom MP3 Music -->
-  <audio id="bg-music" loop preload="auto"></audio>
+  <!-- Audio Element for Custom MP3 Music (preload="none" saves 10.9MB bandwidth on initial load) -->
+  <audio id="bg-music" loop preload="none"></audio>
 
   <!-- Firebase Cloud SDK (v10 Compat for Realtime Cross-Device Sync) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Client-side HEIC/HEIF Image Converter for iPhone & Android compatibility (deferred) -->
+  <script src="js/libs/heic2any.min.js" defer></script>
 
   <!-- Main JavaScript File (ES Modules Architecture) -->
   <script type="module" src="app.js?v=3.0.0"></script>

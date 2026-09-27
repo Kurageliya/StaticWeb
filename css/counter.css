@@ -64,6 +64,21 @@
   border-color: var(--pink-accent);
 }
 
+/* Dark Mode Counter Adaptations */
+[data-theme="dark"] .counter-card,
+[data-theme="midnight-romance"] .counter-card {
+  background: #1e1526;
+  border: 1.5px solid rgba(197, 179, 211, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .counter-card.highlight-card,
+[data-theme="midnight-romance"] .counter-card.highlight-card {
+  background: linear-gradient(135deg, #2c1a36, #1d1225);
+  border-color: #ff7597;
+  box-shadow: 0 10px 30px rgba(255, 117, 151, 0.25);
+}
+
 .counter-card.highlight-card .counter-number {
   color: var(--pink-accent);
   animation: pulse-heart 1.5s infinite alternate ease-in-out;
@@ -85,4 +100,3 @@
   color: var(--pink-deep);
   margin-top: 1.5rem;
 }
-

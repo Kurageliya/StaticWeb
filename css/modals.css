@@ -190,24 +190,32 @@ audio {
    -------------------------------------------------------------------------- */
 .theme-options-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.15rem;
   margin-top: 1rem;
+}
+
+@media (max-width: 480px) {
+  .theme-options-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
 }
 
 .theme-card-option {
   background: var(--bg-cream-card);
   border: 2px solid var(--pink-dusty);
   border-radius: var(--radius-md);
-  padding: 1rem 0.75rem;
+  padding: 1.25rem 1rem;
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-normal);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   position: relative;
+  box-shadow: var(--shadow-sm);
 }
 
 .theme-card-option:hover {
@@ -218,53 +226,77 @@ audio {
 
 .theme-card-option.active {
   border-color: var(--pink-deep);
-  background: rgba(232, 180, 184, 0.15);
-  box-shadow: 0 0 0 3px rgba(216, 131, 144, 0.35);
+  background: rgba(245, 203, 203, 0.18);
+  box-shadow: 0 0 0 3px rgba(164, 90, 130, 0.35);
+}
+
+[data-theme="dark"] .theme-card-option.active {
+  background: rgba(197, 179, 211, 0.12);
+  box-shadow: 0 0 0 3px rgba(255, 117, 151, 0.4);
 }
 
 .theme-card-option.active::after {
-  content: "✓";
+  content: "✓ Aktif";
   position: absolute;
-  top: 6px;
-  right: 8px;
+  top: 10px;
+  right: 12px;
   background: var(--pink-deep);
   color: #fff;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+  padding: 3px 8px;
+  border-radius: 20px;
   font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: bold;
+  gap: 3px;
+}
+
+[data-theme="dark"] .theme-card-option.active::after {
+  background: var(--pink-accent);
+  color: #130e19;
 }
 
 .theme-swatch-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 7px;
+  padding: 5px 8px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 30px;
+}
+
+[data-theme="dark"] .theme-swatch-wrap {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .theme-swatch {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   display: inline-block;
+  transition: transform var(--transition-fast);
+}
+
+.theme-card-option:hover .theme-swatch {
+  transform: scale(1.12);
 }
 
 .theme-name-label {
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--text-dark);
-  line-height: 1.2;
+  line-height: 1.25;
+  margin-top: 0.2rem;
 }
 
 .theme-desc-label {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
+  line-height: 1.35;
 }
 
 /* --------------------------------------------------------------------------
@@ -389,5 +421,44 @@ audio {
     flex-direction: column;
     gap: 0.5rem;
   }
+}
+
+/* --------------------------------------------------------------------------
+   DARK THEME MODAL ENHANCEMENTS
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] .modal-dialog,
+[data-theme="midnight-romance"] .modal-dialog {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+}
+
+[data-theme="dark"] .modal-header,
+[data-theme="midnight-romance"] .modal-header {
+  background: #17101d;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="midnight-romance"] .form-control {
+  background: #160f1c;
+  color: #fbf1f6;
+  border-color: rgba(197, 179, 211, 0.25);
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="midnight-romance"] .form-control:focus {
+  border-color: var(--pink-accent);
+  box-shadow: 0 0 0 3px rgba(255, 117, 151, 0.3);
+}
+
+[data-theme="dark"] .upload-dropzone,
+[data-theme="midnight-romance"] .upload-dropzone {
+  background: #160f1c;
+  border-color: rgba(197, 179, 211, 0.3);
+}
+
+[data-theme="dark"] .multi-preview-header,
+[data-theme="midnight-romance"] .multi-preview-header {
+  background: rgba(197, 179, 211, 0.1);
 }
 

@@ -3,7 +3,7 @@
  * Mengelola LocalStorage dan sinkronisasi real-time cloud Firebase Firestore.
  */
 import { DEFAULT_SETTINGS, firebaseConfig } from '../config/initialData.js';
-import { safeGetLocalStorage, safeSetLocalStorage } from '../utils/helpers.js';
+import { safeGetLocalStorage, safeSetLocalStorage, getMemoryTimestamp, ensureDocumentUnderLimit } from '../utils/helpers.js';
 import { showToast } from '../utils/toast.js';
 
 let db = null;
@@ -44,11 +44,17 @@ export function saveMemoriesList(list) {
 export async function syncMemoryToCloud(memory) {
   if (!db || !memory || !memory.id) return false;
   try {
+    // Pastikan payload dokumen selalu muat di bawah batas 1 MiB (1,048,576 bytes) Firestore
+    await ensureDocumentUnderLimit(memory);
     await db.collection('memories').doc(memory.id).set(memory, { merge: true });
     return true;
   } catch (err) {
     console.error('Cloud sync memory error:', err);
-    showToast('⚠️ Gagal menyimpan ke server cloud. Periksa koneksi internet.');
+    if (err.message && (err.message.includes('exceeds the maximum') || err.message.includes('longer than') || err.message.includes('1048576'))) {
+      showToast('⚠️ Ukuran dokumen melebihi batas 1 MB Firestore. Coba kurangi foto atau kompres lebih kecil.');
+    } else {
+      showToast('⚠️ Gagal menyimpan ke server cloud. Periksa koneksi internet.');
+    }
     return false;
   }
 }
@@ -89,7 +95,7 @@ export function setupCloudListeners({ onMemoriesUpdate, onSettingsUpdate }) {
       }
     });
 
-    cloudMemories.sort((a, b) => new Date(b.date) - new Date(a.date));
+    cloudMemories.sort((a, b) => getMemoryTimestamp(b) - getMemoryTimestamp(a));
 
     if (cloudMemories.length > 0 || snapshot.empty) {
       saveMemoriesList(cloudMemories);

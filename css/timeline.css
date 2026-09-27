@@ -1,4 +1,4 @@
-/* === CHRONOLOGICAL STORY TIMELINE === */
+/* === CHRONOLOGICAL STORY TIMELINE - POLAROID KEEPSAKE REDESIGN === */
 /* --------------------------------------------------------------------------
    8. TIMELINE CERITA KRONOLOGIS
    -------------------------------------------------------------------------- */
@@ -9,8 +9,8 @@
 
 .timeline-wrapper {
   position: relative;
-  max-width: 850px;
-  margin: 3rem auto 0 auto;
+  max-width: 900px;
+  margin: 3.5rem auto 0 auto;
 }
 
 .timeline-line {
@@ -18,117 +18,380 @@
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 3px;
-  background: linear-gradient(180deg, var(--pink-soft), var(--pink-accent), var(--gold-accent));
+  width: 4px;
+  background: linear-gradient(180deg, var(--pink-soft), var(--lavender-soft), var(--pink-accent), var(--gold-accent));
   transform: translateX(-50%);
   border-radius: var(--radius-full);
+  box-shadow: 0 0 12px rgba(197, 179, 211, 0.4);
 }
 
 .timeline-item {
   position: relative;
-  margin-bottom: 3.5rem;
+  margin-bottom: 4rem;
   width: 50%;
 }
 
 .timeline-item.left {
   left: 0;
-  padding-right: 2.5rem;
+  padding-right: 2.8rem;
 }
 
 .timeline-item.right {
   left: 50%;
-  padding-left: 2.5rem;
+  padding-left: 2.8rem;
 }
 
+/* Timeline Center Node Badge */
 .timeline-badge {
   position: absolute;
-  top: 0;
-  width: 44px;
-  height: 44px;
+  top: 18px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: var(--bg-cream-card);
+  background: linear-gradient(135deg, var(--pink-soft), var(--bg-cream-card));
   border: 3px solid var(--pink-accent);
   color: var(--pink-deep);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
-  box-shadow: var(--shadow-md);
+  font-size: 1.15rem;
+  box-shadow: 0 4px 15px rgba(164, 90, 130, 0.25);
   z-index: 5;
+  transition: all var(--transition-normal);
 }
 
 .timeline-item.left .timeline-badge {
-  right: -22px;
+  right: -23px;
 }
 
 .timeline-item.right .timeline-badge {
-  left: -22px;
+  left: -23px;
 }
 
+.timeline-item:hover .timeline-badge {
+  transform: scale(1.12);
+  box-shadow: 0 0 20px rgba(255, 117, 151, 0.5);
+  border-color: var(--pink-deep);
+}
+
+/* Polaroid Keepsake Card Container */
 .timeline-card {
-  background: var(--bg-cream-card);
-  padding: 1.5rem;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  border: 1px solid rgba(232, 180, 184, 0.4);
+  background: var(--bg-cream-card, #ffffff);
+  padding: 1.25rem;
+  border-radius: 20px;
+  box-shadow: 0 12px 35px -5px rgba(164, 90, 130, 0.12), 0 2px 10px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(197, 179, 211, 0.35);
   position: relative;
+  transition: all var(--transition-normal);
 }
 
-.card-tape {
-  position: absolute;
-  top: -10px;
-  width: 60px;
-  height: 20px;
-  background: rgba(229, 193, 88, 0.45);
+.timeline-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px -5px rgba(164, 90, 130, 0.18), 0 4px 16px rgba(0, 0, 0, 0.06);
+  border-color: var(--pink-dusty);
 }
 
-.timeline-item.left .card-tape {
-  right: 20px;
-  transform: rotate(-5deg);
-}
-
-.timeline-item.right .card-tape {
-  left: 20px;
-  transform: rotate(5deg);
-}
-
-.timeline-date {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--pink-accent);
-  text-transform: uppercase;
-  margin-bottom: 0.25rem;
-}
-
-.timeline-card h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  margin-bottom: 0.5rem;
-}
-
-.timeline-card p {
-  font-size: 0.925rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.timeline-img-small {
-  margin-top: 1rem;
-  border-radius: var(--radius-sm);
+/* 1. Polaroid Photo Stage */
+.timeline-polaroid-frame {
+  background: #ffffff;
+  padding: 8px 8px 12px 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(245, 203, 203, 0.7);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  position: relative;
+  cursor: pointer;
   overflow: hidden;
-  max-height: 240px;
-  background: #1a121d;
+  transition: all var(--transition-normal);
+}
+
+.timeline-polaroid-frame:hover {
+  border-color: var(--pink-accent);
+  box-shadow: 0 6px 20px rgba(164, 90, 130, 0.16);
+}
+
+.timeline-polaroid-img-wrap {
+  aspect-ratio: 16 / 10.5;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  background: #201524;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.timeline-img-small img {
+.timeline-polaroid-img {
   width: 100%;
-  max-height: 240px;
+  height: 100%;
   object-fit: cover;
-  object-position: center 20%;
+  object-position: center;
+  transition: transform 0.5s cubic-bezier(0.2, 0, 0.2, 1);
+  display: block;
 }
-
+
+.timeline-polaroid-frame:hover .timeline-polaroid-img {
+  transform: scale(1.04);
+}
+
+/* Multi-photo badge */
+.polaroid-count-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(20, 14, 26, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 2;
+}
+
+/* Hover overlay */
+.timeline-polaroid-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(94, 40, 74, 0.75) 100%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  display: flex;
+  align-items: flex-end;
+  padding: 12px;
+  z-index: 1;
+}
+
+.timeline-polaroid-frame:hover .timeline-polaroid-overlay {
+  opacity: 1;
+}
+
+.overlay-hint {
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* 2. Metadata: Category, Date, Time */
+.timeline-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pill-kencan {
+  background: rgba(164, 90, 130, 0.12);
+  color: var(--pink-accent);
+  border: 1px solid rgba(164, 90, 130, 0.25);
+}
+
+.pill-liburan {
+  background: rgba(198, 148, 96, 0.14);
+  color: var(--gold-accent);
+  border: 1px solid rgba(198, 148, 96, 0.3);
+}
+
+.pill-spesial {
+  background: rgba(197, 179, 211, 0.22);
+  color: var(--pink-deep);
+  border: 1px solid rgba(197, 179, 211, 0.4);
+}
+
+.pill-custom {
+  background: rgba(142, 68, 173, 0.12);
+  color: #8e44ad;
+  border: 1px solid rgba(142, 68, 173, 0.3);
+}
+
+.timeline-meta-time-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.timeline-meta-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.timeline-meta-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--pink-soft);
+  color: var(--pink-deep);
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  border: 1px solid var(--pink-dusty);
+}
+
+/* 3. Card Title & Story Quote */
+.timeline-card-title {
+  font-family: var(--font-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0.35rem 0 0.65rem 0;
+  line-height: 1.35;
+}
+
+.timeline-story-box {
+  position: relative;
+  padding: 0.75rem 0.9rem 0.75rem 1.75rem;
+  background: rgba(251, 239, 239, 0.55);
+  border-left: 3px solid var(--pink-accent);
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 0.9rem;
+}
+
+.timeline-story-box .quote-icon {
+  position: absolute;
+  left: 7px;
+  top: 10px;
+  font-size: 0.75rem;
+  color: var(--pink-accent);
+  opacity: 0.75;
+}
+
+.timeline-story-text {
+  font-size: 0.915rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* 4. Card Footer */
+.timeline-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgba(245, 203, 203, 0.6);
+  margin-top: 0.4rem;
+}
+
+.timeline-pin-chip {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.timeline-pin-chip i {
+  color: var(--pink-accent);
+}
+
+.timeline-read-btn {
+  background: none;
+  border: none;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--pink-accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.timeline-read-btn:hover {
+  background: var(--pink-soft);
+  color: var(--pink-deep);
+  transform: translateX(3px);
+}
+
+/* ==========================================================================
+   Dark Mode Adaptations for Timeline
+   ========================================================================== */
+[data-theme="dark"] .timeline-card,
+[data-theme="midnight-romance"] .timeline-card {
+  background: #1e1526;
+  border: 1px solid rgba(197, 179, 211, 0.2);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] .timeline-card:hover,
+[data-theme="midnight-romance"] .timeline-card:hover {
+  border-color: rgba(255, 117, 151, 0.4);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85);
+}
+
+[data-theme="dark"] .timeline-badge,
+[data-theme="midnight-romance"] .timeline-badge {
+  background: linear-gradient(135deg, #2e1e35, #1e1526);
+  border-color: var(--pink-accent);
+  color: #ff7597;
+  box-shadow: 0 0 15px rgba(255, 117, 151, 0.35);
+}
+
+[data-theme="dark"] .timeline-polaroid-frame,
+[data-theme="midnight-romance"] .timeline-polaroid-frame {
+  background: #271c31;
+  border: 1px solid rgba(255, 117, 151, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .timeline-story-box,
+[data-theme="midnight-romance"] .timeline-story-box {
+  background: rgba(46, 30, 53, 0.45);
+  border-left-color: #ff7597;
+}
+
+[data-theme="dark"] .timeline-meta-time,
+[data-theme="midnight-romance"] .timeline-meta-time {
+  background: rgba(197, 179, 211, 0.15);
+  color: #fbf1f6;
+  border: 1px solid rgba(197, 179, 211, 0.3);
+}
+
+[data-theme="dark"] .timeline-card-footer,
+[data-theme="midnight-romance"] .timeline-card-footer {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .timeline-read-btn:hover,
+[data-theme="midnight-romance"] .timeline-read-btn:hover {
+  background: rgba(255, 117, 151, 0.15);
+  color: #ff7597;
+}
+
+[data-theme="dark"] .pill-custom,
+[data-theme="midnight-romance"] .pill-custom {
+  background: rgba(187, 134, 252, 0.18);
+  color: #d1b3ff;
+  border-color: rgba(187, 134, 252, 0.4);
+}

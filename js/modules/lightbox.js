@@ -3,7 +3,7 @@
  * Menampilkan modal detail foto polaroid dengan transisi zoom-fade,
  * slider multi-foto horizontal yang mulus, titik navigasi terpusat, dan peek full image.
  */
-import { escapeHtml } from '../utils/helpers.js';
+import { escapeHtml, formatMemoryDate } from '../utils/helpers.js';
 import { getMemoryImages } from './gallery.js';
 
 let currentLightboxIndex = 0;
@@ -235,6 +235,26 @@ export function openLightbox(index, photoIndex = 0, callbacks = {}) {
   document.body.style.overflow = 'hidden';
 }
 
+/**
+ * Membuka Lightbox secara langsung berdasarkan referensi objek kenangan (misal dari Timeline)
+ */
+export function openLightboxByMemory(targetMemory, photoIndex = 0, callbacks = {}) {
+  if (!targetMemory) return;
+  const memories = currentGetFilteredMemories();
+  const foundIdx = memories.findIndex(m => m.id === targetMemory.id);
+  if (foundIdx !== -1) {
+    openLightbox(foundIdx, photoIndex, callbacks);
+  } else {
+    updateLightboxContent(targetMemory, photoIndex, callbacks);
+    const lightboxModal = document.getElementById('lightbox-modal');
+    if (lightboxModal) {
+      lightboxModal.classList.add('active');
+      lightboxModal.setAttribute('aria-hidden', 'false');
+    }
+    document.body.style.overflow = 'hidden';
+  }
+}
+
 export function closeLightbox() {
   clearTimeout(peekHintTimer);
   clearTimeout(subNavTimer);
@@ -286,8 +306,7 @@ export function navigateLightbox(direction, callbacks = {}) {
 
 export function updateLightboxContent(memory, photoIndex = 0, callbacks = {}) {
   if (!memory) return;
-  const dateObj = new Date(memory.date);
-  const formattedDate = dateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+  const formattedDate = formatMemoryDate(memory, true);
 
   const images = getMemoryImages(memory);
   currentLightboxPhotoIndex = Math.min(Math.max(0, photoIndex), Math.max(0, images.length - 1));
@@ -322,10 +341,15 @@ export function updateLightboxContent(memory, photoIndex = 0, callbacks = {}) {
   if (lightboxTitle) lightboxTitle.textContent = memory.title;
   if (lightboxDate) lightboxDate.textContent = formattedDate;
   if (lightboxCaption) lightboxCaption.textContent = memory.caption || '';
-  const cat = memory.category || 'Momen';
-  const catIcon = cat === 'kencan' ? 'fa-heart' : (cat === 'liburan' ? 'fa-plane' : 'fa-star');
+  const cat = (memory.category || 'spesial').trim();
+  const catLower = cat.toLowerCase();
+  let catIcon = 'fa-tag';
+  if (catLower === 'kencan') catIcon = 'fa-champagne-glasses';
+  else if (catLower === 'liburan') catIcon = 'fa-plane-departure';
+  else if (catLower === 'spesial') catIcon = 'fa-heart';
+  const catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
   if (lightboxTag) {
-    lightboxTag.innerHTML = `<i class="fa-solid ${catIcon}"></i> ${escapeHtml(cat)}`;
+    lightboxTag.innerHTML = `<i class="fa-solid ${catIcon}"></i> ${escapeHtml(catLabel)}`;
   }
 
   const subPrev = document.getElementById('lightbox-sub-prev');

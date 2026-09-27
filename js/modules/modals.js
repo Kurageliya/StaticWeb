@@ -8,7 +8,7 @@
  * - Pemilih Tema Background
  * - Scroll Reveal Observer
  */
-import { escapeHtml, compressAndReadImage, safeSetLocalStorage } from '../utils/helpers.js';
+import { escapeHtml, compressAndReadImage, safeSetLocalStorage, isSupportedImageFile, isHeicFile } from '../utils/helpers.js';
 import { showToast } from '../utils/toast.js';
 import { getMemoryImages } from './gallery.js';
 
@@ -30,20 +30,42 @@ export function closeModal(modalEl) {
    1. THEME SWITCHER
    -------------------------------------------------------------------------- */
 export function applyTheme(themeId) {
-  document.documentElement.setAttribute('data-theme', themeId);
-  safeSetLocalStorage('love_journey_theme', themeId);
+  // Normalisasi tema: peta tema lama atau input baru ke 2 mode ('light' atau 'dark')
+  let normalizedTheme = 'light';
+  if (themeId === 'dark' || themeId === 'midnight-romance' || themeId === 'midnight-pink') {
+    normalizedTheme = 'dark';
+  }
+
+  document.documentElement.setAttribute('data-theme', normalizedTheme);
+  safeSetLocalStorage('love_journey_theme', normalizedTheme);
 
   const themeOptions = document.querySelectorAll('.theme-card-option');
   themeOptions.forEach(opt => {
-    if (opt.getAttribute('data-theme-id') === themeId) {
+    if (opt.getAttribute('data-theme-id') === normalizedTheme) {
       opt.classList.add('active');
     } else {
       opt.classList.remove('active');
     }
   });
+
+  const btnThemeToggle = document.getElementById('btn-theme-toggle');
+  if (btnThemeToggle) {
+    const icon = btnThemeToggle.querySelector('i');
+    if (icon) {
+      if (normalizedTheme === 'dark') {
+        icon.className = 'fa-solid fa-sun';
+        btnThemeToggle.setAttribute('title', 'Klik untuk Mode Terang (Light Mode)');
+        btnThemeToggle.setAttribute('aria-label', 'Ganti ke Mode Terang');
+      } else {
+        icon.className = 'fa-solid fa-moon';
+        btnThemeToggle.setAttribute('title', 'Klik untuk Mode Gelap (Dark Mode)');
+        btnThemeToggle.setAttribute('aria-label', 'Ganti ke Mode Gelap');
+      }
+    }
+  }
 }
 
-export function setupThemeEvents(initialTheme = 'dusty-rose') {
+export function setupThemeEvents(initialTheme = 'light') {
   const btnThemeToggle = document.getElementById('btn-theme-toggle');
   const modalThemePicker = document.getElementById('modal-theme-picker');
   const modalThemeClose = document.getElementById('modal-theme-close');
@@ -52,10 +74,17 @@ export function setupThemeEvents(initialTheme = 'dusty-rose') {
 
   applyTheme(initialTheme);
 
-  if (btnThemeToggle && modalThemePicker) {
-    btnThemeToggle.addEventListener('click', () => openModal(modalThemePicker));
+  // Klik langsung ganti antara Light & Dark tanpa popup pilihan
+  if (btnThemeToggle) {
+    btnThemeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      applyTheme(nextTheme);
+      showToast(nextTheme === 'dark' ? '🌙 Berubah ke Mode Gelap' : '☀️ Berubah ke Mode Terang');
+    });
   }
 
+  // Backup handlers jika modal dibuka dari tempat lain
   if (modalThemeClose && modalThemePicker) {
     modalThemeClose.addEventListener('click', () => closeModal(modalThemePicker));
     const backdrop = modalThemePicker.querySelector('.modal-backdrop');
@@ -67,7 +96,8 @@ export function setupThemeEvents(initialTheme = 'dusty-rose') {
   if (modalThemeDone && modalThemePicker) {
     modalThemeDone.addEventListener('click', () => {
       closeModal(modalThemePicker);
-      showToast('✨ Tema Warna Background Berhasil Diterapkan!');
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      showToast(currentTheme === 'dark' ? '🌙 Mode Gelap Berhasil Diterapkan!' : '✨ Mode Terang Berhasil Diterapkan!');
     });
   }
 
@@ -77,6 +107,7 @@ export function setupThemeEvents(initialTheme = 'dusty-rose') {
       if (optionCard) {
         const themeId = optionCard.getAttribute('data-theme-id');
         applyTheme(themeId);
+        showToast(themeId === 'dark' ? '🌙 Mode Gelap Dipilih' : '☀️ Mode Terang Dipilih');
       }
     });
   }
@@ -244,14 +275,91 @@ function renderEditPhotoGrid() {
   });
 }
 
-export function openEditMemoryModal(memory) {
+/**
+ * Mengisi opsi dropdown kategori:
+ * - Kategori standar: Kencan, Liburan, Spesial
+ * - Kategori kustom yang saat ini aktif di memoriesList
+ * - Opsi khusus: ✨ + Tulis Kategori Kustom / Baru...
+ */
+export function populateCategorySelect(selectEl, memoriesList = [], selectedValue = '') {
+  if (!selectEl) return;
+
+  const defaultCategories = [
+    { key: 'kencan', label: 'Kencan' },
+    { key: 'liburan', label: 'Liburan' },
+    { key: 'spesial', label: 'Spesial' }
+  ];
+
+  // Kumpulkan kategori kustom unik dari memoriesList
+  const customMap = new Map();
+  if (Array.isArray(memoriesList)) {
+    memoriesList.forEach(m => {
+      const rawCat = (m.category || '').trim();
+      if (!rawCat) return;
+      const lower = rawCat.toLowerCase();
+      if (!defaultCategories.some(d => d.key === lower) && !customMap.has(lower)) {
+        const words = rawCat.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+        customMap.set(lower, words.join(' '));
+      }
+    });
+  }
+
+  const selTrimmed = (selectedValue || '').trim();
+  const selLower = selTrimmed.toLowerCase();
+
+  let html = '';
+  defaultCategories.forEach(c => {
+    html += `<option value="${c.key}">${c.label}</option>`;
+  });
+
+  if (customMap.size > 0) {
+    html += `<optgroup label="Kategori Tersimpan">`;
+    customMap.forEach((label, key) => {
+      html += `<option value="${key}">${label}</option>`;
+    });
+    html += `</optgroup>`;
+  }
+
+  html += `<option value="__custom__">✨ + Tulis Kategori Kustom / Baru...</option>`;
+  selectEl.innerHTML = html;
+
+  if (selLower) {
+    if (defaultCategories.some(d => d.key === selLower) || customMap.has(selLower)) {
+      selectEl.value = selLower;
+    } else {
+      selectEl.value = '__custom__';
+    }
+  }
+}
+
+export function openEditMemoryModal(memory, memoriesList = []) {
   if (!memory) return;
   const modalEditMemory = document.getElementById('modal-edit-memory');
 
+  const rawDate = memory.date || '';
+  const dateOnly = rawDate.includes('T') ? rawDate.split('T')[0] : rawDate;
+  const timeOnly = memory.time || (rawDate.includes('T') ? rawDate.split('T')[1].substring(0, 5) : '');
+
   document.getElementById('edit-memory-id').value = memory.id;
   document.getElementById('edit-memory-title').value = memory.title || '';
-  document.getElementById('edit-memory-date').value = memory.date || '';
-  document.getElementById('edit-memory-category').value = memory.category || 'spesial';
+  document.getElementById('edit-memory-date').value = dateOnly;
+  const editTimeInput = document.getElementById('edit-memory-time');
+  if (editTimeInput) editTimeInput.value = timeOnly;
+
+  const editCatSelect = document.getElementById('edit-memory-category');
+  const editCustomWrap = document.getElementById('edit-custom-category-wrap');
+  const editCustomInput = document.getElementById('edit-memory-custom-category');
+
+  populateCategorySelect(editCatSelect, memoriesList, memory.category || 'spesial');
+
+  if (editCatSelect.value === '__custom__') {
+    if (editCustomWrap) editCustomWrap.style.display = 'block';
+    if (editCustomInput) editCustomInput.value = memory.category || '';
+  } else {
+    if (editCustomWrap) editCustomWrap.style.display = 'none';
+    if (editCustomInput) editCustomInput.value = '';
+  }
+
   document.getElementById('edit-memory-caption').value = memory.caption || '';
 
   editCurrentImages = [...getMemoryImages(memory)];
@@ -272,6 +380,23 @@ export function setupEditMemoryEvents({ onSaveEdit = null }) {
   const btnEditCancel = document.getElementById('btn-edit-cancel');
   const editUploadDropzone = document.getElementById('edit-upload-dropzone');
   const editFileInput = document.getElementById('edit-memory-file-input');
+  const editCatSelect = document.getElementById('edit-memory-category');
+  const editCustomWrap = document.getElementById('edit-custom-category-wrap');
+  const editCustomInput = document.getElementById('edit-memory-custom-category');
+
+  if (editCatSelect) {
+    editCatSelect.addEventListener('change', () => {
+      if (editCatSelect.value === '__custom__') {
+        if (editCustomWrap) editCustomWrap.style.display = 'block';
+        if (editCustomInput) {
+          editCustomInput.focus();
+        }
+      } else {
+        if (editCustomWrap) editCustomWrap.style.display = 'none';
+        if (editCustomInput) editCustomInput.value = '';
+      }
+    });
+  }
 
   const closeEditModal = () => closeModal(modalEditMemory);
 
@@ -288,15 +413,26 @@ export function setupEditMemoryEvents({ onSaveEdit = null }) {
 
   if (editFileInput) {
     editFileInput.addEventListener('change', async (e) => {
-      const files = Array.from(e.target.files || []).filter(f => f.type.startsWith('image/'));
-      if (files.length === 0) return;
+      const rawFiles = Array.from(e.target.files || []);
+      const files = rawFiles.filter(isSupportedImageFile);
+      if (files.length === 0) {
+        if (rawFiles.length > 0) {
+          showToast('⚠️ Format file tidak didukung. Harap pilih foto JPG, PNG, WEBP, atau HEIC.');
+        }
+        return;
+      }
+
+      if (files.some(isHeicFile)) {
+        showToast('⏳ Sedang memproses dan mengonversi foto HEIC...');
+      }
 
       for (const file of files) {
         try {
           const dataUrl = await compressAndReadImage(file);
-          editCurrentImages.push(dataUrl);
+          if (dataUrl) editCurrentImages.push(dataUrl);
         } catch (err) {
           console.warn('Error reading edit photo:', err);
+          showToast(`⚠️ Gagal memuat foto ${file.name || ''}`);
         }
       }
       renderEditPhotoGrid();
@@ -321,13 +457,26 @@ export function setupEditMemoryEvents({ onSaveEdit = null }) {
 
     editUploadDropzone.addEventListener('drop', async (e) => {
       const dt = e.dataTransfer;
-      const files = Array.from(dt.files || []).filter(f => f.type.startsWith('image/'));
+      const rawFiles = Array.from(dt.files || []);
+      const files = rawFiles.filter(isSupportedImageFile);
+      if (files.length === 0) {
+        if (rawFiles.length > 0) {
+          showToast('⚠️ Format file tidak didukung. Harap pilih foto JPG, PNG, WEBP, atau HEIC.');
+        }
+        return;
+      }
+
+      if (files.some(isHeicFile)) {
+        showToast('⏳ Sedang memproses dan mengonversi foto HEIC...');
+      }
+
       for (const file of files) {
         try {
           const dataUrl = await compressAndReadImage(file);
-          editCurrentImages.push(dataUrl);
+          if (dataUrl) editCurrentImages.push(dataUrl);
         } catch (err) {
           console.warn('Error reading edit dropped photo:', err);
+          showToast(`⚠️ Gagal memuat foto ${file.name || ''}`);
         }
       }
       renderEditPhotoGrid();
@@ -350,19 +499,53 @@ export function setupEditMemoryEvents({ onSaveEdit = null }) {
         return;
       }
 
-      const updatedMemoryData = {
-        id,
-        title: document.getElementById('edit-memory-title').value.trim(),
-        date: document.getElementById('edit-memory-date').value,
-        category: document.getElementById('edit-memory-category').value,
-        caption: document.getElementById('edit-memory-caption').value.trim(),
-        images: editCurrentImages,
-        imgUrl: editCurrentImages[0]
-      };
+      const submitBtn = formEditMemory.querySelector('button[type="submit"]');
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+      }
 
-      closeEditModal();
-      if (typeof onSaveEdit === 'function') {
-        onSaveEdit(updatedMemoryData);
+      try {
+        let categoryVal = editCatSelect ? editCatSelect.value : 'spesial';
+        if (categoryVal === '__custom__') {
+          const typedCategory = editCustomInput ? editCustomInput.value.trim() : '';
+          if (!typedCategory) {
+            showToast('⚠️ Silakan ketik nama kategori baru Anda.');
+            if (editCustomInput) editCustomInput.focus();
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalBtnHtml;
+            }
+            return;
+          }
+          categoryVal = typedCategory;
+        }
+
+        const editTimeInput = document.getElementById('edit-memory-time');
+        const updatedMemoryData = {
+          id,
+          title: document.getElementById('edit-memory-title').value.trim(),
+          date: document.getElementById('edit-memory-date').value,
+          time: editTimeInput ? editTimeInput.value.trim() : '',
+          category: categoryVal,
+          caption: document.getElementById('edit-memory-caption').value.trim(),
+          images: [...editCurrentImages],
+          imgUrl: editCurrentImages[0]
+        };
+
+        if (typeof onSaveEdit === 'function') {
+          await onSaveEdit(updatedMemoryData);
+        }
+        closeEditModal();
+      } catch (err) {
+        console.error('Error in onSaveEdit:', err);
+        showToast('⚠️ Terjadi kendala saat menyimpan perubahan.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
       }
     });
   }
@@ -416,15 +599,26 @@ function renderAddPhotoGrid() {
 
 async function handleAddSelectedFiles(files) {
   const memoryFileInput = document.getElementById('memory-file-input');
-  const fileList = Array.from(files || []).filter(f => f.type.startsWith('image/'));
-  if (fileList.length === 0) return;
+  const rawFiles = Array.from(files || []);
+  const fileList = rawFiles.filter(isSupportedImageFile);
+  if (fileList.length === 0) {
+    if (rawFiles.length > 0) {
+      showToast('⚠️ Format file tidak didukung. Harap pilih foto JPG, PNG, WEBP, atau HEIC.');
+    }
+    return;
+  }
+
+  if (fileList.some(isHeicFile)) {
+    showToast('⏳ Sedang memproses dan mengonversi foto HEIC...');
+  }
 
   for (const file of fileList) {
     try {
       const dataUrl = await compressAndReadImage(file);
-      addSelectedImages.push(dataUrl);
+      if (dataUrl) addSelectedImages.push(dataUrl);
     } catch (err) {
       console.warn('Error reading upload photo:', err);
+      showToast(`⚠️ Gagal memuat foto ${file.name || ''}`);
     }
   }
   renderAddPhotoGrid();
@@ -434,7 +628,8 @@ async function handleAddSelectedFiles(files) {
 export function setupModalEvents({
   getCoupleSettings = () => ({}),
   onSaveSettings = null,
-  onAddMemory = null
+  onAddMemory = null,
+  getMemoriesList = () => []
 } = {}) {
   const inputPerson1 = document.getElementById('input-person1');
   const inputPerson2 = document.getElementById('input-person2');
@@ -461,6 +656,23 @@ export function setupModalEvents({
   const memoryFileInput = document.getElementById('memory-file-input');
   const uploadDropzone = document.getElementById('upload-dropzone');
   const btnAddMoreFiles = document.getElementById('btn-add-more-files');
+  const memoryCategorySelect = document.getElementById('memory-category');
+  const customCategoryWrap = document.getElementById('custom-category-wrap');
+  const customCategoryInput = document.getElementById('memory-custom-category');
+
+  if (memoryCategorySelect) {
+    memoryCategorySelect.addEventListener('change', () => {
+      if (memoryCategorySelect.value === '__custom__') {
+        if (customCategoryWrap) customCategoryWrap.style.display = 'block';
+        if (customCategoryInput) {
+          customCategoryInput.focus();
+        }
+      } else {
+        if (customCategoryWrap) customCategoryWrap.style.display = 'none';
+        if (customCategoryInput) customCategoryInput.value = '';
+      }
+    });
+  }
 
   if (inputPerson1) {
     inputPerson1.addEventListener('input', () => {
@@ -533,6 +745,12 @@ export function setupModalEvents({
       addSelectedImages = [];
       if (memoryFileInput) memoryFileInput.value = '';
       renderAddPhotoGrid();
+
+      const currentMems = typeof getMemoriesList === 'function' ? getMemoriesList() : [];
+      populateCategorySelect(memoryCategorySelect, currentMems, 'kencan');
+      if (customCategoryWrap) customCategoryWrap.style.display = 'none';
+      if (customCategoryInput) customCategoryInput.value = '';
+
       openModal(modalAddMemory);
     });
   }
@@ -546,7 +764,7 @@ export function setupModalEvents({
   }
 
   if (formAddMemory) {
-    formAddMemory.addEventListener('submit', (e) => {
+    formAddMemory.addEventListener('submit', async (e) => {
       e.preventDefault();
       const inputUrl = document.getElementById('memory-img-url').value.trim();
       const urlList = inputUrl ? inputUrl.split(/[\n,]+/).map(u => u.trim()).filter(Boolean) : [];
@@ -557,20 +775,50 @@ export function setupModalEvents({
         return;
       }
 
-      const newMemory = {
-        id: 'mem-' + Date.now(),
-        title: document.getElementById('memory-title').value.trim(),
-        date: document.getElementById('memory-date').value,
-        category: document.getElementById('memory-category').value,
-        images: allImages,
-        imgUrl: allImages[0],
-        caption: document.getElementById('memory-caption').value.trim(),
-        isFeatured: true
-      };
+      let categoryVal = memoryCategorySelect ? memoryCategorySelect.value : 'kencan';
+      if (categoryVal === '__custom__') {
+        const typedCategory = customCategoryInput ? customCategoryInput.value.trim() : '';
+        if (!typedCategory) {
+          showToast('⚠️ Silakan ketik nama kategori baru Anda.');
+          if (customCategoryInput) customCategoryInput.focus();
+          return;
+        }
+        categoryVal = typedCategory;
+      }
 
-      closeModal(modalAddMemory);
-      if (typeof onAddMemory === 'function') {
-        onAddMemory(newMemory);
+      const submitBtn = formAddMemory.querySelector('button[type="submit"]');
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+      }
+
+      try {
+        const memoryTimeInput = document.getElementById('memory-time');
+        const newMemory = {
+          id: 'mem-' + Date.now(),
+          title: document.getElementById('memory-title').value.trim(),
+          date: document.getElementById('memory-date').value,
+          time: memoryTimeInput ? memoryTimeInput.value.trim() : '',
+          category: categoryVal,
+          images: allImages,
+          imgUrl: allImages[0],
+          caption: document.getElementById('memory-caption').value.trim(),
+          isFeatured: true
+        };
+
+        if (typeof onAddMemory === 'function') {
+          await onAddMemory(newMemory);
+        }
+        closeModal(modalAddMemory);
+      } catch (err) {
+        console.error('Error in onAddMemory:', err);
+        showToast('⚠️ Terjadi kendala saat menambahkan kenangan.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
       }
     });
   }

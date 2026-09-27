@@ -822,26 +822,30 @@
 }
 
 /* ==========================================================================
-   DARK THEME ADAPTATIONS (data-theme="midnight-romance")
+   DARK THEME ADAPTATIONS (data-theme="dark" & data-theme="midnight-romance")
    ========================================================================== */
+[data-theme="dark"] .special-reminders-wrapper,
 [data-theme="midnight-romance"] .special-reminders-wrapper {
   background: rgba(22, 14, 28, 0.76);
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+[data-theme="dark"] .reminder-tag,
 [data-theme="midnight-romance"] .reminder-tag {
   background: rgba(255, 101, 132, 0.18);
   color: var(--pink-accent);
   border-color: rgba(255, 101, 132, 0.35);
 }
 
+[data-theme="dark"] .reminder-title,
 [data-theme="midnight-romance"] .reminder-title {
   color: #ffffff;
   text-shadow: 0 2px 14px rgba(255, 101, 132, 0.35);
 }
 
 /* Hinata Dark Theme: Deep Violet / Velvet Purple */
+[data-theme="dark"] .reminder-card.card-cilpa.card-anime-miku,
 [data-theme="midnight-romance"] .reminder-card.card-cilpa.card-anime-miku {
   background:
     radial-gradient(circle at 100% 100%, rgba(192, 132, 252, 0.25) 0%, transparent 45%),
@@ -850,12 +854,14 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(139, 92, 246, 0.3);
 }
 
+[data-theme="dark"] .reminder-card.card-cilpa.card-anime-miku:hover,
 [data-theme="midnight-romance"] .reminder-card.card-cilpa.card-anime-miku:hover {
   border-color: rgba(216, 180, 254, 0.75);
   box-shadow: 0 26px 60px rgba(0, 0, 0, 0.8), 0 0 45px rgba(139, 92, 246, 0.45);
 }
 
 /* Naruto Dark Theme: Deep Golden Obsidian / Warm Roasted Amber */
+[data-theme="dark"] .reminder-card.card-rijal.card-anime-miku,
 [data-theme="midnight-romance"] .reminder-card.card-rijal.card-anime-miku {
   background:
     radial-gradient(circle at 0% 100%, rgba(251, 191, 36, 0.25) 0%, transparent 45%),
@@ -864,47 +870,57 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 158, 11, 0.3);
 }
 
+[data-theme="dark"] .reminder-card.card-rijal.card-anime-miku:hover,
 [data-theme="midnight-romance"] .reminder-card.card-rijal.card-anime-miku:hover {
   border-color: rgba(252, 211, 77, 0.75);
   box-shadow: 0 26px 60px rgba(0, 0, 0, 0.8), 0 0 45px rgba(245, 158, 11, 0.45);
 }
 
+[data-theme="dark"] .card-rijal .miku-name,
 [data-theme="midnight-romance"] .card-rijal .miku-name {
   color: #fef3c7;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
+[data-theme="dark"] .card-rijal .zodiac-pill,
 [data-theme="midnight-romance"] .card-rijal .zodiac-pill {
   color: #fde68a;
 }
 
+[data-theme="dark"] .card-rijal .reminder-status,
 [data-theme="midnight-romance"] .card-rijal .reminder-status {
   color: #fef3c7;
 }
 
+[data-theme="dark"] .card-rijal .reminder-countdown,
 [data-theme="midnight-romance"] .card-rijal .reminder-countdown {
   background: rgba(26, 12, 2, 0.85);
   border: 1.5px solid rgba(251, 191, 36, 0.35);
 }
 
+[data-theme="dark"] .card-rijal .cd-num,
 [data-theme="midnight-romance"] .card-rijal .cd-num {
   color: #fde68a;
 }
 
+[data-theme="dark"] .card-rijal .cd-label,
 [data-theme="midnight-romance"] .card-rijal .cd-label {
   color: #fef3c7;
 }
 
+[data-theme="dark"] .card-rijal .btn-wish-naruto,
 [data-theme="midnight-romance"] .card-rijal .btn-wish-naruto {
   background: linear-gradient(135deg, #f59e0b, #d97706);
   color: #1c1917;
   font-weight: 800;
 }
 
+[data-theme="dark"] .card-rijal .miku-slider-dashes .dash,
 [data-theme="midnight-romance"] .card-rijal .miku-slider-dashes .dash {
   background: rgba(254, 243, 199, 0.25);
 }
 
+[data-theme="dark"] .card-rijal .miku-slider-dashes .dash.active,
 [data-theme="midnight-romance"] .card-rijal .miku-slider-dashes .dash.active {
   background: #fde68a;
 }
