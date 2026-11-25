@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Rijal & Silva sudah pindah</title>
+  <script>
+    // Alamat lama /StaticWeb/... diteruskan ke /rijal-silva/... (jalur, ?tema=, dan #bagian ikut terbawa)
+    var rest = location.pathname.replace(/^\/StaticWeb/i, '');
+    location.replace('https://kurageliya.github.io/rijal-silva' + (rest || '/') + location.search + location.hash);
+  </script>
+  <meta http-equiv="refresh" content="0; url=https://kurageliya.github.io/rijal-silva/">
+</head>
+<body>
+  <p>Sudah pindah ke <a href="https://kurageliya.github.io/rijal-silva/">kurageliya.github.io/rijal-silva</a></p>
+</body>
+</html>
